@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "215764582587",
+    "project_id": "occupational-health-c2c14",
+    "storage_bucket": "occupational-health-c2c14.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:215764582587:android:97774d3e625aa597fe299e",
+        "android_client_info": {
+          "package_name": "com.example.occupational_health"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBMXTmyMzY_rzRPZUfO9IdwG9W1q36xGds"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
