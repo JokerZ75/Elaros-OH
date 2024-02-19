@@ -17,6 +17,8 @@ class MyRadarChart extends StatefulWidget {
   State<StatefulWidget> createState() => _MyRadarChartState();
 }
 
+// Used base code from Documentation: https://github.com/imaNNeo/fl_chart/blob/main/repo_files/documentations/radar_chart.md#RadarEntry
+// Updated to use as component and for our use
 class _MyRadarChartState extends State<MyRadarChart> {
   int selectedDataSetIndex = -1;
   double angleValue = 0;
@@ -25,7 +27,7 @@ class _MyRadarChartState extends State<MyRadarChart> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-        padding: const EdgeInsets.all(15.0),
+        padding: const EdgeInsets.symmetric(horizontal: 15.0, vertical: 5.0),
         child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -43,6 +45,7 @@ class _MyRadarChartState extends State<MyRadarChart> {
                         fontSize: 24,
                         fontWeight: FontWeight.w600,
                         color: Colors.black,
+                        
               
                         ),
                   ),
@@ -51,6 +54,7 @@ class _MyRadarChartState extends State<MyRadarChart> {
               const SizedBox(height: 6),
               // ignore: avoid_unnecessary_containers
               const Text("Select a dataset to view", style: TextStyle(fontSize: 14, color: Colors.black, fontWeight: FontWeight.w200)),
+              // ignore: avoid_unnecessary_containers
               Container(
                 child: Wrap(
                   children: rawDataSets()
