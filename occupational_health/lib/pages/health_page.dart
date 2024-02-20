@@ -19,10 +19,12 @@ class _HealthPageState extends State<HealthPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        resizeToAvoidBottomInset: false,
         appBar: AppBar(
           title: const Text('Health Page'),
         ),
-        body: Padding(
+        body: SingleChildScrollView(
+            child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
           child: Column(
             children: <Widget>[
@@ -94,14 +96,14 @@ class _HealthPageState extends State<HealthPage> {
                     icon: const Icon(
                       Icons.upload,
                       color: Colors.black,
-                      size: 35,
+                      size: 28,
                     ),
                     textSize: 18,
                     fontWeight: FontWeight.w600,
                   ),
 
                   const SizedBox(
-                    width: 38,
+                    width: 10,
                   ),
                   // View Previous Assessments Button
                   MySubmitButton(
@@ -111,7 +113,7 @@ class _HealthPageState extends State<HealthPage> {
                     icon: const Icon(
                       Icons.checklist,
                       color: Colors.black,
-                      size: 35,
+                      size: 28,
                     ),
                     textSize: 18,
                     fontWeight: FontWeight.w600,
@@ -120,12 +122,12 @@ class _HealthPageState extends State<HealthPage> {
               ),
             ],
           ),
-        ));
+        )));
   }
 
   Widget _buildChartCoursel() {
     return SizedBox(
-      height: 445,
+      height: 470,
       child: PageView(
         onPageChanged: (value) => {
           setState(() {
@@ -220,7 +222,8 @@ class _HealthPageState extends State<HealthPage> {
             getTitle: (index, value) {
               switch (index) {
                 case 0:
-                  return const RadarChartTitle(text: 'Breathlessness', angle: 0);
+                  return const RadarChartTitle(
+                      text: 'Breathlessness', angle: 0);
                 case 1:
                   return const RadarChartTitle(
                     text: 'Cough',
@@ -246,12 +249,12 @@ class _HealthPageState extends State<HealthPage> {
                     text: 'Pain',
                     angle: 0,
                   );
-                case 6: 
+                case 6:
                   return const RadarChartTitle(
                     text: 'Cognition',
                     angle: 0,
                   );
-                case 7: 
+                case 7:
                   return const RadarChartTitle(
                     text: 'Anxiety',
                     angle: 0,
@@ -261,7 +264,7 @@ class _HealthPageState extends State<HealthPage> {
                     text: 'Depression',
                     angle: 0,
                   );
-                case 9: 
+                case 9:
                   return const RadarChartTitle(
                     text: 'PTSD Screening',
                     angle: 0,
