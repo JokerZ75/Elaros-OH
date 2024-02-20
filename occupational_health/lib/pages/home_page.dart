@@ -165,7 +165,7 @@ class _HomePageState extends State<HomePage> {
                               children: [
                                 Padding(
                                   padding: const EdgeInsets.all(4.0),
-                                  child: Container(
+                                  child: Expanded(
                                     child: Column(
                                       mainAxisAlignment:
                                           MainAxisAlignment.center,
@@ -182,7 +182,7 @@ class _HomePageState extends State<HomePage> {
                                         Text(
                                           "Date Taken: ${assessmentData['tsSubCmds']![index]['dateTaken']}",
                                           style: TextStyle(
-                                              fontSize: 11,
+                                              fontSize: 12,
                                               fontWeight: FontWeight.w600,
                                               height: 1.2),
                                         ),
@@ -190,10 +190,9 @@ class _HomePageState extends State<HomePage> {
                                     ),
                                   ),
                                 ),
-                                Container(
-                                  alignment: Alignment.centerRight,
-                                  child: Padding(
-                                    padding: const EdgeInsets.all(8.0),
+                                Padding(
+                                  padding: const EdgeInsets.all(8.0),
+                                  child: Expanded(
                                     child: MySubmitButton(
                                       onPressed: () {},
                                       minWidth: 10,
