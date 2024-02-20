@@ -176,14 +176,14 @@ class _HomePageState extends State<HomePage> {
                                           Text(
                                             "Assessment ${assessmentData['tsSubCmds']![index]['assessmentNumber']}",
                                             style: TextStyle(
-                                                fontSize: 14,
+                                                fontSize: 13,
                                                 fontWeight: FontWeight.w600,
                                                 height: 1.2),
                                           ),
                                           Text(
                                             "Date Taken: ${assessmentData['tsSubCmds']![index]['dateTaken']}",
                                             style: TextStyle(
-                                                fontSize: 14,
+                                                fontSize: 11,
                                                 fontWeight: FontWeight.w600,
                                                 height: 1.2),
                                           ),
