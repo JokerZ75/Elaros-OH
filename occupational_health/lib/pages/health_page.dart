@@ -19,9 +19,6 @@ class _HealthPageState extends State<HealthPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Health Page'),
-        ),
         body: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
           child: Column(
