@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:occupational_health/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:occupational_health/pages/community_page.dart';
 import 'package:occupational_health/pages/health_page.dart';
 import 'package:occupational_health/services/Auth/auth_gate.dart';
 import 'package:provider/provider.dart';
@@ -27,15 +28,13 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Inter',
         primaryColor: const Color(0xFFF2C351),
         datePickerTheme: const DatePickerThemeData(
-          backgroundColor: Colors.white,
-          rangePickerHeaderBackgroundColor: Colors.amber,
-          rangePickerBackgroundColor: Colors.white
-          
-        ),
+            backgroundColor: Colors.white,
+            rangePickerHeaderBackgroundColor: Colors.amber,
+            rangePickerBackgroundColor: Colors.white),
       ),
       title: 'Occupational Health',
       debugShowCheckedModeBanner: false,
-      home: const HealthPage(),
+      home: const CommunityPage(),
     );
   }
 }
