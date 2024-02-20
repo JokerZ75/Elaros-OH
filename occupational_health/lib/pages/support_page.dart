@@ -47,7 +47,7 @@ class _SupportPageState extends State<SupportPage> {
                           child: Row(
                             children: [
                               Padding(
-                                padding: const EdgeInsets.all(4.0),
+                                padding: const EdgeInsets.all(8.0),
                                 child: Expanded(
                                   child: Text(
                                     "Breathlessness",
