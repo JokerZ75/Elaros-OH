@@ -148,67 +148,67 @@ class _HomePageState extends State<HomePage> {
                       borderRadius: BorderRadius.circular(10.0),
                     ),
                   ),
+                  //  air pollution row
                   child: Column(
-                    children: <Widget>[
-                      //  air pollution row
-                      Column(
-                        children: List.generate(3, (index) {
-                          return Container(
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Container(
-                                width: double.infinity,
-                                height: 65,
-                                decoration: BoxDecoration(
-                                  color: Colors.orangeAccent,
-                                  borderRadius: BorderRadius.circular(10.0),
-                                ),
-                                child: Row(
-                                  children: [
-                                    Padding(
-                                      padding: const EdgeInsets.all(4.0),
-                                      child: Column(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.center,
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text(
-                                            "Assessment ${assessmentData['tsSubCmds']![index]['assessmentNumber']}",
-                                            style: TextStyle(
-                                                fontSize: 13,
-                                                fontWeight: FontWeight.w600,
-                                                height: 1.2),
-                                          ),
-                                          Text(
-                                            "Date Taken: ${assessmentData['tsSubCmds']![index]['dateTaken']}",
-                                            style: TextStyle(
-                                                fontSize: 11,
-                                                fontWeight: FontWeight.w600,
-                                                height: 1.2),
-                                          ),
-                                        ],
-                                      ),
-                                    ),
-                                    Container(
-                                      alignment: Alignment.centerRight,
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: MySubmitButton(
-                                          onPressed: () {},
-                                          text: "More info",
-                                          // need to style this text more
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
+                    children: List.generate(3, (index) {
+                      return Container(
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Container(
+                            width: double.infinity,
+                            height: 65,
+                            decoration: BoxDecoration(
+                              color: Colors.orangeAccent,
+                              borderRadius: BorderRadius.circular(10.0),
                             ),
-                          );
-                        }),
-                      ),
-                    ],
+                            child: Row(
+                              children: [
+                                Padding(
+                                  padding: const EdgeInsets.all(4.0),
+                                  child: Container(
+                                    child: Column(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          "Assessment ${assessmentData['tsSubCmds']![index]['assessmentNumber']}",
+                                          style: TextStyle(
+                                              fontSize: 13,
+                                              fontWeight: FontWeight.w600,
+                                              height: 1.2),
+                                        ),
+                                        Text(
+                                          "Date Taken: ${assessmentData['tsSubCmds']![index]['dateTaken']}",
+                                          style: TextStyle(
+                                              fontSize: 11,
+                                              fontWeight: FontWeight.w600,
+                                              height: 1.2),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                                Container(
+                                  alignment: Alignment.centerRight,
+                                  child: Padding(
+                                    padding: const EdgeInsets.all(8.0),
+                                    child: MySubmitButton(
+                                      onPressed: () {},
+                                      minWidth: 10,
+                                      textSize: 20,
+                                      text: "More info",
+                                      // need to style this text more
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    }),
                   ),
                 ),
               ),
