@@ -89,7 +89,7 @@ class _HealthPageState extends State<HealthPage> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               // Create Export Button
-              MySubmitButton(
+              Expanded(child: MySubmitButton(
                 onPressed: () {},
                 text: 'Create\nExport',
                 minWidth: 165,
@@ -100,13 +100,13 @@ class _HealthPageState extends State<HealthPage> {
                 ),
                 textSize: 18,
                 fontWeight: FontWeight.w600,
-              ),
+              )),
 
               const SizedBox(
                 width: 10,
               ),
               // View Previous Assessments Button
-              MySubmitButton(
+              Expanded(child:MySubmitButton(
                 onPressed: () {},
                 text: 'Previously\nCompleted',
                 minWidth: 165,
@@ -117,7 +117,7 @@ class _HealthPageState extends State<HealthPage> {
                 ),
                 textSize: 18,
                 fontWeight: FontWeight.w600,
-              )
+              ))
             ],
           ),
         ],

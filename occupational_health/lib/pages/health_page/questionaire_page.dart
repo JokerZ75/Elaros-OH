@@ -132,7 +132,7 @@ class _QuestionairePageState extends State<QuestionairePage> {
                     // Questionaire
                     SizedBox(
                       width: 350,
-                      height: 450,
+                      height: 475,
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: PageView(
@@ -175,13 +175,46 @@ class _QuestionairePageState extends State<QuestionairePage> {
                             child: const Icon(Icons.arrow_back_ios_new_rounded),
                           ),
                           const Spacer(flex: 1),
-                          Text(
-                            'Page ${pageNumber} of ${sections.length}',
-                            style: const TextStyle(
-                              fontSize: 12,
-                              fontWeight: FontWeight.w300,
-                            ),
-                          ),
+
+                          // Page Number and Total Pages
+                          pageNumber == sections.length
+                              ? ElevatedButton(
+                                  style: ButtonStyle(
+                                      shape: MaterialStateProperty.all(
+                                          const CircleBorder()),
+                                      backgroundColor: MaterialStateColor.resolveWith(
+                                          (states) => const Color(0xFFEFB84C)),
+                                      iconColor: MaterialStateColor.resolveWith(
+                                          (states) => Colors.black),
+                                      minimumSize: MaterialStateProperty.all(
+                                          const Size(50, 50)),
+                                      iconSize: MaterialStateProperty.all(35.0)),
+                                  onPressed: () {
+                                    var result = validate();
+                                    if (result.$2 == true) {
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        const SnackBar(
+                                          content: Text("Assessment Complete"),
+                                        ),
+                                      );
+                                    } else {
+                                      pageController.animateToPage(result.$1, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          content: Text('Please answer all questions (Issues on page ${result.$1 + 1})'),
+                                        ),
+                                      );
+                                    }
+                                  },
+                                  child: const Icon(Icons.check),
+                                )
+                              : Text(
+                                  'Page $pageNumber of ${sections.length}',
+                                  style: const TextStyle(
+                                    fontSize: 12,
+                                    fontWeight: FontWeight.w300,
+                                  ),
+                                ),
                           const Spacer(flex: 1),
                           ElevatedButton(
                             style: ButtonStyle(
@@ -224,9 +257,8 @@ class _QuestionairePageState extends State<QuestionairePage> {
             borderRadius: BorderRadius.circular(10.0),
           ),
         ),
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
+        child: ListView(
+
             children: <Widget>[
               for (var question in section.questions.entries)
                 _buildQuestion(question.key, section.sectionTitle)
