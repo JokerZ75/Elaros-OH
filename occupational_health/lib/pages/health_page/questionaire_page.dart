@@ -1,7 +1,5 @@
 import 'package:choice/choice.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:occupational_health/model/questionaire.dart';
 import 'package:occupational_health/services/Assessment/assessment_service.dart';
 
 class QuestionairePage extends StatefulWidget {
@@ -219,18 +217,12 @@ class _QuestionairePageState extends State<QuestionairePage> {
                                           content: Text("Assessment Complete"),
                                         ),
                                       );
-                                      Timestamp timeStamp = Timestamp.now();
                                       Map<String, Map<String, int>>
                                           questionaire = {};
                                       for (var section in sections) {
                                         questionaire[section.sectionTitle] =
                                             section.questions;
                                       }
-                                      Questionaire newQuestionaire =
-                                          Questionaire(
-                                              timestamp: timeStamp,
-                                              questionaire: questionaire);
-
                                       _assessmentService
                                           .saveQuestionaire(questionaire);
                                       Navigator.pop(context);

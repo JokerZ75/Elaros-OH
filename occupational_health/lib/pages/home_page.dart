@@ -146,7 +146,7 @@ class _HomePageState extends State<HomePage> {
                             width: double.infinity,
                             height: 65,
                             decoration: BoxDecoration(
-                              color: Colors.orangeAccent,
+                              color: const Color(0xFFEFB84C),
                               borderRadius: BorderRadius.circular(10.0),
                             ),
                             child: Row(
