@@ -17,8 +17,7 @@ class MyRehabCard extends StatelessWidget {
       elevation: 5,
       color: const Color(0xFFEFB84C),
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Expanded(
+        padding: const EdgeInsets.all(8.0),   
           child: Row(
             children: <Widget>[
 
@@ -47,7 +46,6 @@ class MyRehabCard extends StatelessWidget {
             ],
           ),
         ),
-      ),
-    );
+      );
   }
 }
