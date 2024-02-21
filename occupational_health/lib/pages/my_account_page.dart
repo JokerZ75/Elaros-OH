@@ -36,18 +36,6 @@ class _MyAccountPageState extends State<MyAccountPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text("Account"),
-        backgroundColor: Color(0xFFf2C351),
-        actions: [
-          IconButton(
-            onPressed: () {
-              signOut();
-            },
-            icon: const Icon(Icons.logout),
-          )
-        ],
-      ),
       body: SingleChildScrollView(
         child: Center(
           child: Padding(
@@ -59,7 +47,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
                   Icons.account_circle_rounded,
                   size: 200,
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 15),
                 //name
                 MyTextFormField(
                     controller: nameController,
@@ -73,7 +61,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
                       return null;
                     }),
 
-                const SizedBox(height: 20),
+                const SizedBox(height: 25),
                 //DOB
                 MyDatePicker(
                     controller: dateOfBirthController,
@@ -83,7 +71,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
                           date.toString().replaceAll("00:00:00.000", "");
                     }),
 
-                const SizedBox(height: 20),
+                const SizedBox(height: 25),
                 //occupation
                 MyTextFormField(
                     controller: occupationController,
@@ -97,7 +85,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
                       return null;
                     }),
 
-                const SizedBox(height: 20),
+                const SizedBox(height: 25),
 
                 //email
                 MyTextFormField(
@@ -112,7 +100,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
                       return null;
                     }),
 
-                const SizedBox(height: 20),
+                const SizedBox(height: 25),
 
                 //password
                 MyTextFormField(
@@ -127,7 +115,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
                       return null;
                     }),
 
-                const SizedBox(height: 20),
+                const SizedBox(height: 25),
 
                 //confirm password
 
@@ -142,13 +130,15 @@ class _MyAccountPageState extends State<MyAccountPage> {
                       }
                       return null;
                     }),
+                
+                const SizedBox(height: 20),
                 Padding(
                     padding: const EdgeInsets.all(8),
                     child: Expanded(
                         child: MySubmitButton(
                       onPressed: () {},
                       minWidth: 10,
-                      textSize: 14,
+                      textSize: 16,
                       text: "Change Information",
                     ))),
 
