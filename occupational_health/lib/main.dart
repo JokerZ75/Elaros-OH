@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:occupational_health/firebase_options.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:occupational_health/pages/health_page.dart';
-import 'package:occupational_health/pages/support_page.dart';
+import 'package:occupational_health/pages/home_page.dart';
+import 'package:occupational_health/pages/page_view_main.dart';
 import 'package:occupational_health/services/Auth/auth_gate.dart';
 import 'package:provider/provider.dart';
 import 'package:occupational_health/services/Auth/auth_service.dart';
@@ -37,7 +38,7 @@ class MyApp extends StatelessWidget {
       ),
       title: 'Occupational Health',
       debugShowCheckedModeBanner: false,
-      home: const AuthGate(),
+      home: const ListViewMain(),
     );
   }
 }

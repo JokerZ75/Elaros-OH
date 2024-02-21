@@ -12,6 +12,7 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
   void signOut() async {
     final AuthService authService = AuthService();
     try {
