@@ -1,6 +1,4 @@
-import "package:flutter/cupertino.dart";
 import "package:flutter/material.dart";
-import "package:flutter/widgets.dart";
 import "package:occupational_health/components/my_submit_button.dart";
 import "package:occupational_health/services/Auth/auth_service.dart";
 
@@ -35,29 +33,18 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Home Page'),
-          actions: [
-            IconButton(
-              onPressed: () {
-                signOut();
-              },
-              icon: const Icon(Icons.logout),
-            ),
-          ],
-        ),
         body: SingleChildScrollView(
             child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 50.0),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: <Widget>[
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
               MySubmitButton(
                   onPressed: () {},
                   text: "Click To Take Your Daily Assessment"),
               // your environment
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
               Container(
                 child: InputDecorator(
                   decoration: InputDecoration(
@@ -75,7 +62,7 @@ class _HomePageState extends State<HomePage> {
                             // text and icon
                             Expanded(
                               child: Container(
-                                child: Row(
+                                child: const Row(
                                   children: [
                                     Text(
                                       "Air pollution",
@@ -92,7 +79,7 @@ class _HomePageState extends State<HomePage> {
                             // need to get the air polution and display it here
                             Expanded(
                               child: Container(
-                                child: Text(
+                                child: const Text(
                                   '2 Low',
                                   style: TextStyle(
                                       fontSize: 15,
@@ -111,7 +98,7 @@ class _HomePageState extends State<HomePage> {
                             // text and icon
                             Expanded(
                               child: Container(
-                                child: Text(
+                                child: const Text(
                                   "Temperature ",
                                   style: TextStyle(
                                       fontSize: 15,
@@ -123,7 +110,7 @@ class _HomePageState extends State<HomePage> {
                             // need to get the temperature and display it here
                             Expanded(
                               child: Container(
-                                child: Text(
+                                child: const Text(
                                   '9°',
                                   style: TextStyle(
                                       fontSize: 15,
@@ -140,7 +127,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               // recent assessments
-              SizedBox(height: 30),
+              const SizedBox(height: 30),
               Container(
                 child: InputDecorator(
                   decoration: InputDecoration(
@@ -175,14 +162,14 @@ class _HomePageState extends State<HomePage> {
                                       children: [
                                         Text(
                                           "Assessment ${assessmentData['tsSubCmds']![index]['assessmentNumber']}",
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                               fontSize: 13,
                                               fontWeight: FontWeight.w600,
                                               height: 1.2),
                                         ),
                                         Text(
                                           "Date Taken: ${assessmentData['tsSubCmds']![index]['dateTaken']}",
-                                          style: TextStyle(
+                                          style: const TextStyle(
                                               fontSize: 12,
                                               fontWeight: FontWeight.w600,
                                               height: 1.2),

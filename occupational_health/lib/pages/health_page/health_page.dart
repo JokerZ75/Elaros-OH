@@ -2,6 +2,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:occupational_health/components/my_radar_chart.dart';
 import 'package:occupational_health/components/my_submit_button.dart';
+import 'package:occupational_health/pages/health_page/questionaire_page.dart';
 
 class HealthPage extends StatefulWidget {
   const HealthPage({Key? key}) : super(key: key);
@@ -21,104 +22,107 @@ class _HealthPageState extends State<HealthPage> {
     return Scaffold(
         body: SingleChildScrollView(
             child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
-          child: Column(
-            children: <Widget>[
-              // Add Coursel of 2 charts here
-              _buildChartCoursel(),
+      padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
+      child: Column(
+        children: <Widget>[
+          // Add Coursel of 2 charts here
+          _buildChartCoursel(),
 
-              // Circles to show page number
-              Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      for (int i = 0; i < 2; i++)
-                        Container(
-                          margin: const EdgeInsets.symmetric(horizontal: 5),
-                          height: 15,
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: graphPage == i
-                                ? Colors.grey.shade500
-                                : Colors.grey.shade300,
-                            border: graphPage == i
-                                ? Border.all(
-                                    color: Colors.black,
-                                    width: 2,
-                                  )
-                                : Border.all(
-                                    color: Colors.grey.shade300,
-                                    width: 2,
-                                  ),
-                          ),
-                        ),
-                    ],
-                  ),
-                  Text(
-                    'Page ${graphPage + 1} of 2',
-                    style: const TextStyle(
-                      fontSize: 12,
-                      fontWeight: FontWeight.w300,
-                    ),
-                  ),
-                ],
-              ),
-
-              const SizedBox(height: 5),
-
-              // Take Assessment Button
-
-              Row(children: <Widget>[
-                Expanded(
-                    child: MySubmitButton(
-                        onPressed: () {
-                          print('Take Assessment Button Pressed');
-                        },
-                        fontWeight: FontWeight.w600,
-                        text: 'Click To Take A Covid\nAssessment')),
-              ]),
-
-              const SizedBox(height: 10),
-
+          // Circles to show page number
+          Column(
+            children: [
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
-                  // Create Export Button
-                  MySubmitButton(
-                    onPressed: () {},
-                    text: 'Create\nExport',
-                    minWidth: 165,
-                    icon: const Icon(
-                      Icons.upload,
-                      color: Colors.black,
-                      size: 28,
+                  for (int i = 0; i < 2; i++)
+                    Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 5),
+                      height: 15,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: graphPage == i
+                            ? Colors.grey.shade500
+                            : Colors.grey.shade300,
+                        border: graphPage == i
+                            ? Border.all(
+                                color: Colors.black,
+                                width: 2,
+                              )
+                            : Border.all(
+                                color: Colors.grey.shade300,
+                                width: 2,
+                              ),
+                      ),
                     ),
-                    textSize: 18,
-                    fontWeight: FontWeight.w600,
-                  ),
-
-                  const SizedBox(
-                    width: 10,
-                  ),
-                  // View Previous Assessments Button
-                  MySubmitButton(
-                    onPressed: () {},
-                    text: 'Previously\nCompleted',
-                    minWidth: 165,
-                    icon: const Icon(
-                      Icons.checklist,
-                      color: Colors.black,
-                      size: 28,
-                    ),
-                    textSize: 18,
-                    fontWeight: FontWeight.w600,
-                  )
                 ],
+              ),
+              Text(
+                'Page ${graphPage + 1} of 2',
+                style: const TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w300,
+                ),
               ),
             ],
           ),
-        )));
+
+          const SizedBox(height: 5),
+
+          // Take Assessment Button
+
+          Row(children: <Widget>[
+            Expanded(
+                child: MySubmitButton(
+                    onPressed: () {
+                      Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const QuestionairePage()));
+                    },
+                    fontWeight: FontWeight.w600,
+                    text: 'Click To Take A Covid\nAssessment')),
+          ]),
+
+          const SizedBox(height: 10),
+
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              // Create Export Button
+              MySubmitButton(
+                onPressed: () {},
+                text: 'Create\nExport',
+                minWidth: 165,
+                icon: const Icon(
+                  Icons.upload,
+                  color: Colors.black,
+                  size: 28,
+                ),
+                textSize: 18,
+                fontWeight: FontWeight.w600,
+              ),
+
+              const SizedBox(
+                width: 10,
+              ),
+              // View Previous Assessments Button
+              MySubmitButton(
+                onPressed: () {},
+                text: 'Previously\nCompleted',
+                minWidth: 165,
+                icon: const Icon(
+                  Icons.checklist,
+                  color: Colors.black,
+                  size: 28,
+                ),
+                textSize: 18,
+                fontWeight: FontWeight.w600,
+              )
+            ],
+          ),
+        ],
+      ),
+    )));
   }
 
   Widget _buildChartCoursel() {

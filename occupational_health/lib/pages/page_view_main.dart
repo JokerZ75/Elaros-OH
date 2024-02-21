@@ -1,5 +1,5 @@
 import "package:flutter/material.dart";
-import "package:occupational_health/pages/health_page.dart";
+import 'package:occupational_health/pages/health_page/health_page.dart';
 import "package:occupational_health/pages/home_page.dart";
 import "package:occupational_health/services/Auth/auth_service.dart";
 
@@ -48,6 +48,7 @@ class _ListViewMainState extends State<ListViewMain> {
       appBar: AppBar(
         backgroundColor: const Color(0xFFEFB84C),
         actionsIconTheme: const IconThemeData(color: Colors.black),
+        centerTitle: false,
         title: Text(pages[currentPageIndex].appBarTitle,
             style: const TextStyle(
                 color: Colors.black,
