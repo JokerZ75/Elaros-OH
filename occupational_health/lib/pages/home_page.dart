@@ -12,7 +12,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   void signOut() async {
     final AuthService authService = AuthService();
     try {
@@ -162,14 +161,13 @@ class _HomePageState extends State<HomePage> {
                               color: Colors.orangeAccent,
                               borderRadius: BorderRadius.circular(10.0),
                             ),
-                            child: Row(
-                              children: [
-                                Padding(
-                                  padding: const EdgeInsets.all(4.0),
-                                  child: Expanded(
+                            child: Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Row(
+                                children: [
+                                  Expanded(
                                     child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
+                                      mainAxisAlignment: MainAxisAlignment.center,
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
@@ -190,10 +188,7 @@ class _HomePageState extends State<HomePage> {
                                       ],
                                     ),
                                   ),
-                                ),
-                                Padding(
-                                  padding: const EdgeInsets.all(8.0),
-                                  child: Expanded(
+                                  Container(
                                     child: MySubmitButton(
                                       onPressed: () {},
                                       minWidth: 10,
@@ -202,8 +197,8 @@ class _HomePageState extends State<HomePage> {
                                       // need to style this text more
                                     ),
                                   ),
-                                ),
-                              ],
+                                ],
+                              ),
                             ),
                           ),
                         ),
