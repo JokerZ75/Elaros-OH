@@ -8,6 +8,7 @@ import 'package:occupational_health/services/Auth/auth_gate.dart';
 import 'package:provider/provider.dart';
 import 'package:occupational_health/services/Auth/auth_service.dart';
 
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
