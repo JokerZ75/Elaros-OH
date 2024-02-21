@@ -34,17 +34,6 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Home Page'),
-          actions: [
-            IconButton(
-              onPressed: () {
-                signOut();
-              },
-              icon: const Icon(Icons.logout),
-            ),
-          ],
-        ),
         body: SingleChildScrollView(
             child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 50.0),
