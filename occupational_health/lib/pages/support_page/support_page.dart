@@ -46,7 +46,6 @@ class _SupportPageState extends State<SupportPage> {
                     color: const Color(0xFFEFB84C),
                     child: Padding(
                       padding: const EdgeInsets.all(5.0),
-                      child: Expanded(
                         child: Row(
                           children: <Widget>[
                             // Button linking for more
@@ -63,7 +62,7 @@ class _SupportPageState extends State<SupportPage> {
                         ),
                       ),
                     ),
-                  ),
+                  
                 ],
               ),
             ),
