@@ -19,10 +19,6 @@ class _HealthPageState extends State<HealthPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        resizeToAvoidBottomInset: false,
-        appBar: AppBar(
-          title: const Text('Health Page'),
-        ),
         body: SingleChildScrollView(
             child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
