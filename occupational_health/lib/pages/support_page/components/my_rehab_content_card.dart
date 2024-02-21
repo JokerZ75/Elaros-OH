@@ -14,43 +14,40 @@ class MyRehabCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
-        elevation: 5,
-        color: const Color(0xFFEFB84C),
-        child: Row(
-          children: <Widget>[
-            Padding(
-              padding: const EdgeInsets.all(5.0),
-              child: SizedBox(
-                width: 268,
-                child: Row(
-                  children: <Widget>[
-                    // Title / Name
-                
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        fontSize: 17,
-                        height: 1.2,
-                        fontWeight: FontWeight.w600,
-                      ),
-                    ),
-                    const Spacer(
-                      flex: 1,
-                    ),
-                    // Button linking for more info'
-                    MySubmitButton(
-                      onPressed: onPressed,
-                      text: "More info",
-                      minWidth: 110,
-                      lineHeight: 20,
-                      textSize: 14,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ],
+      elevation: 5,
+      color: const Color(0xFFEFB84C),
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Expanded(
+          child: Row(
+            children: <Widget>[
+
+              // Title / Name
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 17,
+                  height: 1.2,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
-            ),
-          ],
-        ));
+
+              const Spacer(
+                flex: 1,
+              ),
+              // Button linking for more info'
+              MySubmitButton(
+                onPressed: onPressed,
+                minWidth: 115,
+                text: "More info",
+                lineHeight: 20,
+                textSize: 14,
+                fontWeight: FontWeight.w600,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
   }
 }

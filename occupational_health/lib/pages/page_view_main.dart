@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 import 'package:occupational_health/pages/health_page/health_page.dart';
 import "package:occupational_health/pages/home_page.dart";
+import "package:occupational_health/pages/support_page/support_page.dart";
 import "package:occupational_health/services/Auth/auth_service.dart";
 
 class ListViewMain extends StatefulWidget {
@@ -27,6 +28,11 @@ class _ListViewMainState extends State<ListViewMain> {
         navTitle: "My Health",
         page: const HealthPage(),
         navIcon: const Icon(Icons.health_and_safety)),
+    PageData(
+        appBarTitle: "Support",
+        navTitle: "Support",
+        navIcon: const Icon(Icons.support_agent),
+        page: const SupportPage())
   ];
   //////////////////////////////////////////////////////////////////
 

@@ -1,5 +1,8 @@
 import 'package:choice/choice.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:occupational_health/model/questionaire.dart';
+import 'package:occupational_health/services/Assessment/assessment_service.dart';
 
 class QuestionairePage extends StatefulWidget {
   const QuestionairePage({Key? key}) : super(key: key);
@@ -24,7 +27,7 @@ class _QuestionairePageState extends State<QuestionairePage> {
     QuestionaireSection(sectionTitle: "Fatigue", questions: {
       "a. Fatigue levels in usual activities": -1,
     }),
-    QuestionaireSection(sectionTitle: "Smell / taste", questions: {
+    QuestionaireSection(sectionTitle: "Smell / Taste", questions: {
       "a. Altered smell": -1,
       "b. Altered taste": -1,
     }),
@@ -45,59 +48,74 @@ class _QuestionairePageState extends State<QuestionairePage> {
       "b. Dizziness in certain positions, activity or  at rest": -1,
     }),
     QuestionaireSection(sectionTitle: "Worsening of symptoms", questions: {
-      "a. Crashing or relapse hours or days after physical, cognitive or emotional exertion": -1,
+      "a. Crashing or relapse hours or days after physical, cognitive or emotional exertion":
+          -1,
     }),
     QuestionaireSection(sectionTitle: "Anixety / Mood", questions: {
       "a. Feeling anxious": -1,
       "b. Feeling depressed": -1,
       "c. Having unwanted memories of your illness or time in hospital ": -1,
       "d. Having unpleasant dreams about your illness or time in hospital": -1,
-      "e. Trying to avoid thoughts or feelings about your illness or time in hospital ": -1,
+      "e. Trying to avoid thoughts or feelings about your illness or time in hospital ":
+          -1,
     }),
     QuestionaireSection(sectionTitle: "Sleep", questions: {
-      "a. Sleep problems, such as difficulty falling asleep, staying asleep or oversleeping" : -1
+      "a. Sleep problems, such as difficulty falling asleep, staying asleep or oversleeping":
+          -1
     }),
     QuestionaireSection(sectionTitle: "Communication", questions: {
-      "a. Difficulty with communication/word finding difficulty/understanding others" : -1
+      "a. Difficulty with communication/word finding difficulty/understanding others":
+          -1
     }),
-    QuestionaireSection(sectionTitle: "Walking or moving around ", questions: {
-      "a. Difficulties with walking or moving around" : -1
-    }),
+    QuestionaireSection(
+        sectionTitle: "Walking or moving around ",
+        questions: {"a. Difficulties with walking or moving around": -1}),
     QuestionaireSection(sectionTitle: "Personal", questions: {
-      "a. Difficulties with personal tasks such as using the toilet or getting washed and dressed" : -1
+      "a. Difficulties with personal tasks such as using the toilet or getting washed and dressed":
+          -1
     }),
-    QuestionaireSection(sectionTitle: "Other activities of Daily Living", questions: {
-      "a. Difficulty doing wider activities, such as household work, leisure/sporting activities, paid/unpaid work, study or shopping" : -1
-    }),
+    QuestionaireSection(
+        sectionTitle: "Other activities of Daily Living",
+        questions: {
+          "a. Difficulty doing wider activities, such as household work, leisure/sporting activities, paid/unpaid work, study or shopping":
+              -1
+        }),
     QuestionaireSection(sectionTitle: "Social role", questions: {
-      "a. Problems with socialising/interacting with friends* or caring for dependants *related to your illness and not due to  social distancing/lockdown measures": -1
+      "a. Problems with socialising/interacting with friends* or caring for dependants *related to your illness and not due to  social distancing/lockdown measures":
+          -1
     }),
   ];
 
   PageController pageController = PageController();
   int pageNumber = 1;
 
-  int indexOf(String value, List<String> array){
-    for(int i = 0; i < array.length; i++){
-        if(array[i] == value){
-            return i;
-        }
+  int indexOf(String value, List<String> array) {
+    for (int i = 0; i < array.length; i++) {
+      if (array[i] == value) {
+        return i;
+      }
     }
     //return a place holder value
     return -1;
   }
 
-  // validator function 
+  // validator function
   (int, bool) validate() {
     for (var section in sections) {
       for (var question in section.questions.entries) {
         if (question.value == -1) {
-          return (indexOf(section.sectionTitle, sections.map((e) => e.sectionTitle).toList()), false);
+          return (
+            indexOf(section.sectionTitle,
+                sections.map((e) => e.sectionTitle).toList()),
+            false
+          );
         }
       }
     }
     return (-1, true);
   }
+
+  final AssessmentService _assessmentService = AssessmentService();
 
   @override
   Widget build(BuildContext context) {
@@ -182,26 +200,50 @@ class _QuestionairePageState extends State<QuestionairePage> {
                                   style: ButtonStyle(
                                       shape: MaterialStateProperty.all(
                                           const CircleBorder()),
-                                      backgroundColor: MaterialStateColor.resolveWith(
-                                          (states) => const Color(0xFFEFB84C)),
+                                      backgroundColor:
+                                          MaterialStateColor.resolveWith(
+                                              (states) =>
+                                                  const Color(0xFFEFB84C)),
                                       iconColor: MaterialStateColor.resolveWith(
                                           (states) => Colors.black),
                                       minimumSize: MaterialStateProperty.all(
                                           const Size(50, 50)),
-                                      iconSize: MaterialStateProperty.all(35.0)),
+                                      iconSize:
+                                          MaterialStateProperty.all(35.0)),
                                   onPressed: () {
                                     var result = validate();
                                     if (result.$2 == true) {
-                                      ScaffoldMessenger.of(context).showSnackBar(
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
                                         const SnackBar(
                                           content: Text("Assessment Complete"),
                                         ),
                                       );
+                                      Timestamp timeStamp = Timestamp.now();
+                                      Map<String, Map<String, int>>
+                                          questionaire = {};
+                                      for (var section in sections) {
+                                        questionaire[section.sectionTitle] =
+                                            section.questions;
+                                      }
+                                      Questionaire newQuestionaire =
+                                          Questionaire(
+                                              timestamp: timeStamp,
+                                              questionaire: questionaire);
+
+                                      _assessmentService
+                                          .saveQuestionaire(questionaire);
+                                      Navigator.pop(context);
                                     } else {
-                                      pageController.animateToPage(result.$1, duration: const Duration(milliseconds: 300), curve: Curves.easeInOut);
-                                      ScaffoldMessenger.of(context).showSnackBar(
+                                      pageController.animateToPage(result.$1,
+                                          duration:
+                                              const Duration(milliseconds: 300),
+                                          curve: Curves.easeInOut);
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(
                                         SnackBar(
-                                          content: Text('Please answer all questions (Issues on page ${result.$1 + 1})'),
+                                          content: Text(
+                                              'Please answer all questions (Issues on page ${result.$1 + 1})'),
                                         ),
                                       );
                                     }
@@ -257,12 +299,10 @@ class _QuestionairePageState extends State<QuestionairePage> {
             borderRadius: BorderRadius.circular(10.0),
           ),
         ),
-        child: ListView(
-
-            children: <Widget>[
-              for (var question in section.questions.entries)
-                _buildQuestion(question.key, section.sectionTitle)
-            ]),
+        child: ListView(children: <Widget>[
+          for (var question in section.questions.entries)
+            _buildQuestion(question.key, section.sectionTitle)
+        ]),
       ),
     );
   }

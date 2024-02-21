@@ -42,36 +42,32 @@ class _SupportPageState extends State<SupportPage> {
 
                   // Button linking for more
                   Card(
-                      elevation: 5,
-                      color: const Color(0xFFEFB84C),
-                      child: Row(
-                        children: <Widget>[
-                          Padding(
-                            padding: const EdgeInsets.all(5.0),
-                            child: SizedBox(
-                              width: 268,
-                              child: Row(
-                                children: <Widget>[
-                                  // Button linking for more
-                                  Expanded(
-                                      child: MySubmitButton(
-                                    onPressed: () {},
-                                    text: "Click Here For More",
-                                    minWidth: 110,
-                                    lineHeight: 20,
-                                    textSize: 14,
-                                    fontWeight: FontWeight.w600,
-                                  )),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ],
-                      ))
+                    elevation: 5,
+                    color: const Color(0xFFEFB84C),
+                    child: Padding(
+                      padding: const EdgeInsets.all(5.0),
+                      child: Expanded(
+                        child: Row(
+                          children: <Widget>[
+                            // Button linking for more
+                            Expanded(
+                                child: MySubmitButton(
+                              onPressed: () {},
+                              text: "Click Here For More",
+                              minWidth: 110,
+                              lineHeight: 20,
+                              textSize: 14,
+                              fontWeight: FontWeight.w600,
+                            )),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
-            
+
             const SizedBox(height: 30),
             const Text("Locate your nearest clinic"),
             const SizedBox(height: 15),
