@@ -55,6 +55,7 @@ class AuthService extends ChangeNotifier {
         'occupation': occupation,
         'email': email,
         'uid': userCredential.user!.uid,
+        'timestamp': FieldValue.serverTimestamp(),
       });
 
       return userCredential;
