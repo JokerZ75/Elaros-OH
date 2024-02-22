@@ -63,10 +63,6 @@ class _CommunityPageState extends State<CommunityPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Community Page'),
-        backgroundColor: Color.fromARGB(249, 238, 152, 2),
-      ),
       body: SingleChildScrollView(
         child: Container(
           margin: EdgeInsets.all(15),
