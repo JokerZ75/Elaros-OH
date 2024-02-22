@@ -33,6 +33,23 @@ class AssessmentService extends ChangeNotifier {
         .snapshots();
   } // getQuestionaires
 
+  // Get single questionaire by id
+  Future<Questionaire> getQuestionaireById(String id) async {
+    try {
+      DocumentSnapshot questionaire = await _firestore
+          .collection('assessments')
+          .doc(_auth.currentUser!.uid)
+          .collection("completed_questionaires")
+          .doc(id)
+          .get();
+      return questionaire.exists
+          ? Questionaire.fromMap(questionaire.data() as Map<String, dynamic>)
+          : throw Exception("Questionaire does not exist");
+    } catch (e) {
+      throw Exception(e);
+    }
+  } // getQuestionaireById
+
   // Get Questionaire Averages
   Future<Map<int, Map<String, double>>> getQuestionaireAverages() async {
     DateTime accountCreated = _auth.currentUser!.metadata.creationTime!;

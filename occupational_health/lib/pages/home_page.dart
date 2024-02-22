@@ -1,6 +1,8 @@
 import "package:flutter/material.dart";
+import "package:occupational_health/components/my_assessment_card.dart";
 import "package:occupational_health/components/my_submit_button.dart";
-import "package:occupational_health/services/Auth/auth_service.dart";
+import "package:occupational_health/pages/health_page/complete_questionaire_page.dart";
+import "package:occupational_health/pages/health_page/questionaire_page.dart";
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -10,24 +12,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  void signOut() async {
-    final AuthService authService = AuthService();
-    try {
-      await authService.signOut();
-    } catch (e) {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.toString())));
-    }
-  }
-
-  // sample past assessment data, will need to actually take the three most recent ones from database
-  var assessmentData = {
-    'tsSubCmds': [
-      {'assessmentNumber': "35", 'dateTaken': "19-02-2024"},
-      {'assessmentNumber': "34", 'dateTaken': "18-02-2024"},
-      {'assessmentNumber': "33", 'dateTaken': "18-02-2024"}
-    ]
-  };
 
   @override
   Widget build(BuildContext context) {
@@ -40,159 +24,114 @@ class _HomePageState extends State<HomePage> {
             children: <Widget>[
               const SizedBox(height: 30),
               MySubmitButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(context, 
+                    MaterialPageRoute(builder: (context) => QuestionairePage()));
+                  },
                   text: "Click To Take Your Daily Assessment"),
               // your environment
               const SizedBox(height: 30),
-              Container(
-                child: InputDecorator(
-                  decoration: InputDecoration(
-                    labelText: 'Your Environmment',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
+              InputDecorator(
+                decoration: InputDecoration(
+                  labelText: 'Your Environmment',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                ),
+                child: const Column(
+                  children: <Widget>[
+                    //  air pollution row
+                    Row(
+                      children: [
+                        // text and icon
+                        Expanded(
+                          child: Row(
+                            children: [
+                              Text(
+                                "Air pollution",
+                                style: TextStyle(
+                                    fontSize: 15,
+                                    fontWeight: FontWeight.w600,
+                                    height: 1.2),
+                              ),
+                              Icon(Icons.info, size: 15),
+                            ],
+                          ),
+                        ),
+                        // need to get the air polution and display it here
+                        Expanded(
+                          child: Text(
+                            '2 Low',
+                            style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                                height: 1.2),
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  child: Column(
-                    children: <Widget>[
-                      //  air pollution row
-                      Container(
-                        child: Row(
-                          children: [
-                            // text and icon
-                            Expanded(
-                              child: Container(
-                                child: const Row(
-                                  children: [
-                                    Text(
-                                      "Air pollution",
-                                      style: TextStyle(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w600,
-                                          height: 1.2),
-                                    ),
-                                    Icon(Icons.info, size: 15),
-                                  ],
-                                ),
-                              ),
-                            ),
-                            // need to get the air polution and display it here
-                            Expanded(
-                              child: Container(
-                                child: const Text(
-                                  '2 Low',
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w600,
-                                      height: 1.2),
-                                ),
-                              ),
-                            ),
-                          ],
+                    // Temperature
+                    Row(
+                      children: [
+                        // text and icon
+                        Expanded(
+                          child: Text(
+                            "Temperature ",
+                            style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                                height: 1.2),
+                          ),
                         ),
-                      ),
-                      // Temperature
-                      Container(
-                        child: Row(
-                          children: [
-                            // text and icon
-                            Expanded(
-                              child: Container(
-                                child: const Text(
-                                  "Temperature ",
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w600,
-                                      height: 1.2),
-                                ),
-                              ),
-                            ),
-                            // need to get the temperature and display it here
-                            Expanded(
-                              child: Container(
-                                child: const Text(
-                                  '9°',
-                                  style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.w600,
-                                      height: 1.2),
-                                ),
-                              ),
-                            ),
-                          ],
+                        // need to get the temperature and display it here
+                        Expanded(
+                          child: Text(
+                            '9°',
+                            style: TextStyle(
+                                fontSize: 15,
+                                fontWeight: FontWeight.w600,
+                                height: 1.2),
+                          ),
                         ),
-                      ),
-                    ],
-                  ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
               // recent assessments
               const SizedBox(height: 30),
-              Container(
-                child: InputDecorator(
-                  decoration: InputDecoration(
-                    labelText: 'Recent Assessments',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                  ),
-                  //  air pollution row
-                  child: Column(
-                    children: List.generate(3, (index) {
-                      return Container(
-                        child: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: Container(
-                            width: double.infinity,
-                            height: 65,
-                            decoration: BoxDecoration(
-                              color: const Color(0xFFEFB84C),
-                              borderRadius: BorderRadius.circular(10.0),
-                            ),
-                            child: Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Row(
-                                children: [
-                                  Expanded(
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.center,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: [
-                                        Text(
-                                          "Assessment ${assessmentData['tsSubCmds']![index]['assessmentNumber']}",
-                                          style: const TextStyle(
-                                              fontSize: 13,
-                                              fontWeight: FontWeight.w600,
-                                              height: 1.2),
-                                        ),
-                                        Text(
-                                          "Date Taken: ${assessmentData['tsSubCmds']![index]['dateTaken']}",
-                                          style: const TextStyle(
-                                              fontSize: 12,
-                                              fontWeight: FontWeight.w600,
-                                              height: 1.2),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                  Container(
-                                    child: MySubmitButton(
-                                      onPressed: () {},
-                                      minWidth: 10,
-                                      textSize: 20,
-                                      text: "More info",
-                                      // need to style this text more
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ),
-                        ),
-                      );
-                    }),
+
+              InputDecorator(
+                decoration: InputDecoration(
+                  labelText: 'Recent Assessments',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
                   ),
                 ),
+                //  air pollution row
+                child: Column(children: <Widget>[
+                  MyAssessmentCard(
+                      title: "Assessment 35",
+                      subtitle: "Date Taken: 19-02-2024",
+                      onPressed: () {
+                        Navigator.push(context, 
+                        MaterialPageRoute(builder: (context) => CompleteQuestionariePage(id: "35")));
+                      }),
+                  MyAssessmentCard(
+                      title: "Assessment 34",
+                      subtitle: "Date Taken: 18-02-2024",
+                      onPressed: () {
+                        Navigator.push(context, 
+                        MaterialPageRoute(builder: (context) => CompleteQuestionariePage(id: "34")));
+                      }),
+                  MyAssessmentCard(
+                      title: "Assessment 33",
+                      subtitle: "Date Taken: 18-02-2024",
+                      onPressed: () {
+                        Navigator.push(context, 
+                        MaterialPageRoute(builder: (context) => CompleteQuestionariePage(id: "33")));
+                      }),
+                ]),
               ),
 
               // Container(

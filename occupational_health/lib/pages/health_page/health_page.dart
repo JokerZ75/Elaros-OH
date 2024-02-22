@@ -1,9 +1,8 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:occupational_health/components/my_radar_chart.dart';
 import 'package:occupational_health/components/my_submit_button.dart';
+import 'package:occupational_health/pages/health_page/previous_page.dart';
 import 'package:occupational_health/pages/health_page/questionaire_page.dart';
 import 'package:occupational_health/services/Assessment/assessment_service.dart';
 
@@ -21,7 +20,6 @@ class _HealthPageState extends State<HealthPage> {
   int graphPage = 0;
 
   final AssessmentService _assessmentService = AssessmentService();
-  final FirebaseAuth _auth = FirebaseAuth.instance;
   final FuncionalChartData functionalChartData = FuncionalChartData(
       zeroMonths: [3, 6, 2, 1, 5],
       twoMonths: [6, 8, 8, 2, 6],
@@ -38,14 +36,19 @@ class _HealthPageState extends State<HealthPage> {
   final Map<int, Map<String, double>> sectionAveragesState =
       {}; // {0(months): {section: average}, 2(months): {section: average}, 4(months): {section: average}, 6(months): {section: average}
 
-  @override void initState() {
+  @override
+  void initState() {
     // TODO: implement initState
     super.initState();
+    _setChartData();
+  }
+
+  void  _setChartData() {
     _assessmentService.getQuestionaireAverages().then((value) {
       setState(() {
         sectionAveragesState.addAll(value);
         functionalChartData.zeroMonths = [
-          sectionAveragesState[0]?['Communication']?? 0,
+          sectionAveragesState[0]?['Communication'] ?? 0,
           sectionAveragesState[0]?['Walking or moving around '] ?? 0,
           sectionAveragesState[0]?['Personal'] ?? 0,
           sectionAveragesState[0]?['Other activities of Daily Living'] ?? 0,
@@ -184,7 +187,7 @@ class _HealthPageState extends State<HealthPage> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => const QuestionairePage()));
+                              builder: (context) => QuestionairePage(onAssessmentComplete: _setChartData )));
                     },
                     fontWeight: FontWeight.w600,
                     text: 'Click To Take A Covid\nAssessment')),
@@ -217,6 +220,11 @@ class _HealthPageState extends State<HealthPage> {
               Expanded(
                   child: MySubmitButton(
                 onPressed: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) =>
+                              const PreviousAssessmentPage()));
                 },
                 text: 'Previously\nCompleted',
                 minWidth: 165,
