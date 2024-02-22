@@ -15,6 +15,7 @@ class CommunityPage extends StatefulWidget {
 
 class _CommunityPageState extends State<CommunityPage> {
   late MapShapeSource _mapSource;
+  late MapZoomPanBehavior _zoomPanBehavior;
   final TextEditingController _commentController = TextEditingController();
   final TextEditingController _replyController = TextEditingController();
 
@@ -42,8 +43,20 @@ class _CommunityPageState extends State<CommunityPage> {
 
   @override
   void initState() {
-    _mapSource =
-        MapShapeSource.asset("assets/lad2.json", shapeDataField: "name");
+    _mapSource = MapShapeSource.asset("assets/world_map.json",
+        shapeDataField: "continent");
+
+    _zoomPanBehavior = MapZoomPanBehavior(
+      focalLatLng: MapLatLng(27.1751, 78.0421),
+      zoomLevel: 3,
+      showToolbar: true,
+      toolbarSettings: MapToolbarSettings(
+        position: MapToolbarPosition.topLeft,
+        iconColor: Colors.red,
+        itemBackgroundColor: Colors.green,
+        itemHoverColor: Colors.blue,
+      ),
+    );
     super.initState();
   }
 
@@ -378,8 +391,10 @@ class _CommunityPageState extends State<CommunityPage> {
                 child: _mapSource != null
                     ? SfMaps(
                         layers: [
-                          MapShapeLayer(
-                            source: _mapSource!,
+                          MapTileLayer(
+                            urlTemplate:
+                                'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                            zoomPanBehavior: _zoomPanBehavior,
                           ),
                         ],
                       )
