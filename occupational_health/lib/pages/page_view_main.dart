@@ -1,6 +1,7 @@
 import "package:flutter/material.dart";
 import 'package:occupational_health/pages/health_page/health_page.dart';
 import "package:occupational_health/pages/home_page.dart";
+import "package:occupational_health/pages/my_account_page.dart";
 import "package:occupational_health/pages/support_page/support_page.dart";
 import "package:occupational_health/services/Auth/auth_service.dart";
 
@@ -66,7 +67,7 @@ class _ListViewMainState extends State<ListViewMain> {
                 color: Colors.black, size: 42),
             onPressed: () => {
               Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const HomePage()))
+                  MaterialPageRoute(builder: (context) => const MyAccountPage()))
             },
           ),
         ],

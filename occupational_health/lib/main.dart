@@ -38,7 +38,7 @@ class MyApp extends StatelessWidget {
       ),
       title: 'Occupational Health',
       debugShowCheckedModeBanner: false,
-      home: const ListViewMain(),
+      home: const AuthGate(),
     );
   }
 }

@@ -36,6 +36,19 @@ class _MyAccountPageState extends State<MyAccountPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: AppBar(
+        title: const Text("My Account"),
+        backgroundColor: const Color(0xFFEFB84C),
+        centerTitle: false,
+        actions: [
+          IconButton(
+              onPressed: () {
+                signOut();
+                Navigator.pop(context);
+              },
+              icon: const Icon(Icons.logout))
+        ],
+      ),
       body: SingleChildScrollView(
         child: Center(
           child: Padding(
