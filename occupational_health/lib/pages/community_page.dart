@@ -110,6 +110,8 @@ class _CommunityPageState extends State<CommunityPage> {
                 padding: const EdgeInsets.all(30),
                 decoration: BoxDecoration(
                   border: Border.all(color: Colors.black12),
+                  image: DecorationImage(
+                      image: AssetImage("map.png"), fit: BoxFit.cover),
                 ),
                 child: const Text("Map", style: TextStyle(fontSize: 20)),
               ),
