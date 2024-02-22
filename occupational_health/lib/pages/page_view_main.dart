@@ -1,4 +1,5 @@
 import "package:flutter/material.dart";
+import "package:occupational_health/pages/community_page.dart";
 import 'package:occupational_health/pages/health_page/health_page.dart';
 import "package:occupational_health/pages/home_page.dart";
 import "package:occupational_health/pages/my_account_page.dart";
@@ -33,7 +34,13 @@ class _ListViewMainState extends State<ListViewMain> {
         appBarTitle: "Support",
         navTitle: "Support",
         navIcon: const Icon(Icons.support_agent),
-        page: const SupportPage())
+        page: const SupportPage()),
+    PageData(
+        appBarTitle: "Community",
+        navTitle: "Community",
+        navIcon: const Icon(Icons.people),
+        page: const CommunityPage()
+    )
   ];
   //////////////////////////////////////////////////////////////////
 
