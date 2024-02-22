@@ -1,7 +1,8 @@
 import "package:flutter/material.dart";
 import "package:occupational_health/components/my_assessment_card.dart";
 import "package:occupational_health/components/my_submit_button.dart";
-import "package:occupational_health/services/Auth/auth_service.dart";
+import "package:occupational_health/pages/health_page/complete_questionaire_page.dart";
+import "package:occupational_health/pages/health_page/questionaire_page.dart";
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -23,7 +24,10 @@ class _HomePageState extends State<HomePage> {
             children: <Widget>[
               const SizedBox(height: 30),
               MySubmitButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.push(context, 
+                    MaterialPageRoute(builder: (context) => QuestionairePage()));
+                  },
                   text: "Click To Take Your Daily Assessment"),
               // your environment
               const SizedBox(height: 30),
@@ -109,15 +113,24 @@ class _HomePageState extends State<HomePage> {
                   MyAssessmentCard(
                       title: "Assessment 35",
                       subtitle: "Date Taken: 19-02-2024",
-                      onPressed: () {}),
+                      onPressed: () {
+                        Navigator.push(context, 
+                        MaterialPageRoute(builder: (context) => CompleteQuestionariePage(id: "35")));
+                      }),
                   MyAssessmentCard(
                       title: "Assessment 34",
                       subtitle: "Date Taken: 18-02-2024",
-                      onPressed: () {}),
+                      onPressed: () {
+                        Navigator.push(context, 
+                        MaterialPageRoute(builder: (context) => CompleteQuestionariePage(id: "34")));
+                      }),
                   MyAssessmentCard(
                       title: "Assessment 33",
                       subtitle: "Date Taken: 18-02-2024",
-                      onPressed: () {}),
+                      onPressed: () {
+                        Navigator.push(context, 
+                        MaterialPageRoute(builder: (context) => CompleteQuestionariePage(id: "33")));
+                      }),
                 ]),
               ),
 

@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:occupational_health/services/Assessment/assessment_service.dart';
 
 class QuestionairePage extends StatefulWidget {
-  const QuestionairePage({Key? key}) : super(key: key);
+  final  void Function()? onAssessmentComplete;
+  const QuestionairePage({Key? key, this.onAssessmentComplete})
+      : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _QuestionairePageState();
@@ -225,6 +227,9 @@ class _QuestionairePageState extends State<QuestionairePage> {
                                       }
                                       _assessmentService
                                           .saveQuestionaire(questionaire);
+                                      if (widget.onAssessmentComplete != null) {
+                                        widget.onAssessmentComplete!();
+                                      }
                                       Navigator.pop(context);
                                     } else {
                                       pageController.animateToPage(result.$1,

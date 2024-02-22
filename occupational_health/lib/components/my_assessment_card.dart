@@ -19,22 +19,22 @@ class MyAssessmentCard extends StatelessWidget {
       elevation: 5,
       color: const Color(0xFFEFB84C),
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const EdgeInsets.symmetric(horizontal: 8.0, vertical: 4.0),
         child: Row(
           children: [
-            const Expanded(
+             Expanded(
                 child: ListTile(
               title: Text(
-                'Assessment',
-                style: TextStyle(
+                title,
+                style: const TextStyle(
                   fontSize: 17,
                   height: 1.2,
                   fontWeight: FontWeight.w600,
                 ),
               ),
               subtitle: Text(
-                'Date: 12/12/2021',
-                style: TextStyle(
+                subtitle,
+                style: const TextStyle(
                   fontSize: 14,
                   height: 1.2,
                   fontWeight: FontWeight.w400,

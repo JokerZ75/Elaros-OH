@@ -1,6 +1,8 @@
 import "package:flutter/material.dart";
 import "package:occupational_health/components/my_submit_button.dart";
 import "package:occupational_health/pages/support_page/components/my_rehab_content_card.dart";
+import "package:url_launcher/url_launcher.dart";
+import "package:url_launcher/url_launcher_string.dart";
 
 class SupportPage extends StatefulWidget {
   const SupportPage({Key? key}) : super(key: key);
@@ -33,11 +35,15 @@ class _SupportPageState extends State<SupportPage> {
                 children: [
                   MyRehabCard(
                     title: "Breathlessness",
-                    onPressed: () {},
+                    onPressed: () {
+                      launchUrlString('https://www.yourcovidrecovery.nhs.uk/i-think-i-have-long-covid/effects-on-your-body/breathlessness/');
+                    },
                   ),
                   MyRehabCard(
                     title: "Fatigue",
-                    onPressed: () {},
+                    onPressed: () {
+                      launchUrlString('https://www.yourcovidrecovery.nhs.uk/i-think-i-have-long-covid/effects-on-your-body/fatigue/');
+                    },
                   ),
 
                   // Button linking for more

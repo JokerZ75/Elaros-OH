@@ -4,6 +4,8 @@ class Questionaire {
   final Map<String, Map<String, int>> questionaire; // {section: {question: answer, question: answer}, section: {question: answer, question: answer}
   final Timestamp timestamp;
 
+
+
   Questionaire({
     required this.questionaire,
     required this.timestamp,
@@ -20,5 +22,18 @@ class Questionaire {
       },
       'timestamp': timestamp,
     };
+  }
+
+  factory Questionaire.fromMap(Map<String, dynamic> map) {
+    return Questionaire(
+      questionaire: {
+        for (var section in map['questionaire'].keys)
+          section: {
+            for (var question in map['questionaire'][section].keys)
+              question: map['questionaire'][section][question],
+          }
+      },
+      timestamp: map['timestamp'],
+    );
   }
 }
