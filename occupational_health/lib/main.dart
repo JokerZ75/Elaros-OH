@@ -30,11 +30,9 @@ class MyApp extends StatelessWidget {
         fontFamily: 'Inter',
         primaryColor: const Color(0xFFF2C351),
         datePickerTheme: const DatePickerThemeData(
-          backgroundColor: Colors.white,
-          rangePickerHeaderBackgroundColor: Colors.amber,
-          rangePickerBackgroundColor: Colors.white
-          
-        ),
+            backgroundColor: Colors.white,
+            rangePickerHeaderBackgroundColor: Colors.amber,
+            rangePickerBackgroundColor: Colors.white),
       ),
       title: 'Occupational Health',
       debugShowCheckedModeBanner: false,
