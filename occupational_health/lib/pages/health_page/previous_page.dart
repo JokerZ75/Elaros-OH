@@ -29,11 +29,17 @@ class _PreviousAssessmentPageState extends State<PreviousAssessmentPage> {
                 fontWeight: FontWeight.w600)),
       ),
       body: StreamBuilder<QuerySnapshot>(
-        stream: _assessmentService.getQuestionaires(),
+        stream: _assessmentService.getQuestionairesStream(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return const Center(
               child: CircularProgressIndicator(),
+            );
+          }
+
+          if (snapshot.data!.docs.isEmpty) {
+            return const Center(
+              child: Text("No Assessments taken yet", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w300)),
             );
           }
           // sort docs by timestamp

@@ -21,16 +21,17 @@ class _HealthPageState extends State<HealthPage> {
 
   final AssessmentService _assessmentService = AssessmentService();
   final FuncionalChartData functionalChartData = FuncionalChartData(
-      zeroMonths: [3, 6, 2, 1, 5],
-      twoMonths: [6, 8, 8, 2, 6],
-      fourMonths: [3, 6, 10, 6, 9],
-      sixMonths: [4, 8, 5, 8, 10]);
+      zeroMonths: [0, 0, 0, 0, 0],
+      twoMonths: [0, 0, 0, 0, 0],
+      fourMonths: [0, 0, 0, 0, 0],
+      sixMonths: [0, 0, 0, 0, 0]);
   final SymptomServerityChartData symptomServerityChartData =
       SymptomServerityChartData(
-          zeroMonths: [3, 6, 2, 1, 5, 3, 6, 2, 1, 5],
-          twoMonths: [6, 8, 8, 2, 6, 6, 8, 8, 2, 6],
-          fourMonths: [3, 6, 10, 6, 9, 3, 6, 10, 6, 9],
-          sixMonths: [4, 8, 5, 8, 10, 4, 8, 5, 8, 10]);
+          zeroMonths: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          twoMonths: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          fourMonths: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+          sixMonths: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
+          
 
   double value = 0;
   final Map<int, Map<String, double>> sectionAveragesState =

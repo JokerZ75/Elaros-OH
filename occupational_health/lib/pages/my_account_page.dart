@@ -64,7 +64,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
                 //name
                 MyTextFormField(
                     controller: nameController,
-                    labelText: "Deacon Hughes",
+                    labelText: "Name",
                     keyboardType: TextInputType.name,
                     obscureText: false,
                     validator: (value) {
@@ -88,7 +88,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
                 //occupation
                 MyTextFormField(
                     controller: occupationController,
-                    labelText: "Software Engineer",
+                    labelText: "Occupation (Optional)",
                     keyboardType: TextInputType.text,
                     obscureText: false,
                     validator: (value) {
@@ -103,7 +103,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
                 //email
                 MyTextFormField(
                     controller: emailController,
-                    labelText: "deac.dev@gmail.com",
+                    labelText: "Email",
                     keyboardType: TextInputType.emailAddress,
                     obscureText: false,
                     validator: (value) {

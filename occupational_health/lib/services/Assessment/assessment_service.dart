@@ -24,14 +24,51 @@ class AssessmentService extends ChangeNotifier {
     }
   } // saveQuestionaire
 
-  Stream<QuerySnapshot> getQuestionaires() {
+  Stream<QuerySnapshot> getQuestionairesStream() {
     notifyListeners();
+    try{
     return _firestore
         .collection('assessments')
         .doc(_auth.currentUser!.uid)
         .collection("completed_questionaires")
         .snapshots();
+    } catch (e) {
+      return Stream.empty();
+    }
   } // getQuestionaires
+
+  Future<QuerySnapshot> getQuestionaires() async {
+    try {
+      return await _firestore
+          .collection('assessments')
+          .doc(_auth.currentUser!.uid)
+          .collection("completed_questionaires")
+          .get();
+    } catch (e) {
+      throw Exception(e);
+    }
+  } // getQuestionaires
+
+  // Get 3 most recent questionaires
+  Future<(List<Questionaire>, List<String>)> getRecentQuestionaires() async {
+    try {
+      QuerySnapshot questionaires = await _firestore
+          .collection('assessments')
+          .doc(_auth.currentUser!.uid)
+          .collection("completed_questionaires")
+          .orderBy('timestamp', descending: true)
+          .limit(3)
+          .get();
+      return questionaires.docs.isNotEmpty
+          ? (questionaires.docs
+              .map((doc) => Questionaire.fromMap(
+                  doc.data() as Map<String, dynamic>))
+              .toList(), questionaires.docs.map((doc) => doc.id).toList())
+          : (List<Questionaire>.empty(), List<String>.empty());
+    } catch (e) {
+      throw Exception(e);
+    }
+  } // getRecentQuestionaires
 
   // Get single questionaire by id
   Future<Questionaire> getQuestionaireById(String id) async {
@@ -81,9 +118,6 @@ class AssessmentService extends ChangeNotifier {
           // Calculate the average for each section having 3 be the max value
           for (var question in questions.keys) {
             sectionTotal += questions[question].toDouble();
-          }
-          if (sectionTotal == 0) {
-            sectionTotal = -1;
           }
           // if key does not exist, create it
           if (sectionAverages[monthsPassed]![section] == null) {
