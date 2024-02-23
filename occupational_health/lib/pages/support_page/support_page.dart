@@ -1,7 +1,6 @@
 import "package:flutter/material.dart";
 import "package:occupational_health/components/my_submit_button.dart";
 import "package:occupational_health/pages/support_page/components/my_rehab_content_card.dart";
-import "package:url_launcher/url_launcher.dart";
 import "package:url_launcher/url_launcher_string.dart";
 
 class SupportPage extends StatefulWidget {
