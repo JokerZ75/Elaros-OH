@@ -221,7 +221,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
                           obscureText: true,
                           validator: (value) {
                             if (value != passwordController.text) {
-                              return "Passwords do not match. Try again.";
+                              return "Passwords do not match.";
                             }
                             return null;
                           }),
