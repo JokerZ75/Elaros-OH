@@ -45,8 +45,6 @@ class _RegisterPageState extends State<RegisterPage> {
           SnackBar(content: Text("$e Please enter a valid date")));
       return;
     }
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(dateOfBirth.toString())));
     try {
       await authService.registerWithEmailAndPassword(
           emailController.text,

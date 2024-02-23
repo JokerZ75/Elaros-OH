@@ -64,7 +64,7 @@ class AssessmentService extends ChangeNotifier {
               .map((doc) => Questionaire.fromMap(
                   doc.data() as Map<String, dynamic>))
               .toList(), questionaires.docs.map((doc) => doc.id).toList())
-          : throw Exception("No questionaires found");
+          : (List<Questionaire>.empty(), List<String>.empty());
     } catch (e) {
       throw Exception(e);
     }
@@ -118,9 +118,6 @@ class AssessmentService extends ChangeNotifier {
           // Calculate the average for each section having 3 be the max value
           for (var question in questions.keys) {
             sectionTotal += questions[question].toDouble();
-          }
-          if (sectionTotal == 0) {
-            sectionTotal = -1;
           }
           // if key does not exist, create it
           if (sectionAverages[monthsPassed]![section] == null) {

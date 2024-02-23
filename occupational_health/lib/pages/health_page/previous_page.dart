@@ -36,6 +36,12 @@ class _PreviousAssessmentPageState extends State<PreviousAssessmentPage> {
               child: CircularProgressIndicator(),
             );
           }
+
+          if (snapshot.data!.docs.isEmpty) {
+            return const Center(
+              child: Text("No Assessments taken yet", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w300)),
+            );
+          }
           // sort docs by timestamp
           List<QueryDocumentSnapshot> docs = snapshot.data!.docs;
           docs.sort((a, b) {

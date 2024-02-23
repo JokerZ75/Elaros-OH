@@ -27,6 +27,10 @@ class _HomePageState extends State<HomePage> {
   getRecentQuestionaires() async {
     (List<Questionaire>, List<String>) questionaires =
         await _assessmentService.getRecentQuestionaires();
+
+    if (questionaires.$1.isEmpty) {
+      return;
+    }
     setState(() {
       this.questionaires = questionaires;
     });

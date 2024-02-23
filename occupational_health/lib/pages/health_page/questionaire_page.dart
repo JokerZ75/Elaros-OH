@@ -325,9 +325,6 @@ class _QuestionairePageState extends State<QuestionairePage> {
         sections
             .firstWhere((element) => element.sectionTitle == sectionTitle)
             .questions[question] = int.parse(choice!);
-        print(sections
-            .firstWhere((element) => element.sectionTitle == sectionTitle)
-            .questions[question]);
       });
     }
 
