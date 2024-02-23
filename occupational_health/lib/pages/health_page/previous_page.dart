@@ -29,7 +29,7 @@ class _PreviousAssessmentPageState extends State<PreviousAssessmentPage> {
                 fontWeight: FontWeight.w600)),
       ),
       body: StreamBuilder<QuerySnapshot>(
-        stream: _assessmentService.getQuestionaires(),
+        stream: _assessmentService.getQuestionairesStream(),
         builder: (context, snapshot) {
           if (!snapshot.hasData) {
             return const Center(
