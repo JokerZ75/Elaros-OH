@@ -23,6 +23,8 @@ class AuthService extends ChangeNotifier {
         'uid': userCredential.user!.uid,
       }, SetOptions(merge: true));
 
+      print(userCredential.user!.uid);
+
       return userCredential;
     } catch (e) {
       throw Exception(e);
@@ -66,8 +68,9 @@ class AuthService extends ChangeNotifier {
       String? occupation,
       String name) async {
     try {
-      UserCredential userCredential = await _auth
-          .createUserWithEmailAndPassword(email: email, password: password);
+      // Create user sending verification email
+      UserCredential userCredential = await _auth.createUserWithEmailAndPassword(
+          email: email, password: password);
 
       // create a new document for the user with the uid
       _firestore.collection('users').doc(userCredential.user!.uid).set({
@@ -84,6 +87,45 @@ class AuthService extends ChangeNotifier {
       throw Exception(e);
     }
   } // registerWithEmailAndPassword
+
+  // verify email
+  Future<void> sendEmailVerification() async {
+    User? user = _auth.currentUser;
+    try {
+      await user!.sendEmailVerification(   );
+    } catch (e) {
+      throw Exception(e);
+    }
+  } // sendEmailVerification
+
+
+  // is email verified
+  bool isEmailVerified() {
+    User? user = _auth.currentUser;
+    return user!.emailVerified;
+  } // isEmailVerified
+
+  // Delete user
+  Future<void> deleteUser() async {
+    User? user = _auth.currentUser;
+    try {
+      // delete all documents associated with the user
+      await _firestore.collection('users').doc(user!.uid).delete();
+      await _firestore
+          .collection('assessments')
+          .doc(user.uid)
+          .collection("completed_questionaires")
+          .get()
+          .then((snapshot) {
+        for (DocumentSnapshot ds in snapshot.docs) {
+          ds.reference.delete();
+        }
+      });
+      await user!.delete();
+    } catch (e) {
+      throw Exception(e);
+    }
+  } // deleteUser
 
   // Get User Info
   Future<MyUser> getUserData() async {
