@@ -14,11 +14,9 @@ class SupportPage extends StatefulWidget {
 }
 
 class _SupportPageState extends State<SupportPage> {
-  double? longitude;
-  double? latitude;
-  double? initialZoom = 14;
-
-  void getLocation() async {
+  // https://www.dhiwise.com/post/maximizing-user-experience-integrating-flutter-geolocator
+  // this website was used to help with the location services, both getting the location and displaying it on the map
+  Future<Position> getLocation() async {
     bool serviceEnabled;
     LocationPermission permission;
 
@@ -36,33 +34,16 @@ class _SupportPageState extends State<SupportPage> {
     }
 
     if (permission == LocationPermission.deniedForever) {
-      return Future.error(
-          'Location permissions are permanently denied, we cannot request permissions.');
+      return Future.error('Location permissions are permanently denied.');
     }
 
-    Position position = await Geolocator.getCurrentPosition(
-        forceAndroidLocationManager: true,
-        desiredAccuracy: LocationAccuracy.best);
-    setState(() {
-      longitude = position.longitude;
-      latitude = position.latitude;
-    });
-    Text("Longitude: $longitude, Latitude: $latitude");
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    getLocation();
+    return await Geolocator.getCurrentPosition();
+    // forceAndroidLocationManager: true,
+    // desiredAccuracy: LocationAccuracy.best);
   }
 
   @override
   Widget build(BuildContext context) {
-    if (longitude != null && latitude != null) {
-      longitude = 0;
-      latitude = 0;
-      initialZoom = 0;
-    }
     return Scaffold(
         body: SingleChildScrollView(
       child: Padding(
@@ -126,20 +107,24 @@ class _SupportPageState extends State<SupportPage> {
             const SizedBox(height: 30),
             const Text("Locate your nearest clinic"),
             const SizedBox(height: 15),
-            Container(
-              width: 350,
-              height: 350,
 
-              // child: 53.383331 != null && -1.466667 != null
-              child: longitude != null && latitude != null
-                  ? Stack(
+            FutureBuilder(
+              future: getLocation(),
+              builder:
+                  (BuildContext context, AsyncSnapshot<Position> snapshot) {
+                if (snapshot.hasData) {
+                  return Container(
+                    width: 350,
+                    height: 350,
+                    child: Stack(
                       children: [
                         FlutterMap(
                           options: MapOptions(
-                            initialCenter:
-                                // LatLng(53.383331 ?? 0.0, -1.466667 ?? 0.0),
-                                LatLng(longitude ?? 0.0, latitude ?? 0.0),
-                            initialZoom: initialZoom ?? 0.0,
+                            initialCenter: LatLng(
+                              snapshot.data!.latitude,
+                              snapshot.data!.longitude,
+                            ),
+                            initialZoom: 14,
                           ),
                           children: [
                             TileLayer(
@@ -151,9 +136,9 @@ class _SupportPageState extends State<SupportPage> {
                               circles: [
                                 CircleMarker(
                                   point: LatLng(
-                                      // 53.383331 ?? 0.0, -1.466667 ?? 0.0),
-                                      longitude ?? 0.0,
-                                      latitude ?? 0.0),
+                                    snapshot.data!.latitude,
+                                    snapshot.data!.longitude,
+                                  ),
                                   radius: 350,
                                   useRadiusInMeter: true,
                                   color: Colors.blue.withOpacity(0.2),
@@ -164,25 +149,33 @@ class _SupportPageState extends State<SupportPage> {
                             ),
                             MarkerLayer(
                               markers: [
-                                // Marker(
-                                //   point: LatLng(53.383331 ?? 0.0, -1.466667 ?? 0.0),
-                                //   width: 80,
-                                //   height: 80,
-                                //   child: Icon(
-                                //     Icons.location_pin,
-                                //     color: Colors.red.withOpacity(0.9),
-                                //     size: 20,
-                                //   ),
-                                // ),
+                                Marker(
+                                  point: LatLng(
+                                    snapshot.data!.latitude,
+                                    snapshot.data!.longitude,
+                                  ),
+                                  width: 80,
+                                  height: 80,
+                                  child: Icon(
+                                    Icons.location_pin,
+                                    color: Colors.red.withOpacity(0.9),
+                                    size: 20,
+                                  ),
+                                ),
                               ],
                             ),
                           ],
                         ),
                       ],
-                    )
-                  : Center(
-                      child: CircularProgressIndicator(),
                     ),
+                  );
+                } else if (snapshot.hasError) {
+                  return Text('Error: ${snapshot.error}');
+                }
+
+                // CircularProgressIndicator while waiting for the location permission
+                return CircularProgressIndicator();
+              },
             ),
           ],
         ),
