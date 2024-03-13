@@ -46,7 +46,7 @@ class AuthService extends ChangeNotifier {
             },
             codeSent: (String verificationId, int? resendToken) async {
               // get the sms code from user, using a text field
-              final smsCode = await getOTP(context, firstHint.phoneNumber!,
+              final smsCode = await getOTP(context, firstHint.phoneNumber,
                   resendToken: resendToken);
 
               if (smsCode != null) {
@@ -259,7 +259,7 @@ class AuthService extends ChangeNotifier {
           ds.reference.delete();
         }
       });
-      await user!.delete();
+      await user.delete();
     } catch (e) {
       throw Exception(e);
     }

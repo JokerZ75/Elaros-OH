@@ -16,7 +16,6 @@ class MfaGate extends StatefulWidget {
 
 class _MfaGateState extends State<MfaGate> {
   bool _isVerified = true; // Make these true if you want to test without enrolling
-  bool _isEnrolled = true;
 
   @override
   void initState() {
@@ -231,7 +230,6 @@ class _MfaGateState extends State<MfaGate> {
       BuildContext context,
       String phoneNumber,
       int? resendToken) {
-    final formKey = GlobalKey<FormState>();
 
     return Dialog.fullscreen(
         child: MyKeyboardHider(
@@ -339,7 +337,6 @@ class _MfaGateState extends State<MfaGate> {
                         // close the dialog
                         if (mounted) Navigator.pop(context);
                         setState(() {
-                          _isEnrolled = true;
                           _isVerified = true;
                         });
                       } on FirebaseAuthException catch (e) {

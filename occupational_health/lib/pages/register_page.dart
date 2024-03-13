@@ -213,6 +213,16 @@ class _RegisterPageState extends State<RegisterPage> {
                               if (value != passwordController.text) {
                                 return 'Passwords do not match';
                               }
+                              // password length more than 6
+                              if (value!.length < 6) {
+                                return 'Password must be at least 6 characters';
+                              }
+
+                              // password should include a number and atleast one uppercase letter
+                              if (!value.contains(RegExp(r'[0-9]')) ||
+                                  !value.contains(RegExp(r'[A-Z]'))) {
+                                return 'Password must include a number and atleast one uppercase letter';
+                              }
                               return null;
                             }),
 
