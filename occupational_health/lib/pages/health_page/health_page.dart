@@ -142,6 +142,7 @@ class _HealthPageState extends State<HealthPage> {
           Row(children: <Widget>[
             Expanded(
                 child: MySubmitButton(
+                  style: TextStyle (backgroundColor: const Color(0xFFEFD080)),
                     onPressed: () {
                       Navigator.push(
                           context,
@@ -161,6 +162,7 @@ class _HealthPageState extends State<HealthPage> {
               // Create Export Button
               Expanded(
                   child: MySubmitButton(
+                    style: TextStyle (backgroundColor: const Color(0xFFEFD080)),
                 onPressed: () {},
                 text: 'Create\nExport',
                 minWidth: 165,
@@ -179,6 +181,7 @@ class _HealthPageState extends State<HealthPage> {
               // View Previous Assessments Button
               Expanded(
                   child: MySubmitButton(
+                    style: TextStyle (backgroundColor: const Color(0xFFEFD080)),
                 onPressed: () {
                   Navigator.push(
                       context,

@@ -48,6 +48,7 @@ class _HomePageState extends State<HomePage> {
         children: <Widget>[
           const SizedBox(height: 30),
           MySubmitButton(
+            style: TextStyle (backgroundColor: const Color(0xFFEFD080)),
               onPressed: () {
                 Navigator.push(
                     context,

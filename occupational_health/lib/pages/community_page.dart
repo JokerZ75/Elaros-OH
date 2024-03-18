@@ -357,6 +357,7 @@ class _CommunityPageState extends State<CommunityPage> {
                     ),
                     Container(
                       child: MySubmitButton(
+                        style: TextStyle (backgroundColor: const Color(0xFFEFD080)),
                         onPressed: () {},
                         text: "Click here to view more posts",
                         textSize: 16,
