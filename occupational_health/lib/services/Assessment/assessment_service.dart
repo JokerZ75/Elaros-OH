@@ -94,53 +94,33 @@ class AssessmentService extends ChangeNotifier {
   } // getQuestionaireById
 
   // Get Questionaire Averages
-  Future<Map<int, Map<String, double>>> getQuestionaireAverages() async {
-    DateTime accountCreated = _auth.currentUser!.metadata.creationTime!;
-    Map<int, Map<String, double>> sectionAverages = {};
+  Future<QuestionaireAverages> getQuestionaireAverages() async {
     try {
-      QuerySnapshot questionaires = await _firestore
+      DocumentSnapshot averages = await _firestore
           .collection('assessments')
           .doc(_auth.currentUser!.uid)
-          .collection("completed_questionaires")
           .get();
-      for (var doc in questionaires.docs) {
-        var questionaire = doc['questionaire'] as Map<String, dynamic>;
-
-        // Check how many months have passed since account created and questionaire was taken
-        Timestamp questionaireDate = doc['timestamp'];
-        int monthsPassed =
-            questionaireDate.toDate().difference(accountCreated).inDays ~/ 30;
-
-        // Round down to nearest multiple of 2 including 0
-        monthsPassed = monthsPassed - (monthsPassed % 2);
-
-        for (var section in questionaire.keys) {
-          if (sectionAverages[monthsPassed] == null) {
-            sectionAverages[monthsPassed] = {};
-          }
-
-          var questions = questionaire[section] as Map<String, dynamic>;
-          double sectionTotal = 0;
-          // Calculate the average for each section having 3 be the max value
-          for (var question in questions.keys) {
-            sectionTotal += questions[question].toDouble();
-          }
-          // if key does not exist, create it
-          if (sectionAverages[monthsPassed]![section] == null) {
-            sectionAverages[monthsPassed]![section] =
-                sectionTotal / questions.length;
-          } else {
-            sectionAverages[monthsPassed]![section] =
-                (sectionAverages[monthsPassed]![section]! +
-                        sectionTotal / questions.length) /
-                    2;
-          }
-        }
+      if (!averages.exists) {
+        return QuestionaireAverages(
+          monthlySectionAverages: {},
+          overallAverages: {},
+        );
       }
+      
+
+      QuestionaireAverages questionaireAverages =
+          QuestionaireAverages.fromMap(averages.data() as Map<String, dynamic>);
+        
+      // Remove numberOfQuestionaires from monthlySectionAverages
+      for (var month in questionaireAverages.monthlySectionAverages.keys) {
+        questionaireAverages.monthlySectionAverages[month]!
+            .remove("numberOfQuestionaires");
+      }
+
+      return questionaireAverages;
     } catch (e) {
       throw Exception(e);
     }
-    return sectionAverages;
   } // getQuestionaireAverages
 
   // Private function to calculate Averages of each section.
@@ -178,14 +158,16 @@ class AssessmentService extends ChangeNotifier {
       // Round down to nearest multiple of 2 including 0
       monthsPassed = monthsPassed - (monthsPassed % 2);
 
+      String monthsPassedString = monthsPassed.toString();
+
       // If the month key does not exist, create it
-      if (averages.monthlySectionAverages[monthsPassed] == null) {
-        averages.monthlySectionAverages[monthsPassed] = {};
+      if (averages.monthlySectionAverages[monthsPassedString] == null) {
+        averages.monthlySectionAverages[monthsPassedString] = {};
       }
 
       // Increment number of questionaires
-      averages.monthlySectionAverages[monthsPassed]!["numberOfQuestionaires"] =
-          (averages.monthlySectionAverages[monthsPassed]![
+      averages.monthlySectionAverages[monthsPassedString]!["numberOfQuestionaires"] =
+          (averages.monthlySectionAverages[monthsPassedString]![
                       "numberOfQuestionaires"] ??
                   0) +
               1;
@@ -203,16 +185,16 @@ class AssessmentService extends ChangeNotifier {
         }
 
         // If a key for that section does not exist, create it
-        if (averages.monthlySectionAverages[monthsPassed]![section] == null) {
-          averages.monthlySectionAverages[monthsPassed]![section] =
+        if (averages.monthlySectionAverages[monthsPassedString]![section] == null) {
+          averages.monthlySectionAverages[monthsPassedString]![section] =
               sectionTotal / questions.length; // Average of month section
           averages.overallAverages[section] =
               sectionTotal / questions.length; // Overall average of section
         }
         // If a key for that section does exist, update it
         else {
-          averages.monthlySectionAverages[monthsPassed]![section] =
-              (averages.monthlySectionAverages[monthsPassed]![section]! +
+          averages.monthlySectionAverages[monthsPassedString]![section] =
+              (averages.monthlySectionAverages[monthsPassedString]![section]! +
                   sectionTotal /
                       questions.length); // Update average of month section
           averages.overallAverages[section] =
@@ -248,11 +230,10 @@ class AssessmentService extends ChangeNotifier {
           .collection('assessments')
           .doc(_auth.currentUser!.uid)
           .set(averages.toMap(), SetOptions(merge: true));
-          print("Averages Updated");
+      print("Averages Updated");
     } catch (e) {
       throw Exception(e);
     }
-
   }
   // _calculateAverages
 } // AssessmentService

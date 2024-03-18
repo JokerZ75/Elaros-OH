@@ -21,109 +21,67 @@ class _HealthPageState extends State<HealthPage> {
 
   final AssessmentService _assessmentService = AssessmentService();
   final FuncionalChartData functionalChartData = FuncionalChartData(
-      zeroMonths: [0, 0, 0, 0, 0],
-      twoMonths: [0, 0, 0, 0, 0],
-      fourMonths: [0, 0, 0, 0, 0],
-      sixMonths: [0, 0, 0, 0, 0]);
+      monthlyAverages: {} // Monthly averages will be added here
+      );
   final SymptomServerityChartData symptomServerityChartData =
       SymptomServerityChartData(
-          zeroMonths: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-          twoMonths: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-          fourMonths: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-          sixMonths: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]);
-          
+          monthlyAverages: {} // Monthly averages will be added here
+          );
 
   double value = 0;
-  final Map<int, Map<String, double>> sectionAveragesState =
-      {}; // {0(months): {section: average}, 2(months): {section: average}, 4(months): {section: average}, 6(months): {section: average}
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     _setChartData();
   }
 
-  void  _setChartData() {
+  void _setChartData() {
     _assessmentService.getQuestionaireAverages().then((value) {
+      Map<String, String> funcNames = {
+        "Communication": "Communication",
+        "Walking or moving around ": "Mobility",
+        "Personal": "Personal Care",
+        "Other activities of Daily Living": "Daily Activities",
+        "Social role": "Social Role"
+      };
+
+      Map<String, String> symptomNames = {
+        "Breathlessness": "Breathlessness", //
+        "Throat sensitivity": "Throat sensitivity", //
+        "Fatigue": "Fatigue", //
+        "Smell / Taste": "Smell / Taste", //
+        "Pain / Discomfort": "Pain / Discomfort", //
+        "Cognition": "Cognition", //
+        "Palpitations / Dizziness": "Palpitations / Dizziness", //
+        "Worsening of symptoms": "Worsening", //
+        "Anixety / Mood": "Mood",
+        "Sleep": "Sleep" //
+      };
+      Map<String, Map<String, double>> functionalData = {};
+      Map<String, Map<String, double>> symptomData = {};
+
+      // convert the data to the format we need
+      for (var months in value.monthlySectionAverages.keys) {
+        functionalData[months] = {};
+        symptomData[months] = {};
+
+        if (value.monthlySectionAverages[months] != null) {
+          Map<String, double> monthData = value.monthlySectionAverages[months]!;
+          for (var section in monthData.keys) {
+            if (funcNames.containsKey(section)) {
+              functionalData[months]![funcNames[section]!] =
+                  monthData[section]!;
+            } else if (symptomNames.containsKey(section)) {
+              symptomData[months]![symptomNames[section]!] =
+                  monthData[section]!;
+            }
+          }
+        }
+      }
       setState(() {
-        sectionAveragesState.addAll(value);
-        functionalChartData.zeroMonths = [
-          sectionAveragesState[0]?['Communication'] ?? 0,
-          sectionAveragesState[0]?['Walking or moving around '] ?? 0,
-          sectionAveragesState[0]?['Personal'] ?? 0,
-          sectionAveragesState[0]?['Other activities of Daily Living'] ?? 0,
-          sectionAveragesState[0]?['Social role'] ?? 0
-        ];
-        functionalChartData.twoMonths = [
-          sectionAveragesState[2]?['Communication'] ?? 0,
-          sectionAveragesState[2]?['Walking or moving around '] ?? 0,
-          sectionAveragesState[2]?['Personal'] ?? 0,
-          sectionAveragesState[2]?['Other activities of Daily Living'] ?? 0,
-          sectionAveragesState[2]?['Social role'] ?? 0
-        ];
-        functionalChartData.fourMonths = [
-          sectionAveragesState[4]?['Communication'] ?? 0,
-          sectionAveragesState[4]?['Walking or moving around '] ?? 0,
-          sectionAveragesState[4]?['Personal'] ?? 0,
-          sectionAveragesState[4]?['Other activities of Daily Living'] ?? 0,
-          sectionAveragesState[4]?['Social role'] ?? 0
-        ];
-        functionalChartData.sixMonths = [
-          sectionAveragesState[6]?['Communication'] ?? 0,
-          sectionAveragesState[6]?['Walking or moving around '] ?? 0,
-          sectionAveragesState[6]?['Personal'] ?? 0,
-          sectionAveragesState[6]?['Other activities of Daily Living'] ?? 0,
-          sectionAveragesState[6]?['Social role'] ?? 0
-        ];
-        symptomServerityChartData.zeroMonths = [
-          sectionAveragesState[0]?['Breathlessness'] ?? 0,
-          sectionAveragesState[0]?['Throat sensitivity'] ?? 0,
-          sectionAveragesState[0]?['Fatigue'] ?? 0,
-          sectionAveragesState[0]?['Smell / Taste'] ?? 0,
-          sectionAveragesState[0]?['Pain / Discomfort'] ?? 0,
-          sectionAveragesState[0]?['Cognition'] ?? 0,
-          sectionAveragesState[0]?['Palpitations / Dizziness'] ?? 0,
-          sectionAveragesState[0]?['Worsening of symptoms'] ?? 0,
-          sectionAveragesState[0]?['Anixety / Mood'] ?? 0,
-          sectionAveragesState[0]?['Sleep'] ?? 0
-        ];
-        symptomServerityChartData.twoMonths = [
-          sectionAveragesState[2]?['Breathlessness'] ?? 0,
-          sectionAveragesState[2]?['Throat sensitivity'] ?? 0,
-          sectionAveragesState[2]?['Fatigue'] ?? 0,
-          sectionAveragesState[2]?['Smell / Taste'] ?? 0,
-          sectionAveragesState[2]?['Pain / Discomfort'] ?? 0,
-          sectionAveragesState[2]?['Cognition'] ?? 0,
-          sectionAveragesState[2]?['Palpitations / Dizziness'] ?? 0,
-          sectionAveragesState[2]?['Worsening of symptoms'] ?? 0,
-          sectionAveragesState[2]?['Anixety / Mood'] ?? 0,
-          sectionAveragesState[2]?['Sleep'] ?? 0
-        ];
-        symptomServerityChartData.fourMonths = [
-          sectionAveragesState[4]?['Breathlessness'] ?? 0,
-          sectionAveragesState[4]?['Throat sensitivity'] ?? 0,
-          sectionAveragesState[4]?['Fatigue'] ?? 0,
-          sectionAveragesState[4]?['Smell / Taste'] ?? 0,
-          sectionAveragesState[4]?['Pain / Discomfort'] ?? 0,
-          sectionAveragesState[4]?['Cognition'] ?? 0,
-          sectionAveragesState[4]?['Palpitations / Dizziness'] ?? 0,
-          sectionAveragesState[4]?['Worsening of symptoms'] ?? 0,
-          sectionAveragesState[4]?['Anixety / Mood'] ?? 0,
-          sectionAveragesState[4]?['Sleep'] ?? 0
-        ];
-        symptomServerityChartData.sixMonths = [
-          sectionAveragesState[6]?['Breathlessness'] ?? 0,
-          sectionAveragesState[6]?['Throat sensitivity'] ?? 0,
-          sectionAveragesState[6]?['Fatigue'] ?? 0,
-          sectionAveragesState[6]?['Smell / Taste'] ?? 0,
-          sectionAveragesState[6]?['Pain / Discomfort'] ?? 0,
-          sectionAveragesState[6]?['Cognition'] ?? 0,
-          sectionAveragesState[6]?['Palpitations / Dizziness'] ?? 0,
-          sectionAveragesState[6]?['Worsening of symptoms'] ?? 0,
-          sectionAveragesState[6]?['Anixety / Mood'] ?? 0,
-          sectionAveragesState[6]?['Sleep'] ?? 0
-        ];
+        functionalChartData.monthlyAverages = functionalData;
+        symptomServerityChartData.monthlyAverages = symptomData;
       });
     });
   }
@@ -138,6 +96,12 @@ class _HealthPageState extends State<HealthPage> {
         children: <Widget>[
           // Add Coursel of 2 charts here
           _buildChartCoursel(),
+
+          MySubmitButton(
+              onPressed: () {
+                _setChartData();
+              },
+              text: "Test Graph data"),
 
           // Circles to show page number
           Column(
@@ -188,7 +152,8 @@ class _HealthPageState extends State<HealthPage> {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => QuestionairePage(onAssessmentComplete: _setChartData )));
+                              builder: (context) => QuestionairePage(
+                                  onAssessmentComplete: _setChartData)));
                     },
                     fontWeight: FontWeight.w600,
                     text: 'Click To Take A Covid\nAssessment')),
@@ -364,32 +329,20 @@ class FuncionalChartData {
     0,
     0
   ]; // Communication, Mobility, Personal Care, Daily Activities, Social Role
-  List<double> zeroMonths;
-  List<double> twoMonths;
-  List<double> fourMonths;
-  List<double> sixMonths;
+  Map<String, Map<String, double>> monthlyAverages = {};
 
-  FuncionalChartData(
-      {required this.zeroMonths,
-      required this.twoMonths,
-      required this.fourMonths,
-      required this.sixMonths});
+  FuncionalChartData({required this.monthlyAverages});
 
   List<RawDataSet> getRawData() {
     return [
-      RawDataSet(
-        title: 'Pre-covid',
-        color: Colors.blue,
-        values: preCovid,
-      ),
-      RawDataSet(
-        title: '0 Months',
-        color: Colors.red,
-        values: zeroMonths,
-      ),
-      RawDataSet(title: '2 Months', color: Colors.brown, values: twoMonths),
-      RawDataSet(title: '4 Months', color: Colors.green, values: fourMonths),
-      RawDataSet(title: '6 Months', color: Colors.purple, values: sixMonths),
+      RawDataSet(title: 'Pre-covid', color: Colors.blue, values: preCovid),
+      // Loop through the monthly averages and create a RawDataSet for each
+      for (var month in monthlyAverages.keys)
+        RawDataSet(
+          title: '$month Months',
+          color: Colors.primaries[int.parse(month)],
+          values: monthlyAverages[month]!.values.toList(),
+        )
     ];
   }
 }
@@ -407,16 +360,11 @@ class SymptomServerityChartData {
     0,
     0
   ]; // Breathlessness, Throat sensitivity, Fatigue, Smell / Taste, Pain / Discomfort, Cognition, Palpitations / Dizzness, Worsening of symptoms, Anxiety / Mood, Sleep
-  List<double> zeroMonths;
-  List<double> twoMonths;
-  List<double> fourMonths;
-  List<double> sixMonths;
+  Map<String, Map<String, double>> monthlyAverages;
 
-  SymptomServerityChartData(
-      {required this.zeroMonths,
-      required this.twoMonths,
-      required this.fourMonths,
-      required this.sixMonths});
+  SymptomServerityChartData({
+    required this.monthlyAverages,
+  });
 
   List<RawDataSet> getRawData() {
     return [
@@ -425,14 +373,13 @@ class SymptomServerityChartData {
         color: Colors.blue,
         values: preCovid,
       ),
-      RawDataSet(
-        title: '0 Months',
-        color: Colors.red,
-        values: zeroMonths,
-      ),
-      RawDataSet(title: '2 Months', color: Colors.brown, values: twoMonths),
-      RawDataSet(title: '4 Months', color: Colors.green, values: fourMonths),
-      RawDataSet(title: '6 Months', color: Colors.purple, values: sixMonths),
+      // Loop through the monthly averages and create a RawDataSet for each
+      for (var month in monthlyAverages.keys)
+        RawDataSet(
+          title: '$month Months',
+          color: Colors.primaries[int.parse(month)],
+          values: monthlyAverages[month]!.values.toList(),
+        )
     ];
   }
 }

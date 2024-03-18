@@ -149,7 +149,7 @@ class _MyRadarChartState extends State<MyRadarChart> {
                       titleTextStyle:
                           const  TextStyle(color: Colors.black, fontSize: 14),
                       getTitle: widget.getTitle,
-                      tickCount: 5,
+                      tickCount: 3,
                       ticksTextStyle: const TextStyle(
                           color: Colors.black, fontSize: 10),
                       tickBorderData: BorderSide(color: Colors.grey.shade400, width: 1),

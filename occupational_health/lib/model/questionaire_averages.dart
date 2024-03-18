@@ -3,7 +3,7 @@ class QuestionaireAverages {
   // Map of Averages over time
   // {Month: {numberOfQuestionaires: num, section: average, section: average}, Month: {numberOfQuestionaires: num, section: average, section: average}
   // Months in multiples of 2
-  final Map<int, Map<String, double>> monthlySectionAverages;
+  final Map<String, Map<String, double>> monthlySectionAverages;
 
   // Map of overall averages
   // {section: average, section: average}

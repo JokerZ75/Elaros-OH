@@ -36,9 +36,6 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  testAverages() async {
-    _assessmentService.calculateAndUpdateAverages();
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -55,18 +52,9 @@ class _HomePageState extends State<HomePage> {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => QuestionairePage(
-                              onAssessmentCompleteAsync: getRecentQuestionaires,
-                            )));
+                        builder: (context) => QuestionairePage(onAssessmentCompleteAsync: getRecentQuestionaires,)));
               },
               text: "Click To Take Your Daily Assessment"),
-
-          MySubmitButton(
-              onPressed: () {
-                testAverages();
-              },
-              text: "Test Averages"),
-
           // your environment
           const SizedBox(height: 30),
           InputDecorator(
