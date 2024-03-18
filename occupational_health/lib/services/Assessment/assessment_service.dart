@@ -21,7 +21,7 @@ class AssessmentService extends ChangeNotifier {
           .collection("completed_questionaires")
           .add(newQuestionaire.toMap());
       // Make a Averages document
-      calculateAndUpdateAverages();
+      _calculateAndUpdateAverages();
     } catch (e) {
       throw Exception(e);
     }
@@ -124,7 +124,7 @@ class AssessmentService extends ChangeNotifier {
   } // getQuestionaireAverages
 
   // Private function to calculate Averages of each section.
-  void calculateAndUpdateAverages() async {
+  void _calculateAndUpdateAverages() async {
     QuestionaireAverages averages = QuestionaireAverages(
       monthlySectionAverages: {},
       overallAverages: {},
@@ -157,6 +157,9 @@ class AssessmentService extends ChangeNotifier {
 
       // Round down to nearest multiple of 2 including 0
       monthsPassed = monthsPassed - (monthsPassed % 2);
+
+      // Make sure monthsPassed is positive
+      monthsPassed = monthsPassed < 0 ? monthsPassed * -1 : monthsPassed;
 
       String monthsPassedString = monthsPassed.toString();
 
