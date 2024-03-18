@@ -89,10 +89,6 @@ class _VerifyPageState extends State<VerifyPage> {
               child: MySubmitButton(
                   onPressed: () {
                     FirebaseAuth.instance.currentUser!.reload();
-                    if (!FirebaseAuth.instance.currentUser!.emailVerified) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text("Email not verified")));
-                    }
                   },
                   text: "Continue"),
             ),
