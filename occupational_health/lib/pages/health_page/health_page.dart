@@ -37,8 +37,8 @@ class _HealthPageState extends State<HealthPage> {
     _setChartData();
   }
 
-  void _setChartData() {
-    _assessmentService.getQuestionaireAverages().then((value) {
+  void _setChartData() async {
+    await _assessmentService.getQuestionaireAverages().then((value) {
       Map<String, String> funcNames = {
         "Communication": "Communication",
         "Walking or moving around ": "Mobility",

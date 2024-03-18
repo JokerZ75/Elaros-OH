@@ -220,6 +220,7 @@ class _QuestionairePageState extends State<QuestionairePage> {
                                           .showSnackBar(
                                         const SnackBar(
                                           content: Text("Assessment Complete"),
+                                          duration: Duration(seconds: 2),
                                         ),
                                       );
                                       Map<String, Map<String, int>>
@@ -235,9 +236,9 @@ class _QuestionairePageState extends State<QuestionairePage> {
                                       }
                                       if (widget.onAssessmentCompleteAsync !=
                                           null) {
-                                        widget.onAssessmentCompleteAsync!();
+                                        await widget.onAssessmentCompleteAsync!();
                                       }
-                                      Navigator.pop(context);
+                                      if (mounted) Navigator.pop(context);
                                     } else {
                                       pageController.animateToPage(result.$1,
                                           duration:

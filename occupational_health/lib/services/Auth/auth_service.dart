@@ -16,7 +16,6 @@ class AuthService extends ChangeNotifier {
 
   // instance for the firestore
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  bool signedInWithGoogle = false;
 
   // sign in with email and password
   Future<void> signInWithEmailAndPassword(
@@ -40,44 +39,8 @@ class AuthService extends ChangeNotifier {
       if (firstHint is! PhoneMultiFactorInfo) {
         return;
       }
-      try {
-        await _auth.verifyPhoneNumber(
-            multiFactorSession: e.resolver.session,
-            multiFactorInfo: firstHint,
-            verificationCompleted: (PhoneAuthCredential credential) async {},
-            verificationFailed: (FirebaseAuthException e) {
-              ScaffoldMessenger.of(context)
-                  .showSnackBar(SnackBar(content: Text(e.toString())));
-            },
-            codeSent: (String verificationId, int? resendToken) async {
-              // get the sms code from user, using a text field
-              final smsCode = await getOTP(context, firstHint.phoneNumber,
-                  resendToken: resendToken);
-
-              if (smsCode != null) {
-                // Create a PhoneAuthCredential with the code
-                final phoneAuthCredential = PhoneAuthProvider.credential(
-                    verificationId: verificationId, smsCode: smsCode);
-
-                // Sign the user in
-                try {
-                  await e.resolver.resolveSignIn(
-                    PhoneMultiFactorGenerator.getAssertion(
-                      phoneAuthCredential,
-                    ),
-                  );
-                } on FirebaseAuthException catch (e) {
-                  throw Exception(e);
-                }
-              }
-            },
-            codeAutoRetrievalTimeout: (String verificationId) {
-              Navigator.pop(context);
-              throw Exception("Code auto retrieval timeout");
-            });
-      } catch (e) {
-        throw Exception(e);
-      }
+      final phoneInfo = firstHint;
+      await _verifyPhoneNumber(phoneInfo.phoneNumber!, context);
     } on FirebaseAuthException catch (e) {
       throw Exception(e);
     } catch (e) {
@@ -85,8 +48,46 @@ class AuthService extends ChangeNotifier {
     }
   }
 
+  // Verify Phone Number
+  Future<void> _verifyPhoneNumber(
+      String phoneNumber, BuildContext context) async {
+    try {
+      await _auth.verifyPhoneNumber(
+          phoneNumber: phoneNumber,
+          verificationCompleted: (PhoneAuthCredential credential) async {},
+          verificationFailed: (FirebaseAuthException e) {
+            ScaffoldMessenger.of(context)
+                .showSnackBar(SnackBar(content: Text(e.toString())));
+          },
+          codeSent: (String verificationId, int? resendToken) async {
+            // get the sms code from user, using a text field
+            final smsCode =
+                await _getOTP(context, phoneNumber, resendToken: resendToken);
+
+            if (smsCode != null) {
+              // Create a PhoneAuthCredential with the code
+              final phoneAuthCredential = PhoneAuthProvider.credential(
+                  verificationId: verificationId, smsCode: smsCode);
+
+              // Sign the user in
+              try {
+                await _auth.signInWithCredential(phoneAuthCredential);
+              } on FirebaseAuthException catch (e) {
+                throw Exception(e);
+              }
+            }
+          },
+          codeAutoRetrievalTimeout: (String verificationId) {
+            Navigator.pop(context);
+            throw Exception("Code auto retrieval timeout");
+          });
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
   // a dialog to get the OTP
-  Future<dynamic> getOTP(BuildContext context, String phoneNumber,
+  Future<dynamic> _getOTP(BuildContext context, String phoneNumber,
       {int? resendToken}) async {
     return showDialog(
         context: context,
@@ -206,7 +207,6 @@ class AuthService extends ChangeNotifier {
       // sign out from google
       await _googleSignIn.signOut();
 
-      signedInWithGoogle = false;
     } catch (e) {
       throw Exception(e);
     }
@@ -288,8 +288,6 @@ class AuthService extends ChangeNotifier {
         ],
       ).signIn();
 
-      
-
       // If the process is cancelled
       if (googleUser == null) {
         throw Exception("Sign in process cancelled");
@@ -328,7 +326,8 @@ class AuthService extends ChangeNotifier {
         response["day"] = "0${response["day"]}";
       }
       try {
-      dateOfBirth = DateTime.parse("${response["year"]}-${response["month"]}-${response["day"]} 00:00:00.000");
+        dateOfBirth = DateTime.parse(
+            "${response["year"]}-${response["month"]}-${response["day"]} 00:00:00.000");
       } catch (e) {
         dateOfBirth = DateTime(2022);
       }
@@ -342,12 +341,9 @@ class AuthService extends ChangeNotifier {
         'uid': user.uid,
         'timestamp': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
-
-      signedInWithGoogle = true;
-
-
       return;
-    } catch (e) {
+    } 
+    catch (e) {
       throw Exception(e);
     }
   }

@@ -5,6 +5,7 @@ import "package:occupational_health/components/my_submit_button.dart";
 import "package:occupational_health/components/my_text_form_field.dart";
 import "package:occupational_health/pages/page_view_main.dart";
 import "package:intl_phone_field/intl_phone_field.dart";
+import "package:occupational_health/services/Auth/auth_service.dart";
 
 class MfaGate extends StatefulWidget {
   
@@ -15,11 +16,21 @@ class MfaGate extends StatefulWidget {
 }
 
 class _MfaGateState extends State<MfaGate> {
-  bool _isVerified = true; // Make these true if you want to test without enrolling
+  bool _isVerified = false;// Make these true if you want to test without enrolling
+  final AuthService _auth = AuthService();
+  bool _signedInWithGoogle = false;
 
   @override
   void initState() {
     super.initState();
+    // Check if user is signed in with Google
+    FirebaseAuth.instance.currentUser!.providerData.forEach((e) {
+      if (e.providerId == "google.com") {
+        setState(() {
+          _signedInWithGoogle = true;
+        });
+      }
+    });
   }
 
   void enrollUser(
@@ -96,7 +107,7 @@ class _MfaGateState extends State<MfaGate> {
             );
           }
           if (snapshot.hasData) {
-            if (_isVerified) {
+            if (_isVerified || _signedInWithGoogle) {
               return const ListViewMain();
             }
 
