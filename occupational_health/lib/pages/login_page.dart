@@ -190,20 +190,8 @@ class _LoginPageState extends State<LoginPage> {
                       text: "Sign In"),
                 ],
               ),
-              const SizedBox(height: 25),
-
-              // login button
-              MySubmitButton(
-                style: TextStyle (backgroundColor: const Color(0xFFEFD080)),
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      login();
-                    }
-                  },
-                  text: "Sign In"),
-            ],
-          ),
-        )));
+            )) // SingleChildScrollView
+            )); // Scaffold
   } // Widget
 } // _LoginPageState
 
