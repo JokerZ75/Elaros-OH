@@ -2,6 +2,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:occupational_health/components/my_radar_chart.dart';
 import 'package:occupational_health/components/my_submit_button.dart';
+import 'package:occupational_health/pages/health_page/pdf_page.dart';
 import 'package:occupational_health/pages/health_page/previous_page.dart';
 import 'package:occupational_health/pages/health_page/questionaire_page.dart';
 import 'package:occupational_health/services/Assessment/assessment_service.dart';
@@ -55,33 +56,70 @@ class _HealthPageState extends State<HealthPage> {
         "Cognition": "Cognition", //
         "Palpitations / Dizziness": "Palpitations / Dizziness", //
         "Worsening of symptoms": "Worsening", //
-        "Anixety / Mood": "Mood",
+        "Anxiety / Mood": "Mood",
         "Sleep": "Sleep" //
       };
       Map<String, Map<String, double>> functionalData = {};
       Map<String, Map<String, double>> symptomData = {};
 
-      // convert the data to the format we need
-      for (var months in value.monthlySectionAverages.keys) {
-        functionalData[months] = {};
-        symptomData[months] = {};
+      // Only take the 5 most recent months
+      var keys = value.monthlySectionAverages.keys.toList();
 
-        if (value.monthlySectionAverages[months] != null) {
-          Map<String, double> monthData = value.monthlySectionAverages[months]!;
+      // sort the keys
+      keys.sort((a, b) => int.parse(a).compareTo(int.parse(b)));
+
+
+      if (keys.length > 4) {
+        keys = keys.sublist(keys.length - 4);
+      }
+
+
+      // convert the data to the format we need
+      for (var month in keys) {
+        
+        functionalData[month] = {};
+        symptomData[month] = {};
+
+        if (value.monthlySectionAverages[month] != null) {
+          Map<String, double> monthData = value.monthlySectionAverages[month]!;
           for (var section in monthData.keys) {
             if (funcNames.containsKey(section)) {
-              functionalData[months]![funcNames[section]!] =
+              functionalData[month]![funcNames[section]!] =
                   monthData[section]!;
             } else if (symptomNames.containsKey(section)) {
-              symptomData[months]![symptomNames[section]!] =
+              symptomData[month]![symptomNames[section]!] =
                   monthData[section]!;
             }
           }
         }
       }
       setState(() {
-        functionalChartData.monthlyAverages = functionalData;
-        symptomServerityChartData.monthlyAverages = symptomData;
+        if (functionalData.isEmpty) {
+          functionalData["0"] = {
+            "Communication": 0,
+            "Mobility": 0,
+            "Personal Care": 0,
+            "Daily Activities": 0,
+            "Social Role": 0
+          };
+        }
+        if (symptomData.isEmpty) {
+          symptomData["0"] = {
+            "Breathlessness": 0,
+            "Throat sensitivity": 0,
+            "Fatigue": 0,
+            "Smell / Taste": 0,
+            "Pain / Discomfort": 0,
+            "Cognition": 0,
+            "Palpitations / Dizziness": 0,
+            "Worsening": 0,
+            "Mood": 0,
+            "Sleep": 0
+          };
+        } else {
+          functionalChartData.monthlyAverages = functionalData;
+          symptomServerityChartData.monthlyAverages = symptomData;
+        }
       });
     });
   }
@@ -142,7 +180,7 @@ class _HealthPageState extends State<HealthPage> {
           Row(children: <Widget>[
             Expanded(
                 child: MySubmitButton(
-                  style: TextStyle (backgroundColor: const Color(0xFFEFD080)),
+                    style: const TextStyle(backgroundColor: Color(0xFFEFD080)),
                     onPressed: () {
                       Navigator.push(
                           context,
@@ -162,8 +200,10 @@ class _HealthPageState extends State<HealthPage> {
               // Create Export Button
               Expanded(
                   child: MySubmitButton(
-                    style: TextStyle (backgroundColor: const Color(0xFFEFD080)),
-                onPressed: () {},
+                style: const TextStyle(backgroundColor: Color(0xFFEFD080)),
+                onPressed: () {
+                  PDFPage().createPDF();
+                },
                 text: 'Create\nExport',
                 minWidth: 165,
                 icon: const Icon(
@@ -181,7 +221,7 @@ class _HealthPageState extends State<HealthPage> {
               // View Previous Assessments Button
               Expanded(
                   child: MySubmitButton(
-                    style: TextStyle (backgroundColor: const Color(0xFFEFD080)),
+                style: const TextStyle(backgroundColor: Color(0xFFEFD080)),
                 onPressed: () {
                   Navigator.push(
                       context,
