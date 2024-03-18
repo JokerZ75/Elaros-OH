@@ -97,12 +97,6 @@ class _HealthPageState extends State<HealthPage> {
           // Add Coursel of 2 charts here
           _buildChartCoursel(),
 
-          MySubmitButton(
-              onPressed: () {
-                _setChartData();
-              },
-              text: "Test Graph data"),
-
           // Circles to show page number
           Column(
             children: [
