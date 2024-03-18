@@ -60,6 +60,7 @@ class _SupportPageState extends State<SupportPage> {
                           // Button linking for more
                           Expanded(
                               child: MySubmitButton(
+                                style: TextStyle (backgroundColor: const Color(0xFFEFD080)),
                             onPressed: () {},
                             text: "Click Here For More",
                             minWidth: 110,

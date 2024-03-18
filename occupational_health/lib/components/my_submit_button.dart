@@ -18,7 +18,7 @@ class MySubmitButton extends StatelessWidget {
     this.icon,
     this.lineHeight = 23,
     this.textSize = 22,
-    this.fontWeight = FontWeight.w500,
+    this.fontWeight = FontWeight.w500, required TextStyle style,
   });
 
   @override

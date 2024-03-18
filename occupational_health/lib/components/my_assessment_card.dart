@@ -42,6 +42,7 @@ class MyAssessmentCard extends StatelessWidget {
               ),
             )),
             MySubmitButton(
+              style: TextStyle (backgroundColor: const Color(0xFFEFD080)),
               onPressed: onPressed,
               minWidth: 115,
               text: "More info",

@@ -165,6 +165,7 @@ class _LoginPageState extends State<LoginPage> {
 
               // login button
               MySubmitButton(
+                style: TextStyle (backgroundColor: const Color(0xFFEFD080)),
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
                       login();
