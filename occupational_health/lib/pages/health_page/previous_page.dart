@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:occupational_health/components/my_assessment_card.dart';
+import 'package:occupational_health/components/my_swipe_back.dart';
 import 'package:occupational_health/pages/health_page/complete_questionaire_page.dart';
 import 'package:occupational_health/services/Assessment/assessment_service.dart';
 
@@ -16,7 +17,8 @@ class _PreviousAssessmentPageState extends State<PreviousAssessmentPage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return MySwipeBack(
+        child: Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFFEFB84C),
         actionsIconTheme:
@@ -39,7 +41,8 @@ class _PreviousAssessmentPageState extends State<PreviousAssessmentPage> {
 
           if (snapshot.data!.docs.isEmpty) {
             return const Center(
-              child: Text("No Assessments taken yet", style: TextStyle(fontSize: 14, fontWeight: FontWeight.w300)),
+              child: Text("No Assessments taken yet",
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w300)),
             );
           }
           // sort docs by timestamp
@@ -61,7 +64,7 @@ class _PreviousAssessmentPageState extends State<PreviousAssessmentPage> {
           );
         },
       ),
-    );
+    ));
   }
 
   Widget _buildAssessmentCard(DocumentSnapshot document) {
@@ -73,7 +76,7 @@ class _PreviousAssessmentPageState extends State<PreviousAssessmentPage> {
     String formattedDate = "${date.day}-${date.month}-${date.year}";
     return MyAssessmentCard(
         title: "Assessment ${document.id.substring(0, 5)}", // Shorten the title
-        subtitle: "Date Taken: ${formattedDate}",
+        subtitle: "Date Taken: $formattedDate",
         onPressed: () {
           Navigator.push(
               context,

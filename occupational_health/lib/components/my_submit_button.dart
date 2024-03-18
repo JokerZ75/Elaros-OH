@@ -10,6 +10,7 @@ class MySubmitButton extends StatelessWidget {
   final int? lineHeight;
   final int? textSize;
   final FontWeight? fontWeight;
+  final TextStyle? style;
   const MySubmitButton({
     super.key,
     required this.onPressed,
@@ -19,6 +20,7 @@ class MySubmitButton extends StatelessWidget {
     this.lineHeight = 23,
     this.textSize = 22,
     this.fontWeight = FontWeight.w500,
+    this.style,
   });
 
   @override

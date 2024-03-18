@@ -1,5 +1,3 @@
-import "package:cloud_firestore/cloud_firestore.dart";
-import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
 import "package:occupational_health/components/my_date_picker.dart";
 import "package:occupational_health/components/my_submit_button.dart";
@@ -34,10 +32,11 @@ class MyAccountPage extends StatefulWidget {
  final TextEditingController _reloadController = TextEditingController();
 
 class _MyAccountPageState extends State<MyAccountPage> {
+  final AuthService _auth = AuthService();
+
   void signOut() async {
-    final AuthService authService = AuthService();
     try {
-      await authService.signOut();
+      await _auth.signOut();
     } catch (e) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(e.toString())));
@@ -83,10 +82,8 @@ class _MyAccountPageState extends State<MyAccountPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     setState(() {
-      AuthService _auth = AuthService();
       _auth.getUserData().then((user) => {
         nameController.text = user.name,
         emailController.text = user.email,
@@ -232,13 +229,14 @@ class _MyAccountPageState extends State<MyAccountPage> {
                 Padding(
                   padding: const EdgeInsets.all(8),
                   child: MySubmitButton(
+                    style: TextStyle (backgroundColor: const Color(0xFFEFD080)),
                     onPressed: () {
                       if (_formKey.currentState!.validate()) {
                         final snackBar = SnackBar(
                           backgroundColor: const Color(0xFFEFD080),
-                          content: Container(
+                          content: const SizedBox(
                             height: 50,
-                            child: const Text(
+                            child:  Text(
                               'An email has been sent to confirm your changes.',
                               style: TextStyle(
                                 color: Colors.black,
@@ -258,6 +256,38 @@ class _MyAccountPageState extends State<MyAccountPage> {
                     text: "Change Information",
                   ),
                 ),
+                const SizedBox(height: 8),
+                Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: TextButton(
+                    onPressed: () {
+                      showModalBottomSheet(
+                        context: context,
+                        isScrollControlled: true,
+                        builder: (BuildContext context) {
+                          return Container(
+                            padding: const EdgeInsets.all(8),
+                            height: MediaQuery.of(context).size.height / 1.5,
+                            child: SingleChildScrollView(
+                              child: const Center(
+                                child: Padding(
+                                  padding: EdgeInsets.all(7),
+                                  child: Text(
+                                     "Lorem ipsum dolora sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Massa eget egestas purus viverra accumsan in nisl nisi scelerisque. Nunc scelerisque viverra mauris in aliquam sem fringilla ut morbi. Vel eros donec ac odio. Gravida arcu ac tortor dignissim convallis aenean et tortor at. Molestie ac feugiat sed lectus vestibulum mattis ullamcorper velit sed. Volutpat sed cras ornare arcu dui. Mauris augue neque gravida in. Adipiscing bibendum est ultricies integer. Id donec ultrices tincidunt arcu. Augue eget arcu dictum varius duis at. At tellus at urna condimentum mattis pellentesque id nibh. Nam libero justo laoreet sit. Massa enim nec dui nunc mattis enim ut. Nulla at volutpat diam ut venenatis tellus. Eu turpis egestas pretium aenean. \n\nNibh tortor id aliquet lectus proin nibh nisl condimentum id. Nunc mi ipsum faucibus vitae aliquet nec ullamcorper sit amet. Quis hendrerit dolor magna eget est lorem ipsum. Tristique nulla aliquet enim tortor at auctor. Volutpat lacus laoreet non curabitur gravida arcu ac tortor. Volutpat blandit aliquam etiam erat velit. Purus faucibus ornare suspendisse sed nisi. In hac habitasse platea dictumst vestibulum rhoncus est pellentesque elit. \n\nQuisque egestas diam in arcu cursus euismod. Aliquet risus feugiat in ante metus dictum. Massa tincidunt nunc pulvinar sapien et. Natoque penatibus et magnis dis parturient montes nascetur ridiculus. Lectus nulla at volutpat diam ut venenatis tellus in metus. Enim nec dui nunc mattis enim ut. Amet facilisis magna etiam tempor. Tincidunt praesent semper feugiat nibh sed pulvinar proin gravida. Imperdiet proin fermentum leo vel orci porta non. Amet consectetur adipiscing elit pellentesque habitant morbi. Amet purus gravida quis blandit turpis cursus in hac. Iaculis urna id volutpat lacus. \n\nArcu odio ut sem nulla. Eget duis at tellus at urna. Semper eget duis at tellus at. Gravida quis blandit turpis cursus in hac habitasse. Netus et malesuada fames ac turpis egestas integer eget. At risus viverra adipiscing at in tellus integer feugiat. Posuere ac ut consequat semper viverra nam libero. In iaculis nunc sed augue lacus viverra vitae congue. Magna fermentum iaculis eu non diam. Iaculis at erat pellentesque adipiscing commodo elit at imperdiet dui. Sed enim ut sem viverra aliquet eget sit amet. \n\nAccumsan lacus vel facilisis volutpat. At varius vel pharetra vel turpis. At ultrices mi tempus imperdiet nulla malesuada pellentesque. Feugiat nisl pretium fusce id velit. Risus in hendrerit gravida rutrum. Sed felis eget velit aliquet. Turpis egestas integer eget aliquet. Augue ut lectus arcu bibendum at. Lectus magna fringilla urna porttitor. Augue neque gravida in fermentum et. Pulvinar etiam non quam lacus. Consectetur purus ut faucibus pulvinar elementum integer. Egestas diam in arcu cursus. Nulla posuere sollicitudin aliquam ultrices sagittis orci a. Adipiscing tristique risus nec feugiat in fermentum.",
+                                  ),
+                                ),
+                              ),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                    child: const Text(
+                      "Terms and Conditions",
+                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.black),
+                    ),
+                  ),
+                  )
               ],
             ),
           ),

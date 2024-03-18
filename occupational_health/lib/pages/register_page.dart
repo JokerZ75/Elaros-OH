@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:occupational_health/components/my_date_picker.dart';
+import 'package:occupational_health/components/my_keyboard_hider.dart';
 // ignore_for_file: prefer_const_constructors
 import 'package:occupational_health/components/my_submit_button.dart';
 import 'package:occupational_health/components/my_text_form_field.dart';
@@ -46,203 +48,283 @@ class _RegisterPageState extends State<RegisterPage> {
       return;
     }
     try {
+      // Show load spinner dialog while waiting
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          },
+          barrierDismissible: false);
       await authService.registerWithEmailAndPassword(
-          emailController.text,
-          passwordController.text,
-          dateOfBirth,
-          occupationController.text,
-          nameController.text);
-    } catch (e) {
-      // ignore: use_build_context_synchronously
-      ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text(e.toString())));
+        emailController.text,
+        passwordController.text,
+        dateOfBirth,
+        occupationController.text,
+        nameController.text,
+      );
+      if (mounted) Navigator.pop(context);
+    } // catch firebase auth weak password
+    catch (e) {
+      if (mounted) {
+        Navigator.pop(context);
+        if (e.toString().contains("weak-password")) {
+          ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Password is too weak")));
+        } else if (e.toString().contains("email-already-in-use")) {
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text("Email cannot be used, try another")));
+        } else if (e.toString().contains("invalid-email")) {
+          ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text("Please enter a valid email")));
+        } else {
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text(e.toString())));
+        }
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        resizeToAvoidBottomInset: false,
-        body: SingleChildScrollView(
-            child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 25.0, vertical: 40.0),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: <Widget>[
-              SizedBox(height: 10),
-              // Welcome back
-              Container(
-                alignment: Alignment.centerLeft,
+    return MyKeyboardHider(
+        child: Scaffold(
+            resizeToAvoidBottomInset: false,
+            body: SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                    horizontal: 25.0, vertical: 40.0),
                 child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: const <Widget>[
-                    Text(
-                      "Welcome",
-                      style: TextStyle(
-                          fontSize: 42,
-                          fontWeight: FontWeight.w600,
-                          height: 1.2),
-                    ),
-                    SizedBox(height: 5),
-                    Text(
-                      "Sign up now and better\ntrack your health...",
-                      style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w100,
-                          height: 1.2),
-                    ),
-                  ],
-                ),
-              ),
-
-              const SizedBox(height: 10),
-
-              Form(
-                key: _formKey,
-                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
                   children: <Widget>[
-                    // email
-                    MyTextFormField(
-                        controller: nameController,
-                        labelText: "Name",
-                        keyboardType: TextInputType.name,
-                        obscureText: false,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter some text';
-                          }
-                          return null;
-                        }),
+                    SizedBox(height: 10),
+                    // Welcome back
+                    Container(
+                      alignment: Alignment.centerLeft,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: const <Widget>[
+                          Text(
+                            "Welcome",
+                            style: TextStyle(
+                                fontSize: 42,
+                                fontWeight: FontWeight.w600,
+                                height: 1.2),
+                          ),
+                          SizedBox(height: 5),
+                          Text(
+                            "Sign up now and better\ntrack your health...",
+                            style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w100,
+                                height: 1.2),
+                          ),
+                        ],
+                      ),
+                    ),
 
-                    const SizedBox(height: 15),
+                    const SizedBox(height: 10),
 
-                    // DOB
-                    MyDatePicker(
-                        controller: dateOfBirthController,
-                        label: "Date of Birth",
-                        onDateSelected: (DateTime date) {
-                          dateOfBirthController.text =
-                              date.toString().replaceAll("00:00:00.000", "");
-                        }),
+                    Form(
+                      key: _formKey,
+                      child: Column(
+                        children: <Widget>[
+                          // email
+                          MyTextFormField(
+                              controller: nameController,
+                              labelText: "Name",
+                              keyboardType: TextInputType.name,
+                              obscureText: false,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter some text';
+                                }
+                                return null;
+                              }),
 
-                    const SizedBox(height: 15),
+                          const SizedBox(height: 15),
 
-                    MyTextFormField(
-                        controller: occupationController,
-                        labelText: "Occupation (Optional)",
-                        keyboardType: TextInputType.text,
-                        obscureText: false,
-                        validator: (value) {
-                          return null;
-                        }),
+                          // DOB
+                          MyDatePicker(
+                              controller: dateOfBirthController,
+                              label: "Date of Birth",
+                              onDateSelected: (DateTime date) {
+                                dateOfBirthController.text = date
+                                    .toString()
+                                    .replaceAll("00:00:00.000", "");
+                              }),
 
-                    const SizedBox(height: 15),
+                          const SizedBox(height: 15),
 
-                    // email
-                    MyTextFormField(
-                        controller: emailController,
-                        labelText: "Email",
-                        keyboardType: TextInputType.emailAddress,
-                        obscureText: false,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter some text';
-                          }
-                          return null;
-                        }),
+                          MyTextFormField(
+                              controller: occupationController,
+                              labelText: "Occupation (Optional)",
+                              keyboardType: TextInputType.text,
+                              obscureText: false,
+                              validator: (value) {
+                                return null;
+                              }),
 
-                    const SizedBox(height: 15),
+                          const SizedBox(height: 15),
 
-                    // password
-                    MyTextFormField(
-                        controller: passwordController,
-                        labelText: "Password",
-                        obscureText: true,
-                        keyboardType: TextInputType.visiblePassword,
-                        validator: (value) {
-                          if (value == null || value.isEmpty) {
-                            return 'Please enter some text';
-                          }
-                          return null;
-                        }),
+                          // email
+                          MyTextFormField(
+                              controller: emailController,
+                              labelText: "Email",
+                              keyboardType: TextInputType.emailAddress,
+                              obscureText: false,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter some text';
+                                }
+                                // check if email is valid
+                                if (!value.contains('@') ||
+                                    !value.contains('.')) {
+                                  return 'Please enter a valid email';
+                                }
+                                return null;
+                              }),
 
-                    const SizedBox(height: 15),
+                          const SizedBox(height: 15),
 
-                    // confirm password
-                    MyTextFormField(
-                        controller: confirmPasswordController,
-                        labelText: "Confirm Password",
-                        obscureText: true,
-                        keyboardType: TextInputType.visiblePassword,
-                        validator: (value) {
-                          if (value != passwordController.text) {
-                            return 'Passwords do not match';
-                          }
-                          return null;
-                        }),
+                          // password
+                          MyTextFormField(
+                              controller: passwordController,
+                              labelText: "Password",
+                              obscureText: true,
+                              keyboardType: TextInputType.visiblePassword,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter some text';
+                                }
 
-                    const SizedBox(height: 5),
+                                return null;
+                              }),
 
-                    // terms and conditions
+                          const SizedBox(height: 15),
+
+                          // confirm password
+                          MyTextFormField(
+                              controller: confirmPasswordController,
+                              labelText: "Confirm Password",
+                              obscureText: true,
+                              keyboardType: TextInputType.visiblePassword,
+                              validator: (value) {
+                                if (value != passwordController.text) {
+                                  return 'Passwords do not match';
+                                }
+                                // password length more than 6
+                                if (value!.length < 6) {
+                                  return 'Password must be at least 6 characters';
+                                }
+
+                                // password should include a number and atleast one uppercase letter
+                                if (!value.contains(RegExp(r'[0-9]')) ||
+                                    !value.contains(RegExp(r'[A-Z]'))) {
+                                  return 'Password must include a number and atleast one uppercase letter';
+                                }
+                                return null;
+                              }),
+
+                          const SizedBox(height: 5),
+
+                          // terms and conditions
+                          Row(
+                            children: <Widget>[
+                              Checkbox(
+                                value: checked,
+                                onChanged: (value) {
+                                  setState(() {
+                                    checked = value!;
+                                  });
+                                },
+                                activeColor: Color(0xFFEFD080),
+                                checkColor: Colors.black,
+                              ),
+                              const Text(
+                                "I agree to the ",
+                                style: TextStyle(
+                                    fontSize: 12, fontWeight: FontWeight.w100),
+                              ),
+                              GestureDetector(
+                                onTap: () {
+                                  showModalBottomSheet(
+                                    context: context,
+                                    isScrollControlled: true,
+                                    builder: (BuildContext context) {
+                                      return Container(
+                                        padding: const EdgeInsets.all(8),
+                                        height:
+                                            MediaQuery.of(context).size.height /
+                                                1.5,
+                                        child: SingleChildScrollView(
+                                          child: const Center(
+                                            child: Padding(
+                                              padding: EdgeInsets.all(7),
+                                              child: Text(
+                                                "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Massa eget egestas purus viverra accumsan in nisl nisi scelerisque. Nunc scelerisque viverra mauris in aliquam sem fringilla ut morbi. Vel eros donec ac odio. Gravida arcu ac tortor dignissim convallis aenean et tortor at. Molestie ac feugiat sed lectus vestibulum mattis ullamcorper velit sed. Volutpat sed cras ornare arcu dui. Mauris augue neque gravida in. Adipiscing bibendum est ultricies integer. Id donec ultrices tincidunt arcu. Augue eget arcu dictum varius duis at. At tellus at urna condimentum mattis pellentesque id nibh. Nam libero justo laoreet sit. Massa enim nec dui nunc mattis enim ut. Nulla at volutpat diam ut venenatis tellus. Eu turpis egestas pretium aenean. \n\nNibh tortor id aliquet lectus proin nibh nisl condimentum id. Nunc mi ipsum faucibus vitae aliquet nec ullamcorper sit amet. Quis hendrerit dolor magna eget est lorem ipsum. Tristique nulla aliquet enim tortor at auctor. Volutpat lacus laoreet non curabitur gravida arcu ac tortor. Volutpat blandit aliquam etiam erat velit. Purus faucibus ornare suspendisse sed nisi. In hac habitasse platea dictumst vestibulum rhoncus est pellentesque elit. \n\nQuisque egestas diam in arcu cursus euismod. Aliquet risus feugiat in ante metus dictum. Massa tincidunt nunc pulvinar sapien et. Natoque penatibus et magnis dis parturient montes nascetur ridiculus. Lectus nulla at volutpat diam ut venenatis tellus in metus. Enim nec dui nunc mattis enim ut. Amet facilisis magna etiam tempor. Tincidunt praesent semper feugiat nibh sed pulvinar proin gravida. Imperdiet proin fermentum leo vel orci porta non. Amet consectetur adipiscing elit pellentesque habitant morbi. Amet purus gravida quis blandit turpis cursus in hac. Iaculis urna id volutpat lacus. \n\nArcu odio ut sem nulla. Eget duis at tellus at urna. Semper eget duis at tellus at. Gravida quis blandit turpis cursus in hac habitasse. Netus et malesuada fames ac turpis egestas integer eget. At risus viverra adipiscing at in tellus integer feugiat. Posuere ac ut consequat semper viverra nam libero. In iaculis nunc sed augue lacus viverra vitae congue. Magna fermentum iaculis eu non diam. Iaculis at erat pellentesque adipiscing commodo elit at imperdiet dui. Sed enim ut sem viverra aliquet eget sit amet. \n\nAccumsan lacus vel facilisis volutpat. At varius vel pharetra vel turpis. At ultrices mi tempus imperdiet nulla malesuada pellentesque. Feugiat nisl pretium fusce id velit. Risus in hendrerit gravida rutrum. Sed felis eget velit aliquet. Turpis egestas integer eget aliquet. Augue ut lectus arcu bibendum at. Lectus magna fringilla urna porttitor. Augue neque gravida in fermentum et. Pulvinar etiam non quam lacus. Consectetur purus ut faucibus pulvinar elementum integer. Egestas diam in arcu cursus. Nulla posuere sollicitudin aliquam ultrices sagittis orci a. Adipiscing tristique risus nec feugiat in fermentum.",
+                                              ),
+                                            ),
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  );
+                                },
+                                child: const Text(
+                                  "terms and conditions",
+                                  style: TextStyle(
+                                      decoration: TextDecoration.underline,
+                                      decorationThickness: 0.7,
+                                      fontSize: 12,
+                                      fontWeight: FontWeight.w100),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 8),
+
+                    // register button
                     Row(
-                      children: <Widget>[
-                        Checkbox(
-                          value: checked,
-                          onChanged: (value) {
-                            setState(() {
-                              checked = value!;
-                            });
-                          },
-                          activeColor: Color(0xFFEFD080),
-                          checkColor: Colors.black,
-                        ),
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      // ignore: prefer_const_literals_to_create_immutables
+                      children: [
                         const Text(
-                          "I agree to the terms and conditions",
+                          "Have an account?",
                           style: TextStyle(
-                              fontSize: 12, fontWeight: FontWeight.w100),
+                              fontSize: 16, fontWeight: FontWeight.w100),
                         ),
+                        const SizedBox(width: 5),
+                        GestureDetector(
+                            onTap: widget.onTap,
+                            child: Text(
+                              "Sign In",
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  color: Color(0xFFC7623A),
+                                  fontWeight: FontWeight.bold),
+                            )),
                       ],
                     ),
+
+                    const SizedBox(height: 10),
+
+                    // login button
+                    MySubmitButton(
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            signUp();
+                          }
+                        },
+                        text: "Sign Up"),
                   ],
                 ),
               ),
-
-              const SizedBox(height: 8),
-
-              // register button
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                // ignore: prefer_const_literals_to_create_immutables
-                children: [
-                  const Text(
-                    "Have an account?",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w100),
-                  ),
-                  const SizedBox(width: 5),
-                  GestureDetector(
-                      onTap: widget.onTap,
-                      child: Text(
-                        "Sign In",
-                        style: TextStyle(
-                            fontSize: 16,
-                            color: Color(0xFFC7623A),
-                            fontWeight: FontWeight.bold),
-                      )),
-                ],
-              ),
-
-              const SizedBox(height: 10),
-
-              // login button
-              MySubmitButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      signUp();
-                    }
-                  },
-                  text: "Sign Up"),
-            ],
-          ),
-        )));
+            )));
   } // Widget
 } // _RegisterPageState

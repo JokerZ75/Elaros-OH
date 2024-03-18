@@ -48,6 +48,9 @@ dependencies:
   geolocator: ^11.0.0
   google_maps_flutter: ^2.6.0
   flutter_google_maps_webservices: ^1.1.1
+  pdf: ^3.10.8
+  localstorage: ^4.0.1+4
+  intl_phone_field: ^3.0.1
 
 dev_dependencies:
   flutter_test:

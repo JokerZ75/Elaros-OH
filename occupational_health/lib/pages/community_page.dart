@@ -1,8 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:occupational_health/components/my_submit_button.dart';
 import 'package:syncfusion_flutter_maps/maps.dart';
 
@@ -359,6 +357,7 @@ class _CommunityPageState extends State<CommunityPage> {
                     ),
                     Container(
                       child: MySubmitButton(
+                        style: TextStyle (backgroundColor: const Color(0xFFEFD080)),
                         onPressed: () {},
                         text: "Click here to view more posts",
                         textSize: 16,

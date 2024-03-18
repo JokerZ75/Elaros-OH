@@ -93,7 +93,52 @@ See the [open issues](https://github.com/JokerZ75/Elaros-OH/issues) for a full l
 
 ### Prerequisites
 
+To get the application up and running you will require:
+<br />
+* Flutter
+    - See how to install Flutter and how to get it up and running here: [Flutter](https://docs.flutter.dev/get-started/install).
+* Firebase
+    - You will need to set up a Firebase account and create a Firebase project with a plan of your choosing.
+    - See how to get Firebase working alongside Flutter here: [Firebase](https://firebase.google.com/docs/flutter/setup?platform=ios).
+
 ### Installation
+
+1. Clone the repository ([How to clone a repo](https://docs.github.com/en/repositories/creating-and-managing-repositories/cloning-a-repository)).
+2. Download the packages by running:
+```zsh
+  flutter pub get
+```
+
+#### Firebase
+
+To get your firebase ready to run the application either for development or deployment we will need to activate a few things.
+  * Activate authentication
+      - Add
+  * Activate firestore database
+      - Update its rules to:
+      ```zsh
+      rules_version = '2';
+      service cloud.firestore {
+        match /databases/{database}/documents {
+          match /{document=**} {
+            allow read, write: if true;
+          }
+        }
+      }
+      ```
+
+
+#### Android
+
+* Follow this guide for setup for Android app: [Flutter Android Guide (Windows)](https://developer.android.com/studio).
+* Follow this guide for setup for Android app: [Flutter Android Guide (Mac)](https://docs.flutter.dev/get-started/install/macos/mobile-android?tab=download).
+
+#### IOS
+
+* Follow this guide for setup for IOS app: [Flutter Android Guide (Mac)](https://docs.flutter.dev/get-started/install/macos/mobile-ios?tab=download).
+
+### Deployment
+
 
 
 
