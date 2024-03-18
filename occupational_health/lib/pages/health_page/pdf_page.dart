@@ -1,6 +1,5 @@
 import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:occupational_health/model/questionaire_averages.dart';
 import 'package:occupational_health/services/Assessment/assessment_service.dart';
