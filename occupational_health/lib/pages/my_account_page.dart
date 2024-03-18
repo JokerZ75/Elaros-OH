@@ -1,5 +1,3 @@
-import "package:cloud_firestore/cloud_firestore.dart";
-import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
 import "package:occupational_health/components/my_date_picker.dart";
 import "package:occupational_health/components/my_submit_button.dart";
@@ -34,10 +32,11 @@ class MyAccountPage extends StatefulWidget {
  final TextEditingController _reloadController = TextEditingController();
 
 class _MyAccountPageState extends State<MyAccountPage> {
+  final AuthService _auth = AuthService();
+
   void signOut() async {
-    final AuthService authService = AuthService();
     try {
-      await authService.signOut();
+      await _auth.signOut();
     } catch (e) {
       ScaffoldMessenger.of(context)
           .showSnackBar(SnackBar(content: Text(e.toString())));
@@ -83,10 +82,8 @@ class _MyAccountPageState extends State<MyAccountPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     setState(() {
-      AuthService _auth = AuthService();
       _auth.getUserData().then((user) => {
         nameController.text = user.name,
         emailController.text = user.email,
@@ -237,9 +234,9 @@ class _MyAccountPageState extends State<MyAccountPage> {
                       if (_formKey.currentState!.validate()) {
                         final snackBar = SnackBar(
                           backgroundColor: const Color(0xFFEFD080),
-                          content: Container(
+                          content: const SizedBox(
                             height: 50,
-                            child: const Text(
+                            child:  Text(
                               'An email has been sent to confirm your changes.',
                               style: TextStyle(
                                 color: Colors.black,
