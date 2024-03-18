@@ -1,17 +1,22 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:occupational_health/components/my_keyboard_hider.dart';
 import 'package:occupational_health/components/my_submit_button.dart';
 import 'package:occupational_health/components/my_text_form_field.dart';
 import 'package:occupational_health/model/user.dart';
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class AuthService extends ChangeNotifier {
   // instance of FirebaseAuth
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   // instance for the firestore
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  bool signedInWithGoogle = false;
 
   // sign in with email and password
   Future<void> signInWithEmailAndPassword(
@@ -196,7 +201,12 @@ class AuthService extends ChangeNotifier {
   // sign out
   Future<void> signOut() async {
     try {
+      // sign out
       await _auth.signOut();
+      // sign out from google
+      await _googleSignIn.signOut();
+
+      signedInWithGoogle = false;
     } catch (e) {
       throw Exception(e);
     }
@@ -264,6 +274,83 @@ class AuthService extends ChangeNotifier {
       throw Exception(e);
     }
   } // deleteUser
+
+  // Sign in with Google
+  Future<void> signInWithGoogle() async {
+    try {
+      // Trigger the Google Sign In process
+      // Fetch email, profile and date of birth
+      final GoogleSignInAccount? googleUser = await GoogleSignIn(
+        scopes: <String>[
+          'email',
+          'profile',
+          'https://www.googleapis.com/auth/user.birthday.read'
+        ],
+      ).signIn();
+
+      
+
+      // If the process is cancelled
+      if (googleUser == null) {
+        throw Exception("Sign in process cancelled");
+      }
+
+      // Get the Google Sign In Authentication
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
+
+      // Create a new credential
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      // Sign in with the credential
+      await _auth.signInWithCredential(credential);
+
+      // User Info
+      final User? user = _auth.currentUser;
+
+      // Get the user's date of birth
+      final headers = await googleUser.authHeaders;
+      final r = await http.get(
+          Uri.parse(
+              "https://people.googleapis.com/v1/people/me?personFields=birthdays"),
+          headers: headers);
+      final response = json.decode(r.body)["birthdays"][0]["date"];
+
+      // Get the date of birth
+      var dateOfBirth;
+      if (response["month"] < 10) {
+        response["month"] = "0${response["month"]}";
+      }
+      if (response["day"] < 10) {
+        response["day"] = "0${response["day"]}";
+      }
+      try {
+      dateOfBirth = DateTime.parse("${response["year"]}-${response["month"]}-${response["day"]} 00:00:00.000");
+      } catch (e) {
+        dateOfBirth = DateTime(2022);
+      }
+
+      // Create a new document for the user with the uid
+      _firestore.collection('users').doc(user!.uid).set({
+        'email': user.email,
+        'name': user.displayName,
+        'dateOfBirth': dateOfBirth,
+        'occupation': "Not Specified",
+        'uid': user.uid,
+        'timestamp': FieldValue.serverTimestamp(),
+      }, SetOptions(merge: true));
+
+      signedInWithGoogle = true;
+
+
+      return;
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
 
   // Get User Info
   Future<MyUser> getUserData() async {
