@@ -29,6 +29,8 @@ class _HealthPageState extends State<HealthPage> {
       SymptomServerityChartData(
           monthlyAverages: {} // Monthly averages will be added here
           );
+  int biggestFunctionalValue = 3;
+  int biggestSymptomValue = 3;
 
   double value = 0;
 
@@ -73,6 +75,9 @@ class _HealthPageState extends State<HealthPage> {
         keys = keys.sublist(keys.length - 4);
       }
 
+      double bigF = 0;
+      double bigS = 0;
+
       // convert the data to the format we need
       for (var month in keys) {
         functionalData[month] = {};
@@ -82,13 +87,20 @@ class _HealthPageState extends State<HealthPage> {
           Map<String, double> monthData = value.monthlySectionAverages[month]!;
           for (var section in monthData.keys) {
             if (funcNames.containsKey(section)) {
+              if (monthData[section]! > bigF) {
+                bigF = monthData[section]!;
+              }
               functionalData[month]![funcNames[section]!] = monthData[section]!;
             } else if (symptomNames.containsKey(section)) {
+              if (monthData[section]! > bigS) {
+                bigS = monthData[section]!;
+              }
               symptomData[month]![symptomNames[section]!] = monthData[section]!;
             }
           }
         }
       }
+
       setState(() {
         if (functionalData.isEmpty) {
           functionalData["0"] = {
@@ -98,6 +110,7 @@ class _HealthPageState extends State<HealthPage> {
             "Daily Activities": 0,
             "Social Role": 0
           };
+          biggestFunctionalValue = 0;
         }
         if (symptomData.isEmpty) {
           symptomData["0"] = {
@@ -112,9 +125,12 @@ class _HealthPageState extends State<HealthPage> {
             "Mood": 0,
             "Sleep": 0
           };
+          biggestSymptomValue = 0;
         } else {
           functionalChartData.monthlyAverages = functionalData;
           symptomServerityChartData.monthlyAverages = symptomData;
+          biggestFunctionalValue = bigF.toInt();
+          biggestSymptomValue = bigS.toInt();
         }
       });
     });
@@ -186,8 +202,11 @@ class _HealthPageState extends State<HealthPage> {
                             // Show Linear Progress Indicator in snackbar
                             if (value != null)
                               {
-                                MyTopProgressCard(duration:const Duration (seconds: 2),
-                                    title: "Refreshing Graph", distanceFromTop: 250).showSnackBar(context),
+                                MyTopProgressCard(
+                                        duration: const Duration(seconds: 2),
+                                        title: "Refreshing Graph",
+                                        distanceFromTop: 250)
+                                    .showSnackBar(context),
 
                                 // wait 500ms before updating the chart
                                 Future.delayed(const Duration(seconds: 2), () {
@@ -267,6 +286,7 @@ class _HealthPageState extends State<HealthPage> {
           MyRadarChart(
             title: 'Functional disability score',
             dataSets: functionalChartData.getRawData(),
+            ticks: biggestFunctionalValue,
             getTitle: (index, value) {
               switch (index) {
                 case 0:
@@ -301,6 +321,7 @@ class _HealthPageState extends State<HealthPage> {
           ),
           MyRadarChart(
             title: 'Symptoms serverity score',
+            ticks: biggestSymptomValue,
             dataSets: symptomServerityChartData.getRawData(),
             getTitle: (index, value) {
               switch (index) {
