@@ -51,6 +51,9 @@ dependencies:
   localstorage: ^4.0.1+4
   intl_phone_field: ^3.0.1
   open_file: ^3.3.2
+  google_sign_in: ^6.2.1
+  googleapis: ^13.1.0
+  http: ^1.2.0
 
 dev_dependencies:
   flutter_test:
@@ -109,6 +112,7 @@ flutter:
     - assets/lad.json
     - assets/lad2.json
     - assets/world_map.json
+    - assets/googleIcon.png
 
   # To add assets to your application, add an assets section, like this:
   #assets:

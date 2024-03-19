@@ -1,3 +1,4 @@
+import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
 import "package:occupational_health/components/my_date_picker.dart";
 import "package:occupational_health/components/my_submit_button.dart";
