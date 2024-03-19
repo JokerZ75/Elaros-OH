@@ -181,18 +181,16 @@ class AuthService extends ChangeNotifier {
   } // signInWithEmailAndPassword
 
   // Update Info
-  Future<void> updateAccount(String? email, String? password,
+  Future<void> updateAccount(
       DateTime? dateOfBirth, String? occupation, String? name) async {
     final FirebaseAuth _auth = FirebaseAuth.instance;
     final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
     try {
       _firestore.collection('users').doc(_auth.currentUser!.uid).set({
-        'email': email,
         'name': name,
         'dateOfBirth': dateOfBirth,
         'occupation': occupation,
-        'password': password,
       }, SetOptions(merge: true));
     } catch (e) {
       throw Exception(e);
