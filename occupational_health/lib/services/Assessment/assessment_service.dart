@@ -110,6 +110,21 @@ class AssessmentService extends ChangeNotifier {
 
       QuestionaireAverages questionaireAverages =
           QuestionaireAverages.fromMap(averages.data() as Map<String, dynamic>);
+
+      // Round Averages to nearest whole number
+      for (var month in questionaireAverages.monthlySectionAverages.keys) {
+        for (var section
+            in questionaireAverages.monthlySectionAverages[month]!.keys) {
+          questionaireAverages.monthlySectionAverages[month]![section] =
+              questionaireAverages.monthlySectionAverages[month]![section]!
+                  .roundToDouble();
+        }
+      }
+
+      for (var section in questionaireAverages.overallAverages.keys) {
+        questionaireAverages.overallAverages[section] =
+            questionaireAverages.overallAverages[section]!.roundToDouble();
+      }
         
       // Remove numberOfQuestionaires from monthlySectionAverages
       for (var month in questionaireAverages.monthlySectionAverages.keys) {
@@ -208,23 +223,21 @@ class AssessmentService extends ChangeNotifier {
       }
     }
 
-    // Divide the averages by the number of questionaires to get the actual average and round to nearest whole number
+    // Divide the averages by the number of questionaires to get the actual averages
     for (var month in averages.monthlySectionAverages.keys) {
       for (var section in averages.monthlySectionAverages[month]!.keys) {
         if (section != "numberOfQuestionaires") {
           averages.monthlySectionAverages[month]![section] = (averages
                       .monthlySectionAverages[month]![section]! /
                   averages
-                      .monthlySectionAverages[month]!["numberOfQuestionaires"]!)
-              .roundToDouble();
+                      .monthlySectionAverages[month]!["numberOfQuestionaires"]!);
         }
       }
     }
 
     for (var section in averages.overallAverages.keys) {
       averages.overallAverages[section] =
-          (averages.overallAverages[section]! / totalQuestionaires)
-              .roundToDouble();
+          (averages.overallAverages[section]! / totalQuestionaires);
     }
 
     // Save the averages to the database

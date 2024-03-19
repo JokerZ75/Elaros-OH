@@ -37,8 +37,8 @@ class _HealthPageState extends State<HealthPage> {
     _setChartData();
   }
 
-  void _setChartData() async {
-    await _assessmentService.getQuestionaireAverages().then((value) {
+  void _setChartData() {
+    _assessmentService.getQuestionaireAverages().then((value) {
       Map<String, String> funcNames = {
         "Communication": "Communication",
         "Walking or moving around ": "Mobility",
@@ -68,15 +68,12 @@ class _HealthPageState extends State<HealthPage> {
       // sort the keys
       keys.sort((a, b) => int.parse(a).compareTo(int.parse(b)));
 
-
       if (keys.length > 4) {
         keys = keys.sublist(keys.length - 4);
       }
 
-
       // convert the data to the format we need
       for (var month in keys) {
-        
         functionalData[month] = {};
         symptomData[month] = {};
 
@@ -84,11 +81,9 @@ class _HealthPageState extends State<HealthPage> {
           Map<String, double> monthData = value.monthlySectionAverages[month]!;
           for (var section in monthData.keys) {
             if (funcNames.containsKey(section)) {
-              functionalData[month]![funcNames[section]!] =
-                  monthData[section]!;
+              functionalData[month]![funcNames[section]!] = monthData[section]!;
             } else if (symptomNames.containsKey(section)) {
-              symptomData[month]![symptomNames[section]!] =
-                  monthData[section]!;
+              symptomData[month]![symptomNames[section]!] = monthData[section]!;
             }
           }
         }
@@ -181,12 +176,40 @@ class _HealthPageState extends State<HealthPage> {
             Expanded(
                 child: MySubmitButton(
                     style: const TextStyle(backgroundColor: Color(0xFFEFD080)),
-                    onPressed: () {
+                    onPressed: () async {
                       Navigator.push(
                           context,
                           MaterialPageRoute(
-                              builder: (context) => QuestionairePage(
-                                  onAssessmentComplete: _setChartData)));
+                              builder: (context) =>
+                                  const QuestionairePage())).then((value) => {
+                            // Show Linear Progress Indicator in snackbar
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                                content: const LinearProgressIndicator(
+                                  backgroundColor: Colors.white,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                      Color(0xFFEFD080)),
+                                ),
+                                duration: const Duration(seconds: 2),
+                                padding: const EdgeInsets.all(15),
+                                margin: EdgeInsets.only(
+                                    bottom: MediaQuery.of(context).size.height -
+                                        200,
+                                    left: 10,
+                                    right: 10),
+                                behavior: SnackBarBehavior.floating,
+                                action: SnackBarAction(
+                                  label: "Close",
+                                  onPressed: () {
+                                    ScaffoldMessenger.of(context)
+                                        .hideCurrentSnackBar();
+                                  },
+                                ))),
+
+                            // wait 500ms before updating the chart
+                            Future.delayed(const Duration(seconds: 2), () {
+                              _setChartData();
+                            })
+                          });
                     },
                     fontWeight: FontWeight.w600,
                     text: 'Click To Take A Covid\nAssessment')),
