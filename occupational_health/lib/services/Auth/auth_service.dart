@@ -309,6 +309,13 @@ class AuthService extends ChangeNotifier {
       // User Info
       final User? user = _auth.currentUser;
 
+
+      // If the UID is already in the database
+      final DocumentSnapshot doc =
+          await _firestore.collection('users').doc(user!.uid).get();
+      if (doc.exists) {
+        return;
+      }
       // Get the user's date of birth
       final headers = await googleUser.authHeaders;
       final r = await http.get(
