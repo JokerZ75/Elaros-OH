@@ -2,6 +2,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:occupational_health/components/my_radar_chart.dart';
 import 'package:occupational_health/components/my_submit_button.dart';
+import 'package:occupational_health/components/my_top_progress_card.dart';
 import 'package:occupational_health/pages/health_page/pdf_page.dart';
 import 'package:occupational_health/pages/health_page/previous_page.dart';
 import 'package:occupational_health/pages/health_page/questionaire_page.dart';
@@ -183,32 +184,16 @@ class _HealthPageState extends State<HealthPage> {
                               builder: (context) =>
                                   const QuestionairePage())).then((value) => {
                             // Show Linear Progress Indicator in snackbar
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                content: const LinearProgressIndicator(
-                                  backgroundColor: Colors.white,
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                      Color(0xFFEFD080)),
-                                ),
-                                duration: const Duration(seconds: 2),
-                                padding: const EdgeInsets.all(15),
-                                margin: EdgeInsets.only(
-                                    bottom: MediaQuery.of(context).size.height -
-                                        200,
-                                    left: 10,
-                                    right: 10),
-                                behavior: SnackBarBehavior.floating,
-                                action: SnackBarAction(
-                                  label: "Close",
-                                  onPressed: () {
-                                    ScaffoldMessenger.of(context)
-                                        .hideCurrentSnackBar();
-                                  },
-                                ))),
+                            if (value != null)
+                              {
+                                MyTopProgressCard(duration:const Duration (seconds: 2),
+                                    title: "Refreshing Graph", distanceFromTop: 250).showSnackBar(context),
 
-                            // wait 500ms before updating the chart
-                            Future.delayed(const Duration(seconds: 2), () {
-                              _setChartData();
-                            })
+                                // wait 500ms before updating the chart
+                                Future.delayed(const Duration(seconds: 2), () {
+                                  _setChartData();
+                                })
+                              }
                           });
                     },
                     fontWeight: FontWeight.w600,

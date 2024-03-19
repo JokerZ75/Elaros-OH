@@ -39,8 +39,12 @@ class AuthService extends ChangeNotifier {
       if (firstHint is! PhoneMultiFactorInfo) {
         return;
       }
-      final phoneInfo = firstHint;
-      await _verifyPhoneNumber(phoneInfo.phoneNumber!, context);
+
+      if (context.mounted) {
+        await _verifyPhoneNumber(firstHint!.phoneNumber, context, e);
+      }
+
+      return;
     } on FirebaseAuthException catch (e) {
       throw Exception(e);
     } catch (e) {
@@ -48,12 +52,44 @@ class AuthService extends ChangeNotifier {
     }
   }
 
-  // Verify Phone Number
-  Future<void> _verifyPhoneNumber(
-      String phoneNumber, BuildContext context) async {
+  // Reset Password
+  Future<void> resetPassword(String email) async {
     try {
+      await _auth.sendPasswordResetEmail(email: email);
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  // Change Email
+  Future<void> changeEmail(String newEmail, String password) async {
+    try {
+      final User user = _auth.currentUser!;
+      final AuthCredential credential = EmailAuthProvider.credential(
+          email: user.email ?? "", password: password);
+      await user.reauthenticateWithCredential(credential);
+      await user.verifyBeforeUpdateEmail(newEmail);
+
+      await _firestore.collection('users').doc(user.uid).set({
+        'email': newEmail,
+      }, SetOptions(merge: true));
+    } on FirebaseAuthException catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  // Verify Phone Number
+  Future<void> _verifyPhoneNumber(String phoneNumber, BuildContext context,
+      FirebaseAuthMultiFactorException e) async {
+    try {
+      final firstHint = e.resolver.hints.first;
+      if (firstHint is! PhoneMultiFactorInfo) {
+        return;
+      }
       await _auth.verifyPhoneNumber(
           phoneNumber: phoneNumber,
+          multiFactorInfo: firstHint,
+          multiFactorSession: e.resolver.session,
           verificationCompleted: (PhoneAuthCredential credential) async {},
           verificationFailed: (FirebaseAuthException e) {
             ScaffoldMessenger.of(context)
@@ -61,17 +97,20 @@ class AuthService extends ChangeNotifier {
           },
           codeSent: (String verificationId, int? resendToken) async {
             // get the sms code from user, using a text field
-            final smsCode =
-                await _getOTP(context, phoneNumber, resendToken: resendToken);
+            final smsCode = await _getOTP(
+                context, phoneNumber, e.resolver.session,
+                resendToken: resendToken);
 
             if (smsCode != null) {
               // Create a PhoneAuthCredential with the code
               final phoneAuthCredential = PhoneAuthProvider.credential(
                   verificationId: verificationId, smsCode: smsCode);
 
-              // Sign the user in
+              // Sign in with the credential
               try {
-                await _auth.signInWithCredential(phoneAuthCredential);
+                await e.resolver.resolveSignIn(
+                  PhoneMultiFactorGenerator.getAssertion(phoneAuthCredential),
+                );
               } on FirebaseAuthException catch (e) {
                 throw Exception(e);
               }
@@ -87,7 +126,8 @@ class AuthService extends ChangeNotifier {
   }
 
   // a dialog to get the OTP
-  Future<dynamic> _getOTP(BuildContext context, String phoneNumber,
+  Future<dynamic> _getOTP(
+      BuildContext context, String phoneNumber, MultiFactorSession session,
       {int? resendToken}) async {
     return showDialog(
         context: context,
@@ -155,6 +195,51 @@ class AuthService extends ChangeNotifier {
                     // Go back to login
                     const SizedBox(height: 25),
 
+                    // Resend
+                    GestureDetector(
+                      onTap: () async {
+                        await FirebaseAuth.instance.verifyPhoneNumber(
+                          multiFactorSession: session,
+                          phoneNumber: phoneNumber,
+                          verificationCompleted: (e) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text("Phone number verified")),
+                            );
+                          },
+                          verificationFailed: (e) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text("Failed to send")),
+                            );
+                          },
+                          codeSent: (String verificationId, int? resendToken) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text("OTP sent")),
+                            );
+                          },
+                          codeAutoRetrievalTimeout: (String verificationId) {},
+                          timeout: const Duration(seconds: 60),
+                          forceResendingToken: resendToken,
+                        );
+                      },
+                      child: const Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Icon(Icons.refresh, color: Color(0xFFC7623A)),
+                          Text(
+                            "Resend OTP",
+                            style: TextStyle(
+                                fontSize: 16,
+                                color: Color(0xFFC7623A),
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
+                      ),
+                    ),
+
+                    const SizedBox(height: 25),
+                    // Go back to login
+
                     GestureDetector(
                       onTap: () {
                         Navigator.pop(context);
@@ -204,7 +289,6 @@ class AuthService extends ChangeNotifier {
       await _auth.signOut();
       // sign out from google
       await _googleSignIn.signOut();
-
     } catch (e) {
       throw Exception(e);
     }
@@ -247,9 +331,6 @@ class AuthService extends ChangeNotifier {
       throw Exception(e);
     }
   } // sendEmailVerification
-
-  // Enroll to MFA
-  Future<void> enroll() async {}
 
   // Delete user
   Future<void> deleteUser() async {
@@ -307,7 +388,6 @@ class AuthService extends ChangeNotifier {
       // User Info
       final User? user = _auth.currentUser;
 
-
       // If the UID is already in the database
       final DocumentSnapshot doc =
           await _firestore.collection('users').doc(user!.uid).get();
@@ -347,8 +427,7 @@ class AuthService extends ChangeNotifier {
         'timestamp': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
       return;
-    } 
-    catch (e) {
+    } catch (e) {
       throw Exception(e);
     }
   }
