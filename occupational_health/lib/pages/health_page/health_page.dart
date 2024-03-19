@@ -1,5 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:occupational_health/components/my_bar_chart.dart';
 import 'package:occupational_health/components/my_radar_chart.dart';
 import 'package:occupational_health/components/my_submit_button.dart';
 import 'package:occupational_health/pages/health_page/pdf_page.dart';
@@ -19,6 +20,9 @@ class _HealthPageState extends State<HealthPage> {
   double angleValue = 0;
   bool relativeAngleMode = true;
   int graphPage = 0;
+  bool graphType = true;
+  Color radarColour = Colors.blue;
+  Color barColour = Colors.grey;
 
   final AssessmentService _assessmentService = AssessmentService();
   final FuncionalChartData functionalChartData = FuncionalChartData(
@@ -119,6 +123,169 @@ class _HealthPageState extends State<HealthPage> {
     });
   }
 
+  List<BarChartGroupData> barChartData = [
+    BarChartGroupData(x: 0, barRods: [
+      BarChartRodData(
+          fromY: 0,
+          toY: 0,
+          color: Colors.blue,
+          width: 3,
+          borderRadius: BorderRadius.zero),
+      BarChartRodData(
+          fromY: 0,
+          toY: 0,
+          color: Colors.green,
+          width: 3,
+          borderRadius: BorderRadius.zero),
+      BarChartRodData(
+          fromY: 0,
+          toY: 0,
+          color: Colors.red,
+          width: 3,
+          borderRadius: BorderRadius.zero),
+      BarChartRodData(
+          fromY: 0,
+          toY: 0,
+          color: Colors.purple,
+          width: 3,
+          borderRadius: BorderRadius.zero),
+      BarChartRodData(
+          fromY: 0,
+          toY: 0,
+          color: Colors.black,
+          width: 3,
+          borderRadius: BorderRadius.zero),
+    ]),
+    BarChartGroupData(x: 4, barRods: [
+      BarChartRodData(
+          fromY: 0,
+          toY: 3,
+          color: Colors.blue,
+          width: 3,
+          borderRadius: BorderRadius.zero),
+      BarChartRodData(
+          fromY: 0,
+          toY: 3,
+          color: Colors.green,
+          width: 3,
+          borderRadius: BorderRadius.zero),
+      BarChartRodData(
+          fromY: 0,
+          toY: 3,
+          color: Colors.red,
+          width: 3,
+          borderRadius: BorderRadius.zero),
+      BarChartRodData(
+          fromY: 0,
+          toY: 3,
+          color: Colors.purple,
+          width: 3,
+          borderRadius: BorderRadius.zero),
+      BarChartRodData(
+          fromY: 0,
+          toY: 3,
+          color: Colors.black,
+          width: 3,
+          borderRadius: BorderRadius.zero),
+    ]),
+    BarChartGroupData(x: 6, barRods: [
+      BarChartRodData(
+          fromY: 0,
+          toY: 3,
+          color: Colors.blue,
+          width: 3,
+          borderRadius: BorderRadius.zero),
+      BarChartRodData(
+          fromY: 0,
+          toY: 3,
+          color: Colors.green,
+          width: 3,
+          borderRadius: BorderRadius.zero),
+      BarChartRodData(
+          fromY: 0,
+          toY: 3,
+          color: Colors.red,
+          width: 3,
+          borderRadius: BorderRadius.zero),
+      BarChartRodData(
+          fromY: 0,
+          toY: 3,
+          color: Colors.purple,
+          width: 3,
+          borderRadius: BorderRadius.zero),
+      BarChartRodData(
+          fromY: 0,
+          toY: 2,
+          color: Colors.black,
+          width: 3,
+          borderRadius: BorderRadius.zero),
+    ]),
+    BarChartGroupData(x: 8, barRods: [
+      BarChartRodData(
+          fromY: 0,
+          toY: 2,
+          color: Colors.blue,
+          width: 3,
+          borderRadius: BorderRadius.zero),
+      BarChartRodData(
+          fromY: 0,
+          toY: 2,
+          color: Colors.green,
+          width: 3,
+          borderRadius: BorderRadius.zero),
+      BarChartRodData(
+          fromY: 0,
+          toY: 3,
+          color: Colors.red,
+          width: 3,
+          borderRadius: BorderRadius.zero),
+      BarChartRodData(
+          fromY: 0,
+          toY: 3,
+          color: Colors.purple,
+          width: 3,
+          borderRadius: BorderRadius.zero),
+      BarChartRodData(
+          fromY: 0,
+          toY: 2,
+          color: Colors.black,
+          width: 3,
+          borderRadius: BorderRadius.zero),
+    ]),
+    BarChartGroupData(x: 10, barRods: [
+      BarChartRodData(
+          fromY: 0,
+          toY: 3,
+          color: Colors.blue,
+          width: 3,
+          borderRadius: BorderRadius.zero),
+      BarChartRodData(
+          fromY: 0,
+          toY: 0,
+          color: Colors.green,
+          width: 3,
+          borderRadius: BorderRadius.zero),
+      BarChartRodData(
+          fromY: 0,
+          toY: 1,
+          color: Colors.red,
+          width: 3,
+          borderRadius: BorderRadius.zero),
+      BarChartRodData(
+          fromY: 0,
+          toY: 3,
+          color: Colors.purple,
+          width: 3,
+          borderRadius: BorderRadius.zero),
+      BarChartRodData(
+          fromY: 0,
+          toY: 1,
+          color: Colors.black,
+          width: 3,
+          borderRadius: BorderRadius.zero),
+    ]),
+  ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -127,10 +294,38 @@ class _HealthPageState extends State<HealthPage> {
       padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
       child: Column(
         children: <Widget>[
-          // Add Coursel of 2 charts here
-          _buildChartCoursel(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TextButton(
+                  onPressed: () {
+                    setState(() {
+                      graphType = true;
+                      radarColour = Colors.blue;
+                      barColour = Colors.grey;
+                      // graphPage = 0;
+                    });
+                  },
+                  child: Text(
+                    'Radar Chart',
+                    style: TextStyle(color: radarColour),
+                  )),
+              TextButton(
+                  onPressed: () {
+                    setState(() {
+                      graphType = false;
+                      radarColour = Colors.grey;
+                      barColour = Colors.blue;
+                      // graphPage = 0;
+                    });
+                  },
+                  child: Text('Bar Chart', style: TextStyle(color: barColour))),
+            ],
+          ),
 
-          // Circles to show page number
+          // Add Coursel of 2 charts here
+          if (graphType) _buildRaderCarousel() else _buildBarCarousel(),
+          // if (graphType)
           Column(
             children: [
               Row(
@@ -167,6 +362,7 @@ class _HealthPageState extends State<HealthPage> {
               ),
             ],
           ),
+          // if (!graphType) MyBarChart(title: "Functional disability score", dataSets: barChartData,),
 
           const SizedBox(height: 5),
 
@@ -269,7 +465,7 @@ class _HealthPageState extends State<HealthPage> {
     )));
   }
 
-  Widget _buildChartCoursel() {
+  Widget _buildRaderCarousel() {
     return SizedBox(
       height: 470,
       child: PageView(
@@ -375,6 +571,24 @@ class _HealthPageState extends State<HealthPage> {
               }
             },
           ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBarCarousel() {
+    return SizedBox(
+      height: 470,
+      child: PageView(
+        onPageChanged: (value) => {
+          setState(() {
+            graphPage = value;
+          })
+        },
+        children: <Widget>[
+          MyBarChart(
+              title: "Functional disability score", dataSets: barChartData),
+          MyBarChart(title: "Symptons severity score", dataSets: barChartData),
         ],
       ),
     );
