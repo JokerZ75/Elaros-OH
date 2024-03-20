@@ -5,6 +5,7 @@ import "package:occupational_health/components/my_submit_button.dart";
 import "package:occupational_health/components/my_text_form_field.dart";
 import "package:occupational_health/pages/page_view_main.dart";
 import "package:intl_phone_field/intl_phone_field.dart";
+import "package:occupational_health/services/Assessment/onboard_gate.dart";
 import "package:occupational_health/services/Auth/auth_service.dart";
 
 class MfaGate extends StatefulWidget {
@@ -108,7 +109,7 @@ class _MfaGateState extends State<MfaGate> {
           }
           if (snapshot.hasData) {
             if (_isVerified || _signedInWithGoogle) {
-              return const ListViewMain();
+              return const OnboardGate();
             }
 
             if (snapshot.data == null || snapshot.data!.isEmpty) {
@@ -116,7 +117,7 @@ class _MfaGateState extends State<MfaGate> {
               return _buildMfaEnroller(context);
             }
             else {
-              return const ListViewMain();
+              return const OnboardGate();
             }
           }
           return const Center(

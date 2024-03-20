@@ -163,14 +163,29 @@ class _LoginPageState extends State<LoginPage> {
 
                   // Google button - circle button with G
                   GestureDetector(
-                    onTap: () {
+                    onTap: () async {
                       final authService =
                           Provider.of<AuthService>(context, listen: false);
                       try {
-                        authService.signInWithGoogle();
+                        // show load spinner dialog while waiting
+                        showDialog(
+                            context: context,
+                            builder: (BuildContext context) {
+                              return const Center(
+                                child: CircularProgressIndicator(),
+                              );
+                            },
+                            barrierDismissible: false);
+                        await authService.signInWithGoogle();
+                        if (mounted) {
+                          Navigator.pop(context);
+                        }
                       } catch (e) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text(e.toString())));
+                        if (mounted) {
+                          Navigator.pop(context);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text(e.toString())));
+                        }
                       }
                     },
                     child: Container(

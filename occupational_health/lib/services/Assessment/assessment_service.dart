@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:googleapis/forms/v1.dart';
 import 'package:occupational_health/model/questionaire.dart';
 import 'package:occupational_health/model/questionaire_averages.dart';
 import 'package:geolocator/geolocator.dart';
@@ -9,6 +8,45 @@ import 'package:geolocator/geolocator.dart';
 class AssessmentService extends ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  // Check if current user has taken onboarding questionaire
+  Future<bool> hasTakenOnboardingQuestionaire() async {
+    try {
+      final assessmentData = await _firestore
+          .collection('assessments')
+          .doc(_auth.currentUser!.uid)
+          .get();
+
+      final data = assessmentData.data();
+      if (data == null) {
+        return false;
+      }
+
+      // check if onboarding_questionaire exists
+      return data.containsKey('onboarding_questionaire');
+    } catch (e) {
+      throw Exception(e);
+    }
+  } // hasTakenOnboardingQuestionaire
+
+  // Save onboarding questionaire
+  Future<void> saveOnboardingQuestionaire(
+      Map<String, Map<String, int>> questionaire) async {
+    Questionaire newQuestionaire = Questionaire(
+      questionaire: questionaire,
+      timestamp: Timestamp.now(),
+    );
+    try {
+      await _firestore
+          .collection('assessments')
+          .doc(_auth.currentUser!.uid)
+          .set({
+        'onboarding_questionaire': newQuestionaire.toMap(),
+      }, SetOptions(merge: true));
+    } catch (e) {
+      throw Exception(e);
+    }
+  } // saveOnboardingQuestionaire
 
   Future<void> saveQuestionaire(
       Map<String, Map<String, int>> questionaire) async {
@@ -374,7 +412,6 @@ class AssessmentService extends ChangeNotifier {
           .collection('assessments')
           .doc(_auth.currentUser!.uid)
           .set(averages.toMap(), SetOptions(merge: true));
-      print("Averages Updated");
     } catch (e) {
       throw Exception(e);
     }

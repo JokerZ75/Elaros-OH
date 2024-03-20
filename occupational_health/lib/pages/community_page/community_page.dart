@@ -82,7 +82,7 @@ class _CommunityPageState extends State<CommunityPage> {
           markerId: MarkerId(location.hashCode.toString()),
           position: LatLng(location.latitude, location.longitude),
           infoWindow: InfoWindow(
-            title: "Most issue symptom",
+            title: "Most common issue",
             snippet: symptom,
           ),
         ),
