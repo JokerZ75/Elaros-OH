@@ -10,6 +10,14 @@ import 'package:occupational_health/pages/community_page/components/community_po
 import 'package:occupational_health/pages/community_page/forumn_page.dart';
 import 'package:occupational_health/services/Forum/forum_service.dart';
 import 'package:syncfusion_flutter_maps/maps.dart';
+import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/gestures.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:occupational_health/model/questionaire.dart';
+import 'package:occupational_health/services/Assessment/assessment_service.dart';
+import 'package:occupational_health/services/Location/location_service.dart';
 
 class CommunityPage extends StatefulWidget {
   const CommunityPage({Key? key}) : super(key: key);
@@ -19,51 +27,130 @@ class CommunityPage extends StatefulWidget {
 }
 
 class _CommunityPageState extends State<CommunityPage> {
-  late MapShapeSource _mapSource;
-  late MapZoomPanBehavior _zoomPanBehavior;
+
   final TextEditingController _commentController = TextEditingController();
   final TextEditingController _replyController = TextEditingController();
-  final textController = TextEditingController();
+  Completer<GoogleMapController> _controller = Completer();
+  List<Marker> markers = <Marker>[];
+  List<Circle> areas = <Circle>[
+    Circle(
+      circleId: CircleId("1"),
+      center: LatLng(53.553363, -1.390641),
+      radius: 100,
+      fillColor: Colors.red.withOpacity(0.5),
+      strokeWidth: 0,
+    ),
+    Circle(
+        circleId: CircleId("2"),
+        center: LatLng(53.553363, -1.390641),
+        radius: 20000,
+        fillColor: Colors.red.withOpacity(0.7),
+        strokeWidth: 0),
+  ];
 
-  // final List<String> comments = [
-  //   'I am so proud of you.',
-  //   'You are so strong.',
-  //   'Thank you for sharing.',
-  //   'Interesting topic!',
-  //   'You can do it!',
-  // ];
+  Map<String, bool> likedComments = {};
 
-  // final List<String> replies = [
-  //   'I am so proud of you.',
-  //   'You are so strong.',
-  //   'Thank you for sharing.',
-  //   'Interesting topic!',
-  //   'You can do it!',
-  // ];
+  late Map<String, int> numberOfLikes = {
+    for (String comment in comments) comment: 0,
+  };
 
-  // Map<String, bool> likedComments = {};
+  void _onMapCreated(GoogleMapController controller) async {
+    _controller.complete(controller);
+    // check for location permission
+    LocationService locationService = LocationService();
 
-  // late Map<String, int> numberOfLikes = {
-  //   for (String comment in comments) comment: 0,
-  // };
+
+    bool hasPermission = await locationService.checkPermission();
+
+    if (hasPermission) {
+      // get current location
+      var location = await locationService.getCurrentLocation();
+      controller.animateCamera(
+        CameraUpdate.newCameraPosition(
+          CameraPosition(
+            target: LatLng(location.latitude, location.longitude),
+            zoom: 7,
+          ),
+        ),
+      );
+    }
+  }
 
   @override
   void initState() {
-    _mapSource = MapShapeSource.asset("assets/world_map.json",
-        shapeDataField: "continent");
-
-    _zoomPanBehavior = MapZoomPanBehavior(
-      focalLatLng: MapLatLng(27.1751, 78.0421),
-      zoomLevel: 3,
-      showToolbar: true,
-      toolbarSettings: MapToolbarSettings(
-        position: MapToolbarPosition.topLeft,
-        iconColor: Colors.red,
-        itemBackgroundColor: Colors.green,
-        itemHoverColor: Colors.blue,
-      ),
-    );
+    // TODO: implement initState
     super.initState();
+    SetCircles();
+
+    // Get questions from the database
+  }
+
+  void SetCircles() async {
+    // Get the locations from the database
+    Map<GeoPoint, List<Questionaire>> questionaires =
+        await AssessmentService().getQuestionairesFromUsersWithLocation();
+    List<Circle> circles = <Circle>[];
+
+
+    // Get the most common symptom for each location
+    Map<GeoPoint, String> mostCommonSymptom =
+        await GetSymptomsMostCommonToLocations(questionaires);
+
+    // Make the circles
+    mostCommonSymptom.forEach((location, symptom) {
+      markers.add(
+        Marker(
+          markerId: MarkerId(location.hashCode.toString()),
+          position: LatLng(location.latitude, location.longitude),
+          infoWindow: InfoWindow(
+            title: "Most common symptom",
+            snippet: symptom,
+          ),
+        ),
+      );
+      circles.add(
+        Circle(
+          circleId: CircleId(location.hashCode.toString()),
+          center: LatLng(location.latitude, location.longitude),
+          radius: 10000,
+          fillColor: Colors.red.withOpacity(0.5),
+          strokeWidth: 0,
+          consumeTapEvents: true,
+        ),
+      );
+    });
+
+    // Set the circles
+    setState(() {
+      areas = circles;
+    });
+  }
+
+  Future<Map<GeoPoint, String>> GetSymptomsMostCommonToLocations(
+      Map<GeoPoint, List<Questionaire>> questionairesWithLocation) async {
+    Map<GeoPoint, String> mostCommonSymptom = {};
+
+    // Get the most common symptom for each location
+    questionairesWithLocation.forEach((location, questionaires) {
+      Map<String, int> symptomCount = {};
+      questionaires.forEach((questionaire) {
+        questionaire.questionaire.forEach((section, questions) {
+          questions.forEach((question, answer) {
+            if (answer == 1 || answer == 2 || answer == 3) {
+              symptomCount[question] = (symptomCount[question] ?? 0) + 1;
+            }
+          });
+        });
+      });
+      String mostCommonSymptomForLocation = symptomCount.entries
+          .reduce((a, b) => a.value > b.value ? a : b)
+          .key;
+      mostCommonSymptom[location] = mostCommonSymptomForLocation;
+    });
+
+    // Get the most common symptom for each location
+
+    return mostCommonSymptom;
   }
 
   @override
@@ -126,34 +213,43 @@ class _CommunityPageState extends State<CommunityPage> {
                 ),
               ),
               SizedBox(height: 20),
+
+
+              // Community Map
+
               Text(
                 "Community Map",
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.left,
               ),
-              Text(
-                'Click to expand',
-              ),
+
+
+              const SizedBox(height: 10),
+
               Container(
-                height: 200,
-                width: 300,
-                margin: const EdgeInsets.all(20),
-                padding: const EdgeInsets.all(30),
+                height: 300,
+                width: double.infinity,
                 decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black12),
+                  color: Color.fromARGB(255, 31, 29, 27),
+                  borderRadius: BorderRadius.circular(20),
                 ),
-                child: _mapSource != null
-                    ? SfMaps(
-                        layers: [
-                          MapTileLayer(
-                            urlTemplate:
-                                'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                            zoomPanBehavior: _zoomPanBehavior,
-                          ),
-                        ],
-                      )
-                    : CircularProgressIndicator(),
-              ),
+                child: GoogleMap(
+                  onMapCreated: _onMapCreated,
+                  initialCameraPosition: const CameraPosition(
+                    target: LatLng(53.553363, -1.390641),
+                    zoom: 7,
+                  ),
+                  myLocationButtonEnabled: false,
+                  myLocationEnabled: false,
+                  circles: areas.toSet(),
+                  markers: markers.toSet(),
+                  gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
+                    Factory<OneSequenceGestureRecognizer>(
+                      () => EagerGestureRecognizer(),
+                    ),
+                  },
+                ),
+              )
             ],
           ),
         ),

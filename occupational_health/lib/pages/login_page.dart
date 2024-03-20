@@ -5,6 +5,7 @@ import 'package:occupational_health/components/my_keyboard_hider.dart';
 import 'package:occupational_health/components/my_submit_button.dart';
 import 'package:occupational_health/components/my_text_form_field.dart';
 import 'package:occupational_health/services/Auth/auth_service.dart';
+import 'package:occupational_health/services/Location/location_service.dart';
 import 'package:provider/provider.dart';
 
 class LoginPage extends StatefulWidget {
@@ -36,7 +37,9 @@ class _LoginPageState extends State<LoginPage> {
           barrierDismissible: false);
       await authService.signInWithEmailAndPassword(
           emailController.text, passwordController.text, context);
-      if (mounted) Navigator.pop(context);
+      if (mounted) {
+        Navigator.pop(context);
+      }
     } catch (e) {
       if (mounted) {
         Navigator.pop(context);
@@ -149,7 +152,7 @@ class _LoginPageState extends State<LoginPage> {
                   ),
 
                   const SizedBox(height: 15),
-                  
+
                   // Sign in with google
                   const Text(
                     "Use google to sign in",
@@ -161,8 +164,14 @@ class _LoginPageState extends State<LoginPage> {
                   // Google button - circle button with G
                   GestureDetector(
                     onTap: () {
-                       final authService = Provider.of<AuthService>(context, listen: false);
+                      final authService =
+                          Provider.of<AuthService>(context, listen: false);
+                      try {
                         authService.signInWithGoogle();
+                      } catch (e) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text(e.toString())));
+                      }
                     },
                     child: Container(
                       width: 100,
@@ -179,7 +188,8 @@ class _LoginPageState extends State<LoginPage> {
                         ],
                       ),
                       child: const Center(
-                        child: Image(image: AssetImage('assets/googleIcon.png')),
+                        child:
+                            Image(image: AssetImage('assets/googleIcon.png')),
                       ),
                     ),
                   ),

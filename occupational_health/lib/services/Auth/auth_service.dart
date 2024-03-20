@@ -24,13 +24,13 @@ class AuthService extends ChangeNotifier {
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
           email: email, password: password);
 
-      // start multifactor session
-
       // create a new document for the user with the uid
       _firestore.collection('users').doc(userCredential.user!.uid).set({
         'email': email,
         'uid': userCredential.user!.uid,
       }, SetOptions(merge: true));
+
+      
 
       return;
     } on FirebaseAuthMultiFactorException catch (e) {
@@ -42,6 +42,7 @@ class AuthService extends ChangeNotifier {
 
       if (context.mounted) {
         await _verifyPhoneNumber(firstHint!.phoneNumber, context, e);
+
       }
 
       return;

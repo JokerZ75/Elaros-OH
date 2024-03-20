@@ -129,7 +129,8 @@ class _HealthPageState extends State<HealthPage> {
             "Mood": 0,
             "Sleep": 0
           };
-          biggestSymptomValue = 0;
+          biggestSymptomValue = 1;
+          biggestFunctionalValue = 1;
         } else {
           functionalChartData.monthlyAverages = functionalData;
           symptomServerityChartData.monthlyAverages = symptomData;
