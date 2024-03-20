@@ -123,43 +123,43 @@ class _HealthPageState extends State<HealthPage> {
     });
   }
 
-  List<BarChartGroupData> barChartData = [
-    BarChartGroupData(x: 0, barRods: [
-      _createBar(Colors.blue, 0),
-      _createBar(Colors.green, 0),
-      _createBar(Colors.red, 0),
-      _createBar(Colors.purple, 0),
-      _createBar(Colors.black, 0),
-    ]),
-    BarChartGroupData(x: 4, barRods: [
-      _createBar(Colors.blue, 3),
-      _createBar(Colors.green, 3),
-      _createBar(Colors.red, 3),
-      _createBar(Colors.purple, 3),
-      _createBar(Colors.black, 3),
-    ]),
-    BarChartGroupData(x: 6, barRods: [
-      _createBar(Colors.blue, 3),
-      _createBar(Colors.green, 3),
-      _createBar(Colors.red, 3),
-      _createBar(Colors.purple, 3),
-      _createBar(Colors.black, 2),
-    ]),
-    BarChartGroupData(x: 8, barRods: [
-      _createBar(Colors.blue, 2),
-      _createBar(Colors.green, 2),
-      _createBar(Colors.red, 3),
-      _createBar(Colors.purple, 3),
-      _createBar(Colors.black, 2),
-    ]),
-    BarChartGroupData(x: 10, barRods: [
-      _createBar(Colors.blue, 3),
-      _createBar(Colors.green, 0),
-      _createBar(Colors.red, 1),
-      _createBar(Colors.purple, 3),
-      _createBar(Colors.black, 1),
-    ]),
-  ];
+  // List<BarChartGroupData> barChartData = [
+  //   BarChartGroupData(x: 0, barRods: [
+  //     _createBar(Colors.blue, 0),
+  //     _createBar(Colors.green, 0),
+  //     _createBar(Colors.red, 0),
+  //     _createBar(Colors.purple, 0),
+  //     _createBar(Colors.black, 0),
+  //   ]),
+  //   BarChartGroupData(x: 4, barRods: [
+  //     _createBar(Colors.blue, 3),
+  //     _createBar(Colors.green, 3),
+  //     _createBar(Colors.red, 3),
+  //     _createBar(Colors.purple, 3),
+  //     _createBar(Colors.black, 3),
+  //   ]),
+  //   BarChartGroupData(x: 6, barRods: [
+  //     _createBar(Colors.blue, 3),
+  //     _createBar(Colors.green, 3),
+  //     _createBar(Colors.red, 3),
+  //     _createBar(Colors.purple, 3),
+  //     _createBar(Colors.black, 2),
+  //   ]),
+  //   BarChartGroupData(x: 8, barRods: [
+  //     _createBar(Colors.blue, 2),
+  //     _createBar(Colors.green, 2),
+  //     _createBar(Colors.red, 3),
+  //     _createBar(Colors.purple, 3),
+  //     _createBar(Colors.black, 2),
+  //   ]),
+  //   BarChartGroupData(x: 10, barRods: [
+  //     _createBar(Colors.blue, 3),
+  //     _createBar(Colors.green, 0),
+  //     _createBar(Colors.red, 1),
+  //     _createBar(Colors.purple, 3),
+  //     _createBar(Colors.black, 1),
+  //   ]),
+  // ];
 
   @override
   Widget build(BuildContext context) {
@@ -462,21 +462,62 @@ class _HealthPageState extends State<HealthPage> {
         },
         children: <Widget>[
           MyBarChart(
-              title: "Functional disability score", dataSets: barChartData),
-          MyBarChart(title: "Symptons severity score", dataSets: barChartData),
+              title: "Functional disability score",
+              dataSets: functionalChartData.getBarChartDataFunctional(),
+              titles: [
+                "Communication",
+                "Mobility",
+                "Personal Care",
+                "Daily Activities",
+                "Social Role"
+              ],
+              colors: [
+                Colors.blue,
+                Colors.green,
+                Colors.red,
+                Colors.purple,
+                Colors.black
+              ]),
+          MyBarChart(
+              title: "Symptons severity score",
+              dataSets: symptomServerityChartData.getBarChartDataSymptons(),
+              titles: [
+                "Breathlessness",
+                "Throat sensitivity",
+                "Fatigue",
+                "Smell / Taste",
+                "Pain / Discomfort"
+                    "Cognition",
+                "Palpitations / Dizziness",
+                "Worsening",
+                "Mood",
+                "Sleep",
+              ],
+              colors: [
+                Colors.blue,
+                Colors.green,
+                Colors.red,
+                Colors.purple,
+                Colors.black,
+                Colors.blue,
+                Colors.green,
+                Colors.red,
+                Colors.purple,
+                Colors.black
+              ]),
         ],
       ),
     );
   }
+}
 
-  static _createBar(Color color, double toY) {
-    return BarChartRodData(
-        fromY: 0,
-        toY: toY,
-        color: color,
-        width: 3,
-        borderRadius: BorderRadius.zero);
-  }
+_createBar(Color color, double toY) {
+  return BarChartRodData(
+      fromY: 0,
+      toY: toY,
+      color: color,
+      width: 3,
+      borderRadius: BorderRadius.zero);
 }
 
 class FuncionalChartData {
@@ -501,6 +542,27 @@ class FuncionalChartData {
           color: Colors.primaries[int.parse(month)],
           values: monthlyAverages[month]!.values.toList(),
         )
+    ];
+  }
+
+  List<BarChartGroupData> getBarChartDataFunctional() {
+    return [
+      BarChartGroupData(x: 0, barRods: [
+        _createBar(Colors.blue, 0),
+        _createBar(Colors.green, 0),
+        _createBar(Colors.red, 0),
+        _createBar(Colors.purple, 0),
+        _createBar(Colors.black, 0),
+      ]),
+      for (var month in monthlyAverages.keys)
+        BarChartGroupData(x: int.parse(month), barRods: [
+          _createBar(Colors.blue, monthlyAverages[month]!['Communication']!),
+          _createBar(Colors.green, monthlyAverages[month]!['Mobility']!),
+          _createBar(Colors.red, monthlyAverages[month]!['Personal Care']!),
+          _createBar(
+              Colors.purple, monthlyAverages[month]!['Daily Activities']!),
+          _createBar(Colors.black, monthlyAverages[month]!['Social Role']!),
+        ])
     ];
   }
 }
@@ -538,6 +600,34 @@ class SymptomServerityChartData {
           color: Colors.primaries[int.parse(month)],
           values: monthlyAverages[month]!.values.toList(),
         )
+    ];
+  }
+
+  List<BarChartGroupData> getBarChartDataSymptons() {
+    return [
+      BarChartGroupData(x: 0, barRods: [
+        _createBar(Colors.blue, 0),
+        _createBar(Colors.green, 0),
+        _createBar(Colors.red, 0),
+        _createBar(Colors.purple, 0),
+        _createBar(Colors.black, 0),
+      ]),
+      for (var month in monthlyAverages.keys)
+        BarChartGroupData(x: int.parse(month), barRods: [
+          _createBar(Colors.blue, monthlyAverages[month]!['Breathlessness']!),
+          _createBar(
+              Colors.green, monthlyAverages[month]!['Throat sensitivity']!),
+          _createBar(Colors.red, monthlyAverages[month]!['Fatigue']!),
+          _createBar(Colors.purple, monthlyAverages[month]!['Smell / Taste']!),
+          _createBar(
+              Colors.black, monthlyAverages[month]!['Pain / Discomfort']!),
+          _createBar(Colors.blue, monthlyAverages[month]!['Cognition']!),
+          _createBar(Colors.green,
+              monthlyAverages[month]!['Palpitations / Dizziness']!),
+          _createBar(Colors.red, monthlyAverages[month]!['Worsening']!),
+          _createBar(Colors.purple, monthlyAverages[month]!['Mood']!),
+          _createBar(Colors.black, monthlyAverages[month]!['Sleep']!),
+        ])
     ];
   }
 }

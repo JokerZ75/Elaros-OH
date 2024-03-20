@@ -4,11 +4,17 @@ import 'package:flutter/material.dart';
 class MyBarChart extends StatefulWidget {
   final String title;
   final List<BarChartGroupData> dataSets;
+  final List<String> titles;
+  final List<Color> colors;
+
+
 
   const MyBarChart({
     Key? key,
     required this.title,
     required this.dataSets,
+    required this.titles,
+    required this.colors,
   }) : super(key: key);
 
   @override
@@ -31,15 +37,22 @@ class _MyBarChartState extends State<MyBarChart> {
               color: Colors.black,
             ),
           ),
-          const Wrap(
+          Wrap(
             alignment: WrapAlignment.center,
             children: [
-              Text(' Communication ', style: TextStyle(color: Colors.blue)),
-              Text(' Mobility ', style: TextStyle(color: Colors.green)),
-              Text(' Personal Care ', style: TextStyle(color: Colors.red)),
-              Text(' Daily Activities ',
-                  style: TextStyle(color: Colors.purple)),
-              Text(' Social Role ', style: TextStyle(color: Colors.black)),
+              // Text(' Communication ', style: TextStyle(color: Colors.blue)),
+              // Text(' Mobility ', style: TextStyle(color: Colors.green)),
+              // Text(' Personal Care ', style: TextStyle(color: Colors.red)),
+              // Text(' Daily Activities ',
+              //     style: TextStyle(color: Colors.purple)),
+              // Text(' Social Role ', style: TextStyle(color: Colors.black)),
+              for (var title in widget.titles)
+                Text(
+                  ' $title ',
+                  style: TextStyle(
+                    color: widget.colors[widget.titles.indexOf(title)],
+                  ),
+                ),
             ],
           ),
           const SizedBox(
