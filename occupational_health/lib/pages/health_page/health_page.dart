@@ -355,24 +355,24 @@ class _HealthPageState extends State<HealthPage> {
             dataSets: functionalChartData.getRawData(),
             getTitle: (index, value) {
               switch (index) {
-                case 0:
+                case 4:
                   return const RadarChartTitle(text: 'Communication', angle: 0);
-                case 1:
+                case 2:
                   return const RadarChartTitle(
                     text: 'Mobility',
                     angle: 0,
                   );
-                case 2:
+                case 0:
                   return const RadarChartTitle(
                     text: 'Personal Care',
                     angle: 0,
                   );
-                case 3:
+                case 1:
                   return const RadarChartTitle(
                     text: 'Daily Activities',
                     angle: 0,
                   );
-                case 4:
+                case 3:
                   return const RadarChartTitle(
                     text: 'Social Role',
                     angle: 0,
@@ -395,7 +395,7 @@ class _HealthPageState extends State<HealthPage> {
                       text: 'Breathlessness', angle: 0);
                 case 1:
                   return const RadarChartTitle(
-                    text: 'Throat sensitivity',
+                    text: 'Mood',
                     angle: 0,
                   );
                 case 2:
@@ -405,7 +405,7 @@ class _HealthPageState extends State<HealthPage> {
                   );
                 case 3:
                   return const RadarChartTitle(
-                    text: 'Smell / Taste',
+                    text: 'Cognition',
                     angle: 0,
                   );
                 case 4:
@@ -415,7 +415,7 @@ class _HealthPageState extends State<HealthPage> {
                   );
                 case 5:
                   return const RadarChartTitle(
-                    text: 'Cognition',
+                    text: 'Worsening',
                     angle: 0,
                   );
                 case 6:
@@ -425,12 +425,12 @@ class _HealthPageState extends State<HealthPage> {
                   );
                 case 7:
                   return const RadarChartTitle(
-                    text: 'Worsening',
+                    text: 'Smell / Taste',
                     angle: 0,
                   );
                 case 8:
                   return const RadarChartTitle(
-                    text: 'Mood',
+                    text: 'Throat sensitivity',
                     angle: 0,
                   );
                 case 9:
@@ -453,7 +453,7 @@ class _HealthPageState extends State<HealthPage> {
 
   Widget _buildBarCarousel() {
     return SizedBox(
-      height: 470,
+      height: 500,
       child: PageView(
         onPageChanged: (value) => {
           setState(() {
@@ -464,14 +464,14 @@ class _HealthPageState extends State<HealthPage> {
           MyBarChart(
               title: "Functional disability score",
               dataSets: functionalChartData.getBarChartDataFunctional(),
-              titles: [
-                "Communication",
-                "Mobility",
+              titles: const [
                 "Personal Care",
                 "Daily Activities",
+                "Mobility",
                 "Social Role"
+                "Communication",
               ],
-              colors: [
+              colors: const [
                 Colors.blue,
                 Colors.green,
                 Colors.red,
@@ -481,19 +481,19 @@ class _HealthPageState extends State<HealthPage> {
           MyBarChart(
               title: "Symptons severity score",
               dataSets: symptomServerityChartData.getBarChartDataSymptons(),
-              titles: [
+              titles: const [
                 "Breathlessness",
-                "Throat sensitivity",
-                "Fatigue",
-                "Smell / Taste",
-                "Pain / Discomfort"
-                    "Cognition",
-                "Palpitations / Dizziness",
-                "Worsening",
                 "Mood",
+                "Fatigue",
+                "Cognition",
+                "Pain / Discomfort",
+                "Worsening",
+                "Palpitations / Dizziness",
+                "Smell / Taste",
+                "Throat sensitivity",
                 "Sleep",
               ],
-              colors: [
+              colors: const [
                 Colors.blue,
                 Colors.green,
                 Colors.red,
@@ -556,12 +556,12 @@ class FuncionalChartData {
       ]),
       for (var month in monthlyAverages.keys)
         BarChartGroupData(x: int.parse(month), barRods: [
-          _createBar(Colors.blue, monthlyAverages[month]!['Communication']!),
-          _createBar(Colors.green, monthlyAverages[month]!['Mobility']!),
-          _createBar(Colors.red, monthlyAverages[month]!['Personal Care']!),
+          _createBar(Colors.blue, monthlyAverages[month]!['Personal Care']!),
+          _createBar(Colors.green, monthlyAverages[month]!['Daily Activities']!),
+          _createBar(Colors.red, monthlyAverages[month]!['Mobility']!),
           _createBar(
-              Colors.purple, monthlyAverages[month]!['Daily Activities']!),
-          _createBar(Colors.black, monthlyAverages[month]!['Social Role']!),
+              Colors.purple, monthlyAverages[month]!['Social Role']!),
+          _createBar(Colors.black, monthlyAverages[month]!['Communication']!),
         ])
     ];
   }
@@ -616,16 +616,16 @@ class SymptomServerityChartData {
         BarChartGroupData(x: int.parse(month), barRods: [
           _createBar(Colors.blue, monthlyAverages[month]!['Breathlessness']!),
           _createBar(
-              Colors.green, monthlyAverages[month]!['Throat sensitivity']!),
+              Colors.green, monthlyAverages[month]!['Mood']!),
           _createBar(Colors.red, monthlyAverages[month]!['Fatigue']!),
-          _createBar(Colors.purple, monthlyAverages[month]!['Smell / Taste']!),
+          _createBar(Colors.purple, monthlyAverages[month]!['Cognition']!),
           _createBar(
               Colors.black, monthlyAverages[month]!['Pain / Discomfort']!),
-          _createBar(Colors.blue, monthlyAverages[month]!['Cognition']!),
+          _createBar(Colors.blue, monthlyAverages[month]!['Worsening']!),
           _createBar(Colors.green,
               monthlyAverages[month]!['Palpitations / Dizziness']!),
-          _createBar(Colors.red, monthlyAverages[month]!['Worsening']!),
-          _createBar(Colors.purple, monthlyAverages[month]!['Mood']!),
+          _createBar(Colors.red, monthlyAverages[month]!['Smell / Taste']!),
+          _createBar(Colors.purple, monthlyAverages[month]!['Throat sensitivity']!),
           _createBar(Colors.black, monthlyAverages[month]!['Sleep']!),
         ])
     ];
