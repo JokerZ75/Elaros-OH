@@ -3,11 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:occupational_health/services/Assessment/assessment_service.dart';
 
 class QuestionairePage extends StatefulWidget {
-  final void Function()? onAssessmentComplete;
-  // Async onAssessmentComplete;
-  final dynamic Function()? onAssessmentCompleteAsync;
+
   const QuestionairePage(
-      {Key? key, this.onAssessmentComplete, this.onAssessmentCompleteAsync})
+      {Key? key})
       : super(key: key);
 
   @override
@@ -215,13 +213,7 @@ class _QuestionairePageState extends State<QuestionairePage> {
                                           MaterialStateProperty.all(35.0)),
                                   onPressed: () async {
                                     var result = validate();
-                                    if (result.$2 == true) {
-                                      ScaffoldMessenger.of(context)
-                                          .showSnackBar(
-                                        const SnackBar(
-                                          content: Text("Assessment Complete"),
-                                        ),
-                                      );
+                                    if (result.$2 == true) {                                  
                                       Map<String, Map<String, int>>
                                           questionaire = {};
                                       for (var section in sections) {
@@ -230,14 +222,7 @@ class _QuestionairePageState extends State<QuestionairePage> {
                                       }
                                       await _assessmentService
                                           .saveQuestionaire(questionaire);
-                                      if (widget.onAssessmentComplete != null) {
-                                        widget.onAssessmentComplete!();
-                                      }
-                                      if (widget.onAssessmentCompleteAsync !=
-                                          null) {
-                                        widget.onAssessmentCompleteAsync!();
-                                      }
-                                      Navigator.pop(context);
+                                      if (mounted) Navigator.pop(context, true);
                                     } else {
                                       pageController.animateToPage(result.$1,
                                           duration:

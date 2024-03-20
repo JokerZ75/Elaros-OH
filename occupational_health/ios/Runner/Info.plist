@@ -8,6 +8,12 @@
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
 	<string>Occupational Health</string>
+	<!-- CLIENT ID -->
+	<key>GIDClientID</key>
+	<string>215764582587-j6s2p5srp9ubdd8u7iv7b1l6p7kqrobl.apps.googleusercontent.com</string>
+	<!-- Location Permission -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Allow Occupational Health to access your location while you are using the app.</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>
@@ -30,6 +36,7 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>app-1-215764582587-ios-c7963ff16b194fc6fe299e</string>
+				<string>com.googleusercontent.apps.215764582587-j6s2p5srp9ubdd8u7iv7b1l6p7kqrobl</string>
 			</array>
 		</dict>
 	</array>

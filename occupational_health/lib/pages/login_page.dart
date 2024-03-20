@@ -148,12 +148,43 @@ class _LoginPageState extends State<LoginPage> {
                     ],
                   ),
 
-                  SizedBox(
-                    height: 160,
-                    child: Center(
-                      child: Text("Google Sign In Apple Sign In"),
+                  const SizedBox(height: 15),
+                  
+                  // Sign in with google
+                  const Text(
+                    "Use google to sign in",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w100),
+                  ),
+
+                  const SizedBox(height: 15),
+
+                  // Google button - circle button with G
+                  GestureDetector(
+                    onTap: () {
+                       final authService = Provider.of<AuthService>(context, listen: false);
+                        authService.signInWithGoogle();
+                    },
+                    child: Container(
+                      width: 100,
+                      height: 100,
+                      decoration: BoxDecoration(
+                        color: Color.fromARGB(123, 239, 208, 128),
+                        shape: BoxShape.circle,
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Colors.black12,
+                            offset: Offset(0, 2),
+                            blurRadius: 6.0,
+                          ),
+                        ],
+                      ),
+                      child: const Center(
+                        child: Image(image: AssetImage('assets/googleIcon.png')),
+                      ),
                     ),
                   ),
+
+                  const SizedBox(height: 35),
 
                   // register button
                   Row(
