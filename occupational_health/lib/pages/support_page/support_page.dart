@@ -1,3 +1,5 @@
+import "package:flutter/foundation.dart";
+import "package:flutter/gestures.dart";
 import "package:flutter/material.dart";
 import "package:occupational_health/components/my_submit_button.dart";
 import "package:occupational_health/pages/support_page/components/my_rehab_content_card.dart";
@@ -17,7 +19,8 @@ class SupportPage extends StatefulWidget {
 }
 
 class _SupportPageState extends State<SupportPage> {
-  final GoogleMapsPlaces _places = GoogleMapsPlaces(apiKey: "Enter Key");
+  final GoogleMapsPlaces _places =
+      GoogleMapsPlaces(apiKey: "AIzaSyCSGGPsZ66yn-OVALuPVoE1z8j-S6R3Nsc");
 
   // https://www.dhiwise.com/post/maximizing-user-experience-integrating-flutter-geolocator
   // this website was used to help with the location services, both getting the location and displaying it on the map
@@ -58,12 +61,11 @@ class _SupportPageState extends State<SupportPage> {
       return response.results;
     } else {
       throw Exception(
-          'Failed to fetch nearby restaurants.\nError: ${response.status}');
+          'Failed to fetch nearby clinics.\nError: ${response.status}');
     }
   }
+
   final RehabilitationService _rehabilitationService = RehabilitationService();
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -87,13 +89,12 @@ class _SupportPageState extends State<SupportPage> {
                   if (snapshot.hasData) {
                     return _buildRecentRehabs(snapshot.data);
                   }
-                  
+
                   return const Text("Error");
                 }),
             const SizedBox(height: 30),
             const Text("Locate your nearest hospital"),
             const SizedBox(height: 15),
-
             FutureBuilder(
               future: getLocation(),
               builder:
@@ -145,6 +146,13 @@ class _SupportPageState extends State<SupportPage> {
                                   zoom: 12,
                                 ),
                                 markers: markers,
+                                myLocationEnabled: false,
+                                gestureRecognizers:
+                                    <Factory<OneSequenceGestureRecognizer>>{
+                                  Factory<OneSequenceGestureRecognizer>(
+                                    () => EagerGestureRecognizer(),
+                                  )
+                                }.toSet(),
                               );
                             } else if (snapshot2.hasError) {
                               return Text('${snapshot2.error}');
@@ -207,10 +215,11 @@ class _SupportPageState extends State<SupportPage> {
                       child: MySubmitButton(
                     onPressed: () {
                       Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  const RehabilitationPage())).then((value) => setState(() {}));
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const RehabilitationPage()))
+                          .then((value) => setState(() {}));
                     },
                     text: "Click Here For More",
                     minWidth: 110,
