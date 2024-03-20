@@ -494,6 +494,8 @@ class _CommunityPageState extends State<CommunityPage> {
                     target: LatLng(53.553363, -1.390641),
                     zoom: 7,
                   ),
+                  myLocationButtonEnabled: false,
+                  myLocationEnabled: false,
                   circles: areas.toSet(),
                   markers: markers.toSet(),
                   gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
