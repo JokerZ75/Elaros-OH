@@ -1,8 +1,5 @@
-import 'dart:ffi';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:occupational_health/model/comment.dart';
 import 'package:occupational_health/model/user.dart';
@@ -11,8 +8,6 @@ import 'package:occupational_health/pages/community_page/components/like_button.
 import 'package:occupational_health/services/Auth/auth_service.dart';
 import 'package:occupational_health/services/Forum/forum_service.dart';
 import 'package:occupational_health/pages/community_page/components/comment_post.dart';
-import 'package:occupational_health/helper/helper_method.dart';
-import 'package:sliding_up_panel/sliding_up_panel.dart';
 
 class CommunityPost extends StatefulWidget {
   final String message;

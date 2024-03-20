@@ -1,15 +1,11 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
-import 'package:flutter/widgets.dart';
 import 'package:occupational_health/components/my_submit_button.dart';
-import 'package:occupational_health/components/my_text_form_field.dart';
 import 'package:occupational_health/model/post.dart';
 import 'package:occupational_health/pages/community_page/components/community_post.dart';
 import 'package:occupational_health/pages/community_page/forumn_page.dart';
 import 'package:occupational_health/services/Forum/forum_service.dart';
-import 'package:syncfusion_flutter_maps/maps.dart';
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
@@ -33,26 +29,9 @@ class _CommunityPageState extends State<CommunityPage> {
   Completer<GoogleMapController> _controller = Completer();
   List<Marker> markers = <Marker>[];
   List<Circle> areas = <Circle>[
-    Circle(
-      circleId: CircleId("1"),
-      center: LatLng(53.553363, -1.390641),
-      radius: 100,
-      fillColor: Colors.red.withOpacity(0.5),
-      strokeWidth: 0,
-    ),
-    Circle(
-        circleId: CircleId("2"),
-        center: LatLng(53.553363, -1.390641),
-        radius: 20000,
-        fillColor: Colors.red.withOpacity(0.7),
-        strokeWidth: 0),
   ];
 
-  Map<String, bool> likedComments = {};
 
-  late Map<String, int> numberOfLikes = {
-    for (String comment in comments) comment: 0,
-  };
 
   void _onMapCreated(GoogleMapController controller) async {
     _controller.complete(controller);
@@ -103,7 +82,7 @@ class _CommunityPageState extends State<CommunityPage> {
           markerId: MarkerId(location.hashCode.toString()),
           position: LatLng(location.latitude, location.longitude),
           infoWindow: InfoWindow(
-            title: "Most common symptom",
+            title: "Most issue symptom",
             snippet: symptom,
           ),
         ),
@@ -136,8 +115,14 @@ class _CommunityPageState extends State<CommunityPage> {
       questionaires.forEach((questionaire) {
         questionaire.questionaire.forEach((section, questions) {
           questions.forEach((question, answer) {
-            if (answer == 1 || answer == 2 || answer == 3) {
+            if (answer == 1) {
               symptomCount[question] = (symptomCount[question] ?? 0) + 1;
+            }
+            else if (answer == 2) {
+              symptomCount[question] = (symptomCount[question] ?? 0) + 2;
+            }
+            else if (answer == 3) {
+              symptomCount[question] = (symptomCount[question] ?? 0) + 3;
             }
           });
         });
@@ -145,6 +130,13 @@ class _CommunityPageState extends State<CommunityPage> {
       String mostCommonSymptomForLocation = symptomCount.entries
           .reduce((a, b) => a.value > b.value ? a : b)
           .key;
+
+      // Find the section the symptom is in
+      questionaires.first.questionaire.forEach((section, questions) {
+        if (questions.containsKey(mostCommonSymptomForLocation)) {
+          mostCommonSymptomForLocation = section;
+        }
+      });
       mostCommonSymptom[location] = mostCommonSymptomForLocation;
     });
 
@@ -196,7 +188,7 @@ class _CommunityPageState extends State<CommunityPage> {
                               message: p.postTitle,
                               user: p.user,
                               likes: p.likes,
-                              comments: p.postComments,
+                              comments: [p.postComments.last],
                             );
                           }),
                       SizedBox(height: 20),
