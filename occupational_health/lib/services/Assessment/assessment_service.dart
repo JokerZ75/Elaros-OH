@@ -29,6 +29,31 @@ class AssessmentService extends ChangeNotifier {
     }
   } // hasTakenOnboardingQuestionaire
 
+  // Get onboarding questionaire
+  Future<Questionaire> getOnboardingQuestionaire() async {
+    try {
+      final assessmentData = await _firestore
+          .collection('assessments')
+          .doc(_auth.currentUser!.uid)
+          .get();
+
+      final data = assessmentData.data();
+      if (data == null) {
+        throw Exception("No assessment data found");
+      }
+
+      // check if onboarding_questionaire exists
+      if (!data.containsKey('onboarding_questionaire')) {
+        throw Exception("No onboarding questionaire found");
+      }
+
+      return Questionaire.fromMap(
+          data['onboarding_questionaire'] as Map<String, dynamic>);
+    } catch (e) {
+      throw Exception(e);
+    }
+  } // getOnboardingQuestionaire
+
   // Save onboarding questionaire
   Future<void> saveOnboardingQuestionaire(
       Map<String, Map<String, int>> questionaire) async {
