@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:occupational_health/model/questionaire.dart';
 import 'package:occupational_health/model/questionaire_averages.dart';
+import 'package:geolocator/geolocator.dart';
 
 class AssessmentService extends ChangeNotifier {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -51,6 +52,101 @@ class AssessmentService extends ChangeNotifier {
       throw Exception(e);
     }
   } // getQuestionaires
+
+  Future<List<Questionaire>> getQuestionairesFromUsersWithLocation() async {
+    List<Questionaire> questionaires = [];
+    List<Questionaire> temp = [];
+    Map<String, String> geoPoints = {};
+    Map<String, List<Questionaire>> locationQuestionaire = {};
+    try {
+      final users = await _firestore
+          .collection('users')
+          .where('location', isNotEqualTo: null)
+          .get();
+      for (var user in users.docs) {
+        final userdata = user.data();
+        if (userdata['location'] == null) {
+          continue;
+        }
+
+        // Put userID in a map with the location as the key
+        final userLocation = userdata['location'] as GeoPoint;
+        if (!geoPoints.containsKey(
+                "${userLocation.latitude}, ${userLocation.longitude}") ||
+            geoPoints.isEmpty) {
+          geoPoints["${userLocation.latitude}, ${userLocation.longitude}"] =
+              user.id;
+        }
+      }
+
+      Map<String, List<String>> locationUsers = {};
+
+      for (var location in geoPoints.keys) {
+        if (locationUsers.isEmpty) {
+          locationUsers[location] = [geoPoints[location]!];
+        }
+
+        // Check if user is in 1km radius of location
+        for (var user in geoPoints.keys) {
+          if (user == location) {
+            continue;
+          }
+          final userLocation = user.split(", ");
+          final locationLocation = location.split(", ");
+          final distance = Geolocator.distanceBetween(
+              double.parse(userLocation[0]),
+              double.parse(userLocation[1]),
+              double.parse(locationLocation[0]),
+              double.parse(locationLocation[1]));
+          if (distance < 1000) {
+            if (locationUsers[location] == null) {
+              locationUsers[location] = [geoPoints[user]!, geoPoints[location]!];
+            } 
+          }
+        }
+      }
+
+
+      print(locationUsers);
+
+      for (var location in geoPoints.keys) {
+        final questionairesDocs = await _firestore
+            .collection('assessments')
+            .where('location', isEqualTo: location)
+            .get();
+        for (var questionaire in questionairesDocs.docs) {
+          temp.add(Questionaire.fromMap(
+              questionaire.data() as Map<String, dynamic>));
+        }
+        locationQuestionaire[location] = temp;
+        temp = [];
+      }
+
+
+      return questionaires;
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+  // get most recent post
+  Future<Questionaire> getMostRecentQuestionaire() async {
+    try {
+      QuerySnapshot questionaires = await _firestore
+          .collection('assessments')
+          .doc(_auth.currentUser!.uid)
+          .collection("completed_questionaires")
+          .orderBy('timestamp', descending: true)
+          .limit(1)
+          .get();
+      return questionaires.docs.isNotEmpty
+          ? Questionaire.fromMap(
+              questionaires.docs.first.data() as Map<String, dynamic>)
+          : throw Exception("Questionaire does not exist");
+    } catch (e) {
+      throw Exception(e);
+    }
+  } // getMostRecentQuestionaire
 
   // Get 3 most recent questionaires
   Future<(List<Questionaire>, List<String>)> getRecentQuestionaires() async {
@@ -106,7 +202,6 @@ class AssessmentService extends ChangeNotifier {
           overallAverages: {},
         );
       }
-      
 
       QuestionaireAverages questionaireAverages =
           QuestionaireAverages.fromMap(averages.data() as Map<String, dynamic>);
@@ -125,7 +220,7 @@ class AssessmentService extends ChangeNotifier {
         questionaireAverages.overallAverages[section] =
             questionaireAverages.overallAverages[section]!.roundToDouble();
       }
-        
+
       // Remove numberOfQuestionaires from monthlySectionAverages
       for (var month in questionaireAverages.monthlySectionAverages.keys) {
         questionaireAverages.monthlySectionAverages[month]!
@@ -184,11 +279,11 @@ class AssessmentService extends ChangeNotifier {
       }
 
       // Increment number of questionaires
-      averages.monthlySectionAverages[monthsPassedString]!["numberOfQuestionaires"] =
-          (averages.monthlySectionAverages[monthsPassedString]![
-                      "numberOfQuestionaires"] ??
-                  0) +
-              1;
+      averages.monthlySectionAverages[monthsPassedString]![
+          "numberOfQuestionaires"] = (averages.monthlySectionAverages[
+                  monthsPassedString]!["numberOfQuestionaires"] ??
+              0) +
+          1;
 
       // Loop through each section in the questionaire
       for (var section in currentQuestionaireDocument.questionaire.keys) {
@@ -203,7 +298,8 @@ class AssessmentService extends ChangeNotifier {
         }
 
         // If a key for that section does not exist, create it
-        if (averages.monthlySectionAverages[monthsPassedString]![section] == null) {
+        if (averages.monthlySectionAverages[monthsPassedString]![section] ==
+            null) {
           averages.monthlySectionAverages[monthsPassedString]![section] =
               sectionTotal / questions.length; // Average of month section
           averages.overallAverages[section] =
@@ -228,9 +324,9 @@ class AssessmentService extends ChangeNotifier {
       for (var section in averages.monthlySectionAverages[month]!.keys) {
         if (section != "numberOfQuestionaires") {
           averages.monthlySectionAverages[month]![section] = (averages
-                      .monthlySectionAverages[month]![section]! /
-                  averages
-                      .monthlySectionAverages[month]!["numberOfQuestionaires"]!);
+                  .monthlySectionAverages[month]![section]! /
+              averages
+                  .monthlySectionAverages[month]!["numberOfQuestionaires"]!);
         }
       }
     }

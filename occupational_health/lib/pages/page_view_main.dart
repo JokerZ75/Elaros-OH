@@ -1,5 +1,5 @@
 import "package:flutter/material.dart";
-import "package:occupational_health/pages/community_page.dart";
+import 'package:occupational_health/pages/community_page/community_page.dart';
 import 'package:occupational_health/pages/health_page/health_page.dart';
 import "package:occupational_health/pages/home_page.dart";
 import "package:occupational_health/pages/my_account_page.dart";
