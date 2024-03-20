@@ -1,5 +1,6 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
+import 'package:occupational_health/components/my_bar_chart.dart';
 import 'package:occupational_health/components/my_radar_chart.dart';
 import 'package:occupational_health/components/my_submit_button.dart';
 import 'package:occupational_health/components/my_top_progress_card.dart';
@@ -20,6 +21,9 @@ class _HealthPageState extends State<HealthPage> {
   double angleValue = 0;
   bool relativeAngleMode = true;
   int graphPage = 0;
+  bool graphType = true;
+  Color radarColour = Colors.blue;
+  Color barColour = Colors.grey;
 
   final AssessmentService _assessmentService = AssessmentService();
   final FuncionalChartData functionalChartData = FuncionalChartData(
@@ -137,6 +141,44 @@ class _HealthPageState extends State<HealthPage> {
     });
   }
 
+  // List<BarChartGroupData> barChartData = [
+  //   BarChartGroupData(x: 0, barRods: [
+  //     _createBar(Colors.blue, 0),
+  //     _createBar(Colors.green, 0),
+  //     _createBar(Colors.red, 0),
+  //     _createBar(Colors.purple, 0),
+  //     _createBar(Colors.black, 0),
+  //   ]),
+  //   BarChartGroupData(x: 4, barRods: [
+  //     _createBar(Colors.blue, 3),
+  //     _createBar(Colors.green, 3),
+  //     _createBar(Colors.red, 3),
+  //     _createBar(Colors.purple, 3),
+  //     _createBar(Colors.black, 3),
+  //   ]),
+  //   BarChartGroupData(x: 6, barRods: [
+  //     _createBar(Colors.blue, 3),
+  //     _createBar(Colors.green, 3),
+  //     _createBar(Colors.red, 3),
+  //     _createBar(Colors.purple, 3),
+  //     _createBar(Colors.black, 2),
+  //   ]),
+  //   BarChartGroupData(x: 8, barRods: [
+  //     _createBar(Colors.blue, 2),
+  //     _createBar(Colors.green, 2),
+  //     _createBar(Colors.red, 3),
+  //     _createBar(Colors.purple, 3),
+  //     _createBar(Colors.black, 2),
+  //   ]),
+  //   BarChartGroupData(x: 10, barRods: [
+  //     _createBar(Colors.blue, 3),
+  //     _createBar(Colors.green, 0),
+  //     _createBar(Colors.red, 1),
+  //     _createBar(Colors.purple, 3),
+  //     _createBar(Colors.black, 1),
+  //   ]),
+  // ];
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -145,10 +187,38 @@ class _HealthPageState extends State<HealthPage> {
       padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 15.0),
       child: Column(
         children: <Widget>[
-          // Add Coursel of 2 charts here
-          _buildChartCoursel(),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              TextButton(
+                  onPressed: () {
+                    setState(() {
+                      graphType = true;
+                      radarColour = Colors.blue;
+                      barColour = Colors.grey;
+                      // graphPage = 0;
+                    });
+                  },
+                  child: Text(
+                    'Radar Chart',
+                    style: TextStyle(color: radarColour),
+                  )),
+              TextButton(
+                  onPressed: () {
+                    setState(() {
+                      graphType = false;
+                      radarColour = Colors.grey;
+                      barColour = Colors.blue;
+                      // graphPage = 0;
+                    });
+                  },
+                  child: Text('Bar Chart', style: TextStyle(color: barColour))),
+            ],
+          ),
 
-          // Circles to show page number
+          // Add Coursel of 2 charts here
+          if (graphType) _buildRaderCarousel() else _buildBarCarousel(),
+          // if (graphType)
           Column(
             children: [
               Row(
@@ -185,6 +255,7 @@ class _HealthPageState extends State<HealthPage> {
               ),
             ],
           ),
+          // if (!graphType) MyBarChart(title: "Functional disability score", dataSets: barChartData,),
 
           const SizedBox(height: 5),
 
@@ -274,9 +345,9 @@ class _HealthPageState extends State<HealthPage> {
     )));
   }
 
-  Widget _buildChartCoursel() {
+  Widget _buildRaderCarousel() {
     return SizedBox(
-      height: 470,
+      height: 500,
       child: PageView(
         onPageChanged: (value) => {
           setState(() {
@@ -290,24 +361,24 @@ class _HealthPageState extends State<HealthPage> {
             ticks: biggestFunctionalValue,
             getTitle: (index, value) {
               switch (index) {
-                case 0:
+                case 4:
                   return const RadarChartTitle(text: 'Communication', angle: 0);
-                case 1:
+                case 2:
                   return const RadarChartTitle(
                     text: 'Mobility',
                     angle: 0,
                   );
-                case 2:
+                case 0:
                   return const RadarChartTitle(
                     text: 'Personal Care',
                     angle: 0,
                   );
-                case 3:
+                case 1:
                   return const RadarChartTitle(
                     text: 'Daily Activities',
                     angle: 0,
                   );
-                case 4:
+                case 3:
                   return const RadarChartTitle(
                     text: 'Social Role',
                     angle: 0,
@@ -331,7 +402,7 @@ class _HealthPageState extends State<HealthPage> {
                       text: 'Breathlessness', angle: 0);
                 case 1:
                   return const RadarChartTitle(
-                    text: 'Throat sensitivity',
+                    text: 'Mood',
                     angle: 0,
                   );
                 case 2:
@@ -341,7 +412,7 @@ class _HealthPageState extends State<HealthPage> {
                   );
                 case 3:
                   return const RadarChartTitle(
-                    text: 'Smell / Taste',
+                    text: 'Cognition',
                     angle: 0,
                   );
                 case 4:
@@ -351,7 +422,7 @@ class _HealthPageState extends State<HealthPage> {
                   );
                 case 5:
                   return const RadarChartTitle(
-                    text: 'Cognition',
+                    text: 'Worsening',
                     angle: 0,
                   );
                 case 6:
@@ -361,12 +432,12 @@ class _HealthPageState extends State<HealthPage> {
                   );
                 case 7:
                   return const RadarChartTitle(
-                    text: 'Worsening',
+                    text: 'Smell / Taste',
                     angle: 0,
                   );
                 case 8:
                   return const RadarChartTitle(
-                    text: 'Mood',
+                    text: 'Throat sensitivity',
                     angle: 0,
                   );
                 case 9:
@@ -386,6 +457,74 @@ class _HealthPageState extends State<HealthPage> {
       ),
     );
   }
+
+  Widget _buildBarCarousel() {
+    return SizedBox(
+      height: 500,
+      child: PageView(
+        onPageChanged: (value) => {
+          setState(() {
+            graphPage = value;
+          })
+        },
+        children: <Widget>[
+          MyBarChart(
+              title: "Functional disability score",
+              dataSets: functionalChartData.getBarChartDataFunctional(),
+              titles: const [
+                "Personal Care",
+                "Daily Activities",
+                "Mobility",
+                "Social Role",
+                "Communication",
+              ],
+              colors: const [
+                Colors.blue,
+                Colors.green,
+                Colors.red,
+                Colors.purple,
+                Colors.black
+              ]),
+          MyBarChart(
+              title: "Symptons severity score",
+              dataSets: symptomServerityChartData.getBarChartDataSymptons(),
+              titles: const [
+                "Breathlessness",
+                "Mood",
+                "Fatigue",
+                "Cognition",
+                "Pain / Discomfort",
+                "Worsening",
+                "Palpitations / Dizziness",
+                "Smell / Taste",
+                "Throat sensitivity",
+                "Sleep",
+              ],
+              colors: const [
+                Colors.blue,
+                Colors.green,
+                Colors.red,
+                Colors.purple,
+                Colors.black,
+                Colors.blue,
+                Colors.green,
+                Colors.red,
+                Colors.purple,
+                Colors.black
+              ]),
+        ],
+      ),
+    );
+  }
+}
+
+_createBar(Color color, double toY) {
+  return BarChartRodData(
+      fromY: 0,
+      toY: toY,
+      color: color,
+      width: 4,
+      borderRadius: BorderRadius.zero);
 }
 
 class FuncionalChartData {
@@ -410,6 +549,27 @@ class FuncionalChartData {
           color: Colors.primaries[int.parse(month)],
           values: monthlyAverages[month]!.values.toList(),
         )
+    ];
+  }
+
+  List<BarChartGroupData> getBarChartDataFunctional() {
+    return [
+      BarChartGroupData(x: 0, barRods: [
+        _createBar(Colors.blue, 0),
+        _createBar(Colors.green, 0),
+        _createBar(Colors.red, 0),
+        _createBar(Colors.purple, 0),
+        _createBar(Colors.black, 0),
+      ]),
+      for (var month in monthlyAverages.keys)
+        BarChartGroupData(x: int.parse(month), barRods: [
+          _createBar(Colors.blue, monthlyAverages[month]!['Personal Care']!),
+          _createBar(Colors.green, monthlyAverages[month]!['Daily Activities']!),
+          _createBar(Colors.red, monthlyAverages[month]!['Mobility']!),
+          _createBar(
+              Colors.purple, monthlyAverages[month]!['Social Role']!),
+          _createBar(Colors.black, monthlyAverages[month]!['Communication']!),
+        ])
     ];
   }
 }
@@ -447,6 +607,34 @@ class SymptomServerityChartData {
           color: Colors.primaries[int.parse(month)],
           values: monthlyAverages[month]!.values.toList(),
         )
+    ];
+  }
+
+  List<BarChartGroupData> getBarChartDataSymptons() {
+    return [
+      BarChartGroupData(x: 0, barRods: [
+        _createBar(Colors.blue, 0),
+        _createBar(Colors.green, 0),
+        _createBar(Colors.red, 0),
+        _createBar(Colors.purple, 0),
+        _createBar(Colors.black, 0),
+      ]),
+      for (var month in monthlyAverages.keys)
+        BarChartGroupData(x: int.parse(month), barRods: [
+          _createBar(Colors.blue, monthlyAverages[month]!['Breathlessness']!),
+          _createBar(
+              Colors.green, monthlyAverages[month]!['Mood']!),
+          _createBar(Colors.red, monthlyAverages[month]!['Fatigue']!),
+          _createBar(Colors.purple, monthlyAverages[month]!['Cognition']!),
+          _createBar(
+              Colors.black, monthlyAverages[month]!['Pain / Discomfort']!),
+          _createBar(Colors.blue, monthlyAverages[month]!['Worsening']!),
+          _createBar(Colors.green,
+              monthlyAverages[month]!['Palpitations / Dizziness']!),
+          _createBar(Colors.red, monthlyAverages[month]!['Smell / Taste']!),
+          _createBar(Colors.purple, monthlyAverages[month]!['Throat sensitivity']!),
+          _createBar(Colors.black, monthlyAverages[month]!['Sleep']!),
+        ])
     ];
   }
 }

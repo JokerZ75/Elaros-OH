@@ -1,3 +1,5 @@
+import "package:flutter/foundation.dart";
+import "package:flutter/gestures.dart";
 import "package:flutter/material.dart";
 import "package:occupational_health/components/my_submit_button.dart";
 import "package:occupational_health/pages/support_page/components/my_rehab_content_card.dart";
@@ -5,8 +7,9 @@ import "package:occupational_health/pages/support_page/rehabilitation_page.dart"
 import "package:occupational_health/services/Rehabilitation/rehabilitation_service.dart";
 import "package:provider/provider.dart";
 import "package:url_launcher/url_launcher_string.dart";
-import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong2/latlong.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import "package:flutter_google_maps_webservices/places.dart";
 
 class SupportPage extends StatefulWidget {
   const SupportPage({Key? key}) : super(key: key);
@@ -16,9 +19,53 @@ class SupportPage extends StatefulWidget {
 }
 
 class _SupportPageState extends State<SupportPage> {
+  final GoogleMapsPlaces _places =
+      GoogleMapsPlaces(apiKey: "AIzaSyCSGGPsZ66yn-OVALuPVoE1z8j-S6R3Nsc");
+
+  // https://www.dhiwise.com/post/maximizing-user-experience-integrating-flutter-geolocator
+  // this website was used to help with the location services, both getting the location and displaying it on the map
+  Future<Position> getLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      return Future.error('Location services are disabled.');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        return Future.error('Location permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      return Future.error('Location permissions are permanently denied.');
+    }
+
+    return await Geolocator.getCurrentPosition(
+        forceAndroidLocationManager: true,
+        desiredAccuracy: LocationAccuracy.best);
+  }
+
+  Future<List<PlacesSearchResult>> getNearbyHospitals(Position position) async {
+    PlacesSearchResponse response = await _places.searchNearbyWithRadius(
+      Location(lat: position.latitude, lng: position.longitude),
+      8047, // 5 miles in meters
+      type: "hospital",
+    );
+
+    if (response.status == "OK") {
+      return response.results;
+    } else {
+      throw Exception(
+          'Failed to fetch nearby clinics.\nError: ${response.status}');
+    }
+  }
+
   final RehabilitationService _rehabilitationService = RehabilitationService();
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -42,63 +89,88 @@ class _SupportPageState extends State<SupportPage> {
                   if (snapshot.hasData) {
                     return _buildRecentRehabs(snapshot.data);
                   }
-                  
+
                   return const Text("Error");
                 }),
             const SizedBox(height: 30),
-            const Text("Locate your nearest clinic"),
+            const Text("Locate your nearest hospital"),
             const SizedBox(height: 15),
-            Container(
-              width: 350,
-              height: 350,
-              child: 53.383331 != null && -1.466667 != null
-                  ? Stack(
+            FutureBuilder(
+              future: getLocation(),
+              builder:
+                  (BuildContext context, AsyncSnapshot<Position> snapshot1) {
+                if (snapshot1.hasData) {
+                  return SizedBox(
+                    width: 350,
+                    height: 350,
+                    child: Stack(
                       children: [
-                        FlutterMap(
-                          options: MapOptions(
-                            center: LatLng(53.383331 ?? 0.0, -1.466667 ?? 0.0),
-                            zoom: 14,
-                          ),
-                          children: [
-                            TileLayer(
-                              urlTemplate:
-                                  'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
-                              userAgentPackageName: 'com.example.app',
-                            ),
-                            CircleLayer(
-                              circles: [
-                                CircleMarker(
-                                  point: LatLng(
-                                      53.383331 ?? 0.0, -1.466667 ?? 0.0),
-                                  radius: 350,
-                                  useRadiusInMeter: true,
-                                  color: Colors.blue.withOpacity(0.2),
-                                  borderColor: Colors.red.withOpacity(0.7),
-                                  borderStrokeWidth: 2,
-                                )
-                              ],
-                            ),
-                            MarkerLayer(
-                              markers: [
-                                // Marker(
-                                //   point: LatLng(53.383331 ?? 0.0, -1.466667 ?? 0.0),
-                                //   width: 80,
-                                //   height: 80,
-                                //   child: Icon(
-                                //     Icons.location_pin,
-                                //     color: Colors.red.withOpacity(0.9),
-                                //     size: 20,
-                                //   ),
-                                // ),
-                              ],
-                            ),
-                          ],
+                        FutureBuilder(
+                          future: getNearbyHospitals(snapshot1.data!),
+                          builder: (BuildContext context,
+                              AsyncSnapshot<List<dynamic>> snapshot2) {
+                            if (snapshot2.hasData) {
+                              Set<Marker> markers = {};
+                              for (var restaurant in snapshot2.data!) {
+                                markers.add(
+                                  Marker(
+                                    markerId: MarkerId(restaurant.placeId),
+                                    // markerId: MarkerId(restaurant.id),
+                                    position: LatLng(
+                                        restaurant.geometry.location.lat,
+                                        restaurant.geometry.location.lng),
+                                    infoWindow: InfoWindow(
+                                      title: restaurant.name,
+                                      snippet: restaurant.vicinity,
+                                    ),
+                                    icon: BitmapDescriptor.defaultMarkerWithHue(
+                                        BitmapDescriptor.hueBlue),
+                                  ),
+                                );
+                              }
+                              markers.add(
+                                Marker(
+                                    markerId: const MarkerId('currentLocation'),
+                                    position: LatLng(snapshot1.data!.latitude,
+                                        snapshot1.data!.longitude),
+                                    infoWindow: const InfoWindow(
+                                      title: 'Your Location',
+                                    ),
+                                    icon: BitmapDescriptor.defaultMarkerWithHue(
+                                        BitmapDescriptor.hueRed)),
+                              );
+                              return GoogleMap(
+                                initialCameraPosition: CameraPosition(
+                                  target: LatLng(snapshot1.data!.latitude,
+                                      snapshot1.data!.longitude),
+                                  zoom: 12,
+                                ),
+                                markers: markers,
+                                myLocationEnabled: false,
+                                gestureRecognizers:
+                                    <Factory<OneSequenceGestureRecognizer>>{
+                                  Factory<OneSequenceGestureRecognizer>(
+                                    () => EagerGestureRecognizer(),
+                                  )
+                                }.toSet(),
+                              );
+                            } else if (snapshot2.hasError) {
+                              return Text('${snapshot2.error}');
+                            }
+                            return const Center(
+                              child: CircularProgressIndicator(),
+                            );
+                          },
                         ),
+                        //
                       ],
-                    )
-                  : Center(
-                      child: CircularProgressIndicator(),
                     ),
+                  );
+                } else if (snapshot1.hasError) {
+                  return Text('Error: ${snapshot1.error}');
+                }
+                return const CircularProgressIndicator();
+              },
             ),
           ],
         ),
@@ -143,10 +215,11 @@ class _SupportPageState extends State<SupportPage> {
                       child: MySubmitButton(
                     onPressed: () {
                       Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) =>
-                                  const RehabilitationPage())).then((value) => setState(() {}));
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) =>
+                                      const RehabilitationPage()))
+                          .then((value) => setState(() {}));
                     },
                     text: "Click Here For More",
                     minWidth: 110,
