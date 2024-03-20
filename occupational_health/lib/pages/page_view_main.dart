@@ -1,5 +1,5 @@
 import "package:flutter/material.dart";
-import 'package:occupational_health/pages/community_page/community_page.dart';
+import "package:occupational_health/pages/community_page/community_page.dart";
 import 'package:occupational_health/pages/health_page/health_page.dart';
 import "package:occupational_health/pages/home_page.dart";
 import "package:occupational_health/pages/my_account_page.dart";
@@ -39,8 +39,7 @@ class _ListViewMainState extends State<ListViewMain> {
         appBarTitle: "Community",
         navTitle: "Community",
         navIcon: const Icon(Icons.people),
-        page: const CommunityPage()
-    )
+        page: const CommunityPage())
   ];
   //////////////////////////////////////////////////////////////////
 
@@ -73,8 +72,10 @@ class _ListViewMainState extends State<ListViewMain> {
             icon: const Icon(Icons.account_circle_outlined,
                 color: Colors.black, size: 42),
             onPressed: () => {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => const MyAccountPage()))
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const MyAccountPage()))
             },
           ),
         ],

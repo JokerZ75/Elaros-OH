@@ -1,12 +1,20 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
+import 'package:flutter/widgets.dart';
+import 'package:occupational_health/components/my_submit_button.dart';
+import 'package:occupational_health/components/my_text_form_field.dart';
+import 'package:occupational_health/model/post.dart';
+import 'package:occupational_health/pages/community_page/components/community_post.dart';
+import 'package:occupational_health/pages/community_page/forumn_page.dart';
+import 'package:occupational_health/services/Forum/forum_service.dart';
+import 'package:syncfusion_flutter_maps/maps.dart';
 import 'dart:async';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:occupational_health/components/my_submit_button.dart';
 import 'package:occupational_health/model/questionaire.dart';
 import 'package:occupational_health/services/Assessment/assessment_service.dart';
 import 'package:occupational_health/services/Location/location_service.dart';
@@ -19,6 +27,7 @@ class CommunityPage extends StatefulWidget {
 }
 
 class _CommunityPageState extends State<CommunityPage> {
+
   final TextEditingController _commentController = TextEditingController();
   final TextEditingController _replyController = TextEditingController();
   Completer<GoogleMapController> _controller = Completer();
@@ -37,22 +46,6 @@ class _CommunityPageState extends State<CommunityPage> {
         radius: 20000,
         fillColor: Colors.red.withOpacity(0.7),
         strokeWidth: 0),
-  ];
-
-  final List<String> comments = [
-    'I am so proud of you.',
-    'You are so strong.',
-    'Thank you for sharing.',
-    'Interesting topic!',
-    'You can do it!',
-  ];
-
-  final List<String> replies = [
-    'I am so proud of you.',
-    'You are so strong.',
-    'Thank you for sharing.',
-    'Interesting topic!',
-    'You can do it!',
   ];
 
   Map<String, bool> likedComments = {};
@@ -175,301 +168,52 @@ class _CommunityPageState extends State<CommunityPage> {
                     borderRadius: BorderRadius.circular(10.0),
                   ),
                 ),
-                child: Column(
-                  children: <Widget>[
-                    Container(
-                      height: 200,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        color: Color(0xFFEFB84C),
-                        borderRadius: BorderRadius.circular(20),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.grey.shade500,
-                            offset: Offset(4.0, 4.0),
-                            blurRadius: 15.0,
-                            spreadRadius: 1.0,
-                          ),
-                          BoxShadow(
-                            color: Colors.white,
-                            offset: Offset(-4.0, -4.0),
-                            blurRadius: 15.0,
-                            spreadRadius: 1.0,
-                          )
-                        ],
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              'This is the Forum Title',
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            SizedBox(width: 8),
-                            Text('This is forum text'),
-                            const Spacer(flex: 1),
-                            Container(
-                              alignment: Alignment.centerRight,
-                              child: ElevatedButton.icon(
-                                onPressed: () {
-                                  showModalBottomSheet(
-                                    context: context,
-                                    isScrollControlled: true,
-                                    builder: (BuildContext context) {
-                                      return SingleChildScrollView(
-                                        child: Container(
-                                          padding: EdgeInsets.only(
-                                            top: MediaQuery.of(context)
-                                                .padding
-                                                .top,
-                                            left: 16,
-                                            right: 16,
-                                            bottom: MediaQuery.of(context)
-                                                .viewInsets
-                                                .bottom,
-                                          ),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.stretch,
-                                            children: [
-                                              SizedBox(height: 16),
-                                              Text(
-                                                'Comments',
-                                                style: TextStyle(
-                                                  fontSize: 18,
-                                                  fontWeight: FontWeight.bold,
-                                                ),
-                                              ),
-                                              SizedBox(height: 16),
-                                              ...comments.map((comment) {
-                                                return ListTile(
-                                                  title: Text(comment),
-                                                  trailing: Row(
-                                                    mainAxisSize:
-                                                        MainAxisSize.min,
-                                                    children: [
-                                                      IconButton(
-                                                        icon: Icon(
-                                                          Icons.thumb_up,
-                                                          color: likedComments[
-                                                                      comment] ==
-                                                                  true
-                                                              ? Colors.red
-                                                              : null,
-                                                        ),
-                                                        onPressed: () {
-                                                          setState(() {
-                                                            if (likedComments[
-                                                                    comment] ==
-                                                                true) {
-                                                              likedComments[
-                                                                      comment] =
-                                                                  false;
-                                                              numberOfLikes[
-                                                                      comment] =
-                                                                  (numberOfLikes[
-                                                                              comment] ??
-                                                                          0) -
-                                                                      1;
-                                                            } else {
-                                                              likedComments[
-                                                                      comment] =
-                                                                  true;
-                                                              numberOfLikes[
-                                                                      comment] =
-                                                                  (numberOfLikes[
-                                                                              comment] ??
-                                                                          0) +
-                                                                      1;
-                                                            }
-                                                          });
-                                                        },
-                                                      ),
-                                                      Text(
-                                                        '${numberOfLikes[comment] ?? 0}',
-                                                      ),
-                                                      IconButton(
-                                                        icon: Icon(Icons.reply),
-                                                        onPressed: () {
-                                                          print(
-                                                              "Reply IconButton Pressed");
-                                                          showModalBottomSheet(
-                                                            context: context,
-                                                            isScrollControlled:
-                                                                true,
-                                                            builder:
-                                                                (BuildContext
-                                                                    context) {
-                                                              return Container(
-                                                                padding:
-                                                                    EdgeInsets
-                                                                        .all(
-                                                                            16),
-                                                                child: Column(
-                                                                  crossAxisAlignment:
-                                                                      CrossAxisAlignment
-                                                                          .start,
-                                                                  children: [
-                                                                    Text(
-                                                                      'Enter your reply:',
-                                                                      style: TextStyle(
-                                                                          fontWeight:
-                                                                              FontWeight.bold),
-                                                                    ),
-                                                                    SizedBox(
-                                                                        height:
-                                                                            8),
-                                                                    TextField(
-                                                                      controller:
-                                                                          _replyController,
-                                                                      decoration:
-                                                                          InputDecoration(
-                                                                        hintText:
-                                                                            'Type your reply here...',
-                                                                        border:
-                                                                            OutlineInputBorder(),
-                                                                      ),
-                                                                    ),
-                                                                    SizedBox(
-                                                                        height:
-                                                                            16),
-                                                                    Row(
-                                                                      mainAxisAlignment:
-                                                                          MainAxisAlignment
-                                                                              .end,
-                                                                      children: [
-                                                                        TextButton(
-                                                                          onPressed:
-                                                                              () {
-                                                                            Navigator.pop(context);
-                                                                          },
-                                                                          child:
-                                                                              Text('Cancel'),
-                                                                        ),
-                                                                        SizedBox(
-                                                                            width:
-                                                                                8),
-                                                                        ElevatedButton(
-                                                                          onPressed:
-                                                                              () {
-                                                                            String
-                                                                                reply =
-                                                                                _replyController.text;
-                                                                            if (reply.isNotEmpty) {
-                                                                              Navigator.pop(context, reply);
-                                                                              print("Reply cannot be empty.");
-                                                                            }
-                                                                          },
-                                                                          child:
-                                                                              Text('Submit'),
-                                                                        ),
-                                                                      ],
-                                                                    ),
-                                                                  ],
-                                                                ),
-                                                              );
-                                                            },
-                                                          ).then((value) {
-                                                            print(
-                                                                "Bottom Sheet Closed");
-                                                            if (value != null &&
-                                                                value
-                                                                    .isNotEmpty) {
-                                                              setState(() {
-                                                                replies
-                                                                    .add(value);
-                                                              });
-                                                            }
-                                                          });
-                                                        },
-                                                      ),
-                                                    ],
-                                                  ),
-                                                );
-                                              }).toList(),
-                                              SizedBox(height: 16),
-                                              Padding(
-                                                padding:
-                                                    const EdgeInsets.all(8.0),
-                                                child: Row(
-                                                  children: [
-                                                    Expanded(
-                                                      child: TextField(
-                                                        controller:
-                                                            _commentController,
-                                                        decoration:
-                                                            InputDecoration(
-                                                          hintText:
-                                                              'Write a comment...',
-                                                          border:
-                                                              OutlineInputBorder(),
-                                                        ),
-                                                      ),
-                                                    ),
-                                                    IconButton(
-                                                      onPressed: () {
-                                                        String comment =
-                                                            _commentController
-                                                                .text;
-                                                        if (comment
-                                                            .isNotEmpty) {
-                                                          setState(() {
-                                                            comments
-                                                                .add(comment);
-                                                            _commentController
-                                                                .clear();
-                                                          });
-                                                        }
-                                                      },
-                                                      icon: Icon(Icons.send),
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                            ],
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                  );
-                                },
-                                icon: Icon(
-                                  Icons.comment_rounded,
-                                  color: Colors.black,
-                                ),
-                                label: Text(
-                                  'Comment',
-                                  style: TextStyle(color: Colors.black),
-                                ),
-                                style: ElevatedButton.styleFrom(
-                                    backgroundColor: Color(0xFFEFB84C)),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    Container(
-                      child: MySubmitButton(
-                        style:
-                            TextStyle(backgroundColor: const Color(0xFFEFD080)),
-                        onPressed: () {},
-                        text: "Click here to view more posts",
-                        textSize: 16,
-                      ),
-                    ),
-                  ],
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Color(0xFFEFB84C),
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                  padding: EdgeInsets.all(10.0),
+                  margin: EdgeInsets.symmetric(vertical: 10.0),
+                  child: Column(
+                    children: [
+                      StreamBuilder(
+                          stream: ForumService().getMostRecent(),
+                          builder: (context, snapshot) {
+                            if (!snapshot.hasData) {
+                              return SizedBox(
+                                  height: 250,
+                                  child: Center(child: Text("No posts")));
+                            }
+                            if (snapshot.hasError) {
+                              print(snapshot.error.toString());
+                            }
+                            Post p = Post.fromMap(snapshot.data!.docs.first
+                                .data() as Map<String, dynamic>);
+                            p.setUid(snapshot.data!.docs.first.id);
+                            return CommunityPost(
+                              postId: p.uid,
+                              message: p.postTitle,
+                              user: p.user,
+                              likes: p.likes,
+                              comments: p.postComments,
+                            );
+                          }),
+                      SizedBox(height: 20),
+                      MySubmitButton(
+                          onPressed: () {
+                            Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const ForumPage()));
+                          },
+                          text: "View more posts")
+                    ],
+                  ),
                 ),
               ),
               SizedBox(height: 20),
+
 
               // Community Map
 
@@ -478,6 +222,7 @@ class _CommunityPageState extends State<CommunityPage> {
                 style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                 textAlign: TextAlign.left,
               ),
+
 
               const SizedBox(height: 10),
 
