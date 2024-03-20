@@ -11,6 +11,9 @@
 	<!-- CLIENT ID -->
 	<key>GIDClientID</key>
 	<string>215764582587-j6s2p5srp9ubdd8u7iv7b1l6p7kqrobl.apps.googleusercontent.com</string>
+	<!-- Location Permission -->
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Allow Occupational Health to access your location while you are using the app.</string>
 	<key>CFBundleExecutable</key>
 	<string>$(EXECUTABLE_NAME)</string>
 	<key>CFBundleIdentifier</key>

@@ -640,7 +640,7 @@ PODS:
   - BoringSSL-GRPC/Implementation (0.0.24):
     - BoringSSL-GRPC/Interface (= 0.0.24)
   - BoringSSL-GRPC/Interface (0.0.24)
-  - cloud_firestore (4.15.5):
+  - cloud_firestore (4.15.9):
     - Firebase/Firestore (= 10.22.0)
     - firebase_core
     - Flutter
@@ -653,11 +653,11 @@ PODS:
   - Firebase/Firestore (10.22.0):
     - Firebase/CoreOnly
     - FirebaseFirestore (~> 10.22.0)
-  - firebase_auth (4.17.5):
+  - firebase_auth (4.17.9):
     - Firebase/Auth (= 10.22.0)
     - firebase_core
     - Flutter
-  - firebase_core (2.27.0):
+  - firebase_core (2.27.1):
     - Firebase/CoreOnly (= 10.22.0)
     - Flutter
   - FirebaseAppCheckInterop (10.22.0)
@@ -697,10 +697,20 @@ PODS:
     - nanopb (< 2.30911.0, >= 2.30908.0)
   - FirebaseSharedSwift (10.22.0)
   - Flutter (1.0.0)
+  - geolocator_apple (1.2.0):
+    - Flutter
+  - google_maps_flutter_ios (0.0.1):
+    - Flutter
+    - GoogleMaps (< 9.0)
   - google_sign_in_ios (0.0.1):
     - Flutter
     - FlutterMacOS
     - GoogleSignIn (~> 7.0)
+  - GoogleMaps (6.2.1):
+    - GoogleMaps/Maps (= 6.2.1)
+  - GoogleMaps/Base (6.2.1)
+  - GoogleMaps/Maps (6.2.1):
+    - GoogleMaps/Base
   - GoogleSignIn (7.0.0):
     - AppAuth (~> 1.5)
     - GTMAppAuth (< 3.0, >= 1.3)
@@ -813,6 +823,8 @@ DEPENDENCIES:
   - firebase_auth (from `.symlinks/plugins/firebase_auth/ios`)
   - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
   - Flutter (from `Flutter`)
+  - geolocator_apple (from `.symlinks/plugins/geolocator_apple/ios`)
+  - google_maps_flutter_ios (from `.symlinks/plugins/google_maps_flutter_ios/ios`)
   - google_sign_in_ios (from `.symlinks/plugins/google_sign_in_ios/darwin`)
   - open_file (from `.symlinks/plugins/open_file/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
@@ -832,6 +844,7 @@ SPEC REPOS:
     - FirebaseFirestore
     - FirebaseFirestoreInternal
     - FirebaseSharedSwift
+    - GoogleMaps
     - GoogleSignIn
     - GoogleUtilities
     - "gRPC-C++"
@@ -852,6 +865,10 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/firebase_core/ios"
   Flutter:
     :path: Flutter
+  geolocator_apple:
+    :path: ".symlinks/plugins/geolocator_apple/ios"
+  google_maps_flutter_ios:
+    :path: ".symlinks/plugins/google_maps_flutter_ios/ios"
   google_sign_in_ios:
     :path: ".symlinks/plugins/google_sign_in_ios/darwin"
   open_file:
@@ -865,10 +882,10 @@ SPEC CHECKSUMS:
   abseil: 926fb7a82dc6d2b8e1f2ed7f3a718bce691d1e46
   AppAuth: a13994980c1ec792f7e2e665acd4d4aa6be43240
   BoringSSL-GRPC: 3175b25143e648463a56daeaaa499c6cb86dad33
-  cloud_firestore: 460d5e18a0c1abe0ae5bcaa385d088c24645cccb
+  cloud_firestore: 9d69182af1d677062f005584ca5470a19e1f68e7
   Firebase: 797fd7297b7e1be954432743a0b3f90038e45a71
-  firebase_auth: 50bead5d815328246c8111d8c8c0eea4b47be490
-  firebase_core: 100945864b4aedce3cfef0c62ab864858bf013cf
+  firebase_auth: 610184b4f624545f81e0416bca60642b6818f27f
+  firebase_core: d6dfb4cb86a9ebd92464bb8736075fe967211c97
   FirebaseAppCheckInterop: 58db3e9494751399cf3e7b7e3e705cff71099153
   FirebaseAuth: bbe4c68f958504ba9e54aee181adbdf5b664fbc6
   FirebaseCore: 0326ec9b05fbed8f8716cddbf0e36894a13837f7
@@ -878,7 +895,10 @@ SPEC CHECKSUMS:
   FirebaseFirestoreInternal: 86fe6fc8ca156309cb4842d2d7b2f15c669a64a0
   FirebaseSharedSwift: 48076404e6e52372290d15a07d2ed1d2f1754023
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
+  geolocator_apple: 6cbaf322953988e009e5ecb481f07efece75c450
+  google_maps_flutter_ios: f135b968a67c05679e0a53538e900b5c174b0d99
   google_sign_in_ios: 989eea5abe94af62050782714daf920be883d4a2
+  GoogleMaps: 20d7b12be49a14287f797e88e0e31bc4156aaeb4
   GoogleSignIn: b232380cf495a429b8095d3178a8d5855b42e842
   GoogleUtilities: d053d902a8edaa9904e1bd00c37535385b8ed152
   "gRPC-C++": 2df8cba576898bdacd29f0266d5236fa0e26ba6a
@@ -891,7 +911,7 @@ SPEC CHECKSUMS:
   path_provider_foundation: 3784922295ac71e43754bd15e0653ccfd36a147c
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
   RecaptchaInterop: 7d1a4a01a6b2cb1610a47ef3f85f0c411434cb21
-  url_launcher_ios: bbd758c6e7f9fd7b5b1d4cde34d2b95fcce5e812
+  url_launcher_ios: 6116280ddcfe98ab8820085d8d76ae7449447586
 
 PODFILE CHECKSUM: 7be2f5f74864d463a8ad433546ed1de7e0f29aef
 

@@ -522,7 +522,7 @@ _createBar(Color color, double toY) {
       fromY: 0,
       toY: toY,
       color: color,
-      width: 3,
+      width: 4,
       borderRadius: BorderRadius.zero);
 }
 
