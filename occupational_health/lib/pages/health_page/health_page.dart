@@ -342,7 +342,7 @@ class _HealthPageState extends State<HealthPage> {
 
   Widget _buildRaderCarousel() {
     return SizedBox(
-      height: 470,
+      height: 500,
       child: PageView(
         onPageChanged: (value) => {
           setState(() {
