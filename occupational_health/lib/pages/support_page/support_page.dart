@@ -147,6 +147,7 @@ class _SupportPageState extends State<SupportPage> {
                                 ),
                                 markers: markers,
                                 myLocationEnabled: false,
+                                myLocationButtonEnabled: false,
                                 gestureRecognizers:
                                     <Factory<OneSequenceGestureRecognizer>>{
                                   Factory<OneSequenceGestureRecognizer>(

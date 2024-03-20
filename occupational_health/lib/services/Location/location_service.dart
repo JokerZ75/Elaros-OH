@@ -21,9 +21,7 @@ class LocationService {
 
   Future<void> setLoggedInPosition() async {
     try {
-      print("Setting location");
       Position p = await getCurrentLocation();
-      print(p.latitude);
       // Save to Firestore
       await _firestore
           .collection('users')
