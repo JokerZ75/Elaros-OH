@@ -171,7 +171,6 @@ class _CommunityPostState extends State<CommunityPost> {
                       _toggleLike(widget.postId);
                     },
                   ),
-                  SizedBox(width: 5),
                   Text(widget.likes!.length.toString()),
                 ],
               ),
