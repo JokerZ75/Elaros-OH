@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:googleapis/forms/v1.dart';
 import 'package:occupational_health/model/questionaire.dart';
 import 'package:occupational_health/model/questionaire_averages.dart';
 import 'package:geolocator/geolocator.dart';
@@ -53,8 +54,9 @@ class AssessmentService extends ChangeNotifier {
     }
   } // getQuestionaires
 
-  Future<List<Questionaire>> getQuestionairesFromUsersWithLocation() async {
-    List<Questionaire> questionaires = [];
+  Future<Map<GeoPoint, List<Questionaire>>>
+      getQuestionairesFromUsersWithLocation() async {
+    Map<GeoPoint, List<Questionaire>> questionaires = {};
     List<Questionaire> temp = [];
     Map<String, String> geoPoints = {};
     Map<String, List<Questionaire>> locationQuestionaire = {};
@@ -81,47 +83,77 @@ class AssessmentService extends ChangeNotifier {
 
       Map<String, List<String>> locationUsers = {};
 
-      for (var location in geoPoints.keys) {
-        if (locationUsers.isEmpty) {
-          locationUsers[location] = [geoPoints[location]!];
-        }
-
-        // Check if user is in 1km radius of location
-        for (var user in geoPoints.keys) {
-          if (user == location) {
-            continue;
-          }
-          final userLocation = user.split(", ");
-          final locationLocation = location.split(", ");
-          final distance = Geolocator.distanceBetween(
-              double.parse(userLocation[0]),
-              double.parse(userLocation[1]),
-              double.parse(locationLocation[0]),
-              double.parse(locationLocation[1]));
-          if (distance < 1000) {
-            if (locationUsers[location] == null) {
-              locationUsers[location] = [geoPoints[user]!, geoPoints[location]!];
-            } 
+      for (var geoPoint1 in geoPoints.keys) {
+        for (var geoPoint2 in geoPoints.keys) {
+          // If geo point 1 is within 1000m of geo point 2
+          if (Geolocator.distanceBetween(
+                  double.parse(geoPoint1.split(", ")[0]),
+                  double.parse(geoPoint1.split(", ")[1]),
+                  double.parse(geoPoint2.split(", ")[0]),
+                  double.parse(geoPoint2.split(", ")[1])) <=
+              1000) {
+            // If the locationUsers map does not contain the key
+            if (!locationUsers.containsKey(geoPoint1)) {
+              locationUsers[geoPoint1] = [geoPoints[geoPoint2]!];
+            } else {
+              locationUsers[geoPoint1]!.add(geoPoints[geoPoint2]!);
+            }
           }
         }
       }
 
+      Map<String, List<String>> locationUsersCopy = Map.from(locationUsers);
+      // Alrady deleted locations
+      List<List<String>> lastDeleted = [];
 
-      print(locationUsers);
-
-      for (var location in geoPoints.keys) {
-        final questionairesDocs = await _firestore
-            .collection('assessments')
-            .where('location', isEqualTo: location)
-            .get();
-        for (var questionaire in questionairesDocs.docs) {
-          temp.add(Questionaire.fromMap(
-              questionaire.data() as Map<String, dynamic>));
+      // if locations have the same array values remove the duplicate
+      for (var location in locationUsersCopy.keys) {
+        for (var location2 in locationUsersCopy.keys) {
+          if (locationUsersCopy[location]!.every((element) =>
+                  locationUsersCopy[location2]!.contains(element)) &&
+              location != location2 &&
+              locationUsersCopy[location]!.length > 1) {
+            // if array is in last deleted
+            if (lastDeleted.contains(locationUsersCopy[location]!)) {
+              continue;
+            }
+            locationUsers.remove(location2);
+            lastDeleted.add(locationUsersCopy[location2]!);
+          }
         }
-        locationQuestionaire[location] = temp;
-        temp = [];
       }
 
+      // If an array has less than 3 users remove it
+      locationUsersCopy = Map.from(locationUsers);
+      for (var location in locationUsersCopy.keys) {
+        if (locationUsersCopy[location]!.length < 3) {
+          locationUsers.remove(location);
+        }
+      }
+
+      for (var location in locationUsers.keys) {
+        for (var user in locationUsers[location]!) {
+          final questionairesDocs = await _firestore
+              .collection('assessments')
+              .doc(user)
+              .collection("completed_questionaires")
+              .get();
+          temp = questionairesDocs.docs
+              .map((doc) =>
+                  Questionaire.fromMap(doc.data() as Map<String, dynamic>))
+              .toList();
+          if (questionaires.containsKey(GeoPoint(
+              double.parse(location.split(", ")[0]),
+              double.parse(location.split(", ")[1])))) {
+            questionaires[GeoPoint(double.parse(location.split(", ")[0]),
+                    double.parse(location.split(", ")[1]))]!
+                .addAll(temp);
+          } else {
+            questionaires[GeoPoint(double.parse(location.split(", ")[0]),
+                double.parse(location.split(", ")[1]))] = temp;
+          }
+        }
+      }
 
       return questionaires;
     } catch (e) {

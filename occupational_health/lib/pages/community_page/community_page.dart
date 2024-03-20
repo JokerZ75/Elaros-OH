@@ -22,6 +22,7 @@ class _CommunityPageState extends State<CommunityPage> {
   final TextEditingController _commentController = TextEditingController();
   final TextEditingController _replyController = TextEditingController();
   Completer<GoogleMapController> _controller = Completer();
+  List<Marker> markers = <Marker>[];
   List<Circle> areas = <Circle>[
     Circle(
       circleId: CircleId("1"),
@@ -65,6 +66,7 @@ class _CommunityPageState extends State<CommunityPage> {
     // check for location permission
     LocationService locationService = LocationService();
 
+
     bool hasPermission = await locationService.checkPermission();
 
     if (hasPermission) {
@@ -92,42 +94,70 @@ class _CommunityPageState extends State<CommunityPage> {
 
   void SetCircles() async {
     // Get the locations from the database
-    List<Questionaire> questionaires =
+    Map<GeoPoint, List<Questionaire>> questionaires =
         await AssessmentService().getQuestionairesFromUsersWithLocation();
     List<Circle> circles = <Circle>[];
-    for (Questionaire questionaire in questionaires) {
 
-    }
+
+    // Get the most common symptom for each location
+    Map<GeoPoint, String> mostCommonSymptom =
+        await GetSymptomsMostCommonToLocations(questionaires);
+
+    // Make the circles
+    mostCommonSymptom.forEach((location, symptom) {
+      markers.add(
+        Marker(
+          markerId: MarkerId(location.hashCode.toString()),
+          position: LatLng(location.latitude, location.longitude),
+          infoWindow: InfoWindow(
+            title: "Most common symptom",
+            snippet: symptom,
+          ),
+        ),
+      );
+      circles.add(
+        Circle(
+          circleId: CircleId(location.hashCode.toString()),
+          center: LatLng(location.latitude, location.longitude),
+          radius: 10000,
+          fillColor: Colors.red.withOpacity(0.5),
+          strokeWidth: 0,
+          consumeTapEvents: true,
+        ),
+      );
+    });
+
     // Set the circles
     setState(() {
       areas = circles;
     });
   }
 
-  Future<Map<String, GeoPoint>> GetSymptomsMostCommonToLocations(
-      List<Questionaire> questionairesWithLocation) async {
-    Map<String, GeoPoint> locations = {};
-    Map<GeoPoint, List<Questionaire>> locationsWithQuestionaires = {};
-    for (Questionaire questionaire in questionairesWithLocation) {}
+  Future<Map<GeoPoint, String>> GetSymptomsMostCommonToLocations(
+      Map<GeoPoint, List<Questionaire>> questionairesWithLocation) async {
+    Map<GeoPoint, String> mostCommonSymptom = {};
 
-    return locations;
-  }
+    // Get the most common symptom for each location
+    questionairesWithLocation.forEach((location, questionaires) {
+      Map<String, int> symptomCount = {};
+      questionaires.forEach((questionaire) {
+        questionaire.questionaire.forEach((section, questions) {
+          questions.forEach((question, answer) {
+            if (answer == 1 || answer == 2 || answer == 3) {
+              symptomCount[question] = (symptomCount[question] ?? 0) + 1;
+            }
+          });
+        });
+      });
+      String mostCommonSymptomForLocation = symptomCount.entries
+          .reduce((a, b) => a.value > b.value ? a : b)
+          .key;
+      mostCommonSymptom[location] = mostCommonSymptomForLocation;
+    });
 
-  Future<Map<String, double>> CalculateAverages(
-      List<Questionaire> questionairesWithLocation) async {
-    Map<String, double> averages = {};
-    for (Questionaire questionaires in questionairesWithLocation) {
-      // Get the average of the questionaire
-      double average = 0;
-      for (String section in questionaires.questionaire.keys) {
-        for (String question in questionaires.questionaire[section]!.keys) {
-          average += questionaires.questionaire[section]![question]!;
-        }
-        average /= questionaires.questionaire.length;
-        averages[section] = average;
-      }
-    }
-    return averages;
+    // Get the most common symptom for each location
+
+    return mostCommonSymptom;
   }
 
   @override
@@ -465,6 +495,7 @@ class _CommunityPageState extends State<CommunityPage> {
                     zoom: 7,
                   ),
                   circles: areas.toSet(),
+                  markers: markers.toSet(),
                   gestureRecognizers: <Factory<OneSequenceGestureRecognizer>>{
                     Factory<OneSequenceGestureRecognizer>(
                       () => EagerGestureRecognizer(),
