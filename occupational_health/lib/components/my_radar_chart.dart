@@ -5,12 +5,14 @@ class MyRadarChart extends StatefulWidget {
   final String title;
   final List<RawDataSet> dataSets;
   final RadarChartTitle Function(int, double)? getTitle;
+  final int ticks;
 
   const MyRadarChart({
     Key? key,
     required this.title,
     required this.dataSets,
     required this.getTitle,
+    required this.ticks,
   }) : super(key: key);
 
   @override
@@ -149,7 +151,7 @@ class _MyRadarChartState extends State<MyRadarChart> {
                       titleTextStyle:
                           const  TextStyle(color: Colors.black, fontSize: 14),
                       getTitle: widget.getTitle,
-                      tickCount: 4,
+                      tickCount: widget.ticks,
                       ticksTextStyle: const TextStyle(
                           color: Colors.black, fontSize: 10),
                       tickBorderData: BorderSide(color: Colors.grey.shade400, width: 1),

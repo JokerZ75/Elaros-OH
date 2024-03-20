@@ -210,7 +210,7 @@ class _SupportPageState extends State<SupportPage> {
                           context,
                           MaterialPageRoute(
                               builder: (context) =>
-                                  const RehabilitationPage()));
+                                  const RehabilitationPage())).then((value) => setState(() {}));
                     },
                     text: "Click Here For More",
                     minWidth: 110,

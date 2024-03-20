@@ -6,6 +6,7 @@ class MyTextFormField extends StatelessWidget {
   final TextInputType keyboardType;
   final bool obscureText;
   final String? Function(String?)? validator;
+  final bool readOnly;
 
   const MyTextFormField({
     Key? key,
@@ -14,12 +15,14 @@ class MyTextFormField extends StatelessWidget {
     required this.keyboardType,
     required this.obscureText,
     required this.validator,
+    this.readOnly = false,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
+      readOnly: readOnly,
       keyboardType: keyboardType,
       obscureText: obscureText,
       validator: validator,
@@ -31,7 +34,7 @@ class MyTextFormField extends StatelessWidget {
         labelStyle: TextStyle(
           color: Colors.grey.shade600,
         ),
-        fillColor: const Color(0xFFECEBEC),
+        fillColor:  readOnly ?  Colors.grey.shade400: const Color(0xFFECEBEC),
         filled: true,
         contentPadding: const EdgeInsetsDirectional.fromSTEB(10, 3, 10, 10),
         border: UnderlineInputBorder(
