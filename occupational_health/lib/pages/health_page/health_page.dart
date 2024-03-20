@@ -125,164 +125,39 @@ class _HealthPageState extends State<HealthPage> {
 
   List<BarChartGroupData> barChartData = [
     BarChartGroupData(x: 0, barRods: [
-      BarChartRodData(
-          fromY: 0,
-          toY: 0,
-          color: Colors.blue,
-          width: 3,
-          borderRadius: BorderRadius.zero),
-      BarChartRodData(
-          fromY: 0,
-          toY: 0,
-          color: Colors.green,
-          width: 3,
-          borderRadius: BorderRadius.zero),
-      BarChartRodData(
-          fromY: 0,
-          toY: 0,
-          color: Colors.red,
-          width: 3,
-          borderRadius: BorderRadius.zero),
-      BarChartRodData(
-          fromY: 0,
-          toY: 0,
-          color: Colors.purple,
-          width: 3,
-          borderRadius: BorderRadius.zero),
-      BarChartRodData(
-          fromY: 0,
-          toY: 0,
-          color: Colors.black,
-          width: 3,
-          borderRadius: BorderRadius.zero),
+      _createBar(Colors.blue, 0),
+      _createBar(Colors.green, 0),
+      _createBar(Colors.red, 0),
+      _createBar(Colors.purple, 0),
+      _createBar(Colors.black, 0),
     ]),
     BarChartGroupData(x: 4, barRods: [
-      BarChartRodData(
-          fromY: 0,
-          toY: 3,
-          color: Colors.blue,
-          width: 3,
-          borderRadius: BorderRadius.zero),
-      BarChartRodData(
-          fromY: 0,
-          toY: 3,
-          color: Colors.green,
-          width: 3,
-          borderRadius: BorderRadius.zero),
-      BarChartRodData(
-          fromY: 0,
-          toY: 3,
-          color: Colors.red,
-          width: 3,
-          borderRadius: BorderRadius.zero),
-      BarChartRodData(
-          fromY: 0,
-          toY: 3,
-          color: Colors.purple,
-          width: 3,
-          borderRadius: BorderRadius.zero),
-      BarChartRodData(
-          fromY: 0,
-          toY: 3,
-          color: Colors.black,
-          width: 3,
-          borderRadius: BorderRadius.zero),
+      _createBar(Colors.blue, 3),
+      _createBar(Colors.green, 3),
+      _createBar(Colors.red, 3),
+      _createBar(Colors.purple, 3),
+      _createBar(Colors.black, 3),
     ]),
     BarChartGroupData(x: 6, barRods: [
-      BarChartRodData(
-          fromY: 0,
-          toY: 3,
-          color: Colors.blue,
-          width: 3,
-          borderRadius: BorderRadius.zero),
-      BarChartRodData(
-          fromY: 0,
-          toY: 3,
-          color: Colors.green,
-          width: 3,
-          borderRadius: BorderRadius.zero),
-      BarChartRodData(
-          fromY: 0,
-          toY: 3,
-          color: Colors.red,
-          width: 3,
-          borderRadius: BorderRadius.zero),
-      BarChartRodData(
-          fromY: 0,
-          toY: 3,
-          color: Colors.purple,
-          width: 3,
-          borderRadius: BorderRadius.zero),
-      BarChartRodData(
-          fromY: 0,
-          toY: 2,
-          color: Colors.black,
-          width: 3,
-          borderRadius: BorderRadius.zero),
+      _createBar(Colors.blue, 3),
+      _createBar(Colors.green, 3),
+      _createBar(Colors.red, 3),
+      _createBar(Colors.purple, 3),
+      _createBar(Colors.black, 2),
     ]),
     BarChartGroupData(x: 8, barRods: [
-      BarChartRodData(
-          fromY: 0,
-          toY: 2,
-          color: Colors.blue,
-          width: 3,
-          borderRadius: BorderRadius.zero),
-      BarChartRodData(
-          fromY: 0,
-          toY: 2,
-          color: Colors.green,
-          width: 3,
-          borderRadius: BorderRadius.zero),
-      BarChartRodData(
-          fromY: 0,
-          toY: 3,
-          color: Colors.red,
-          width: 3,
-          borderRadius: BorderRadius.zero),
-      BarChartRodData(
-          fromY: 0,
-          toY: 3,
-          color: Colors.purple,
-          width: 3,
-          borderRadius: BorderRadius.zero),
-      BarChartRodData(
-          fromY: 0,
-          toY: 2,
-          color: Colors.black,
-          width: 3,
-          borderRadius: BorderRadius.zero),
+      _createBar(Colors.blue, 2),
+      _createBar(Colors.green, 2),
+      _createBar(Colors.red, 3),
+      _createBar(Colors.purple, 3),
+      _createBar(Colors.black, 2),
     ]),
     BarChartGroupData(x: 10, barRods: [
-      BarChartRodData(
-          fromY: 0,
-          toY: 3,
-          color: Colors.blue,
-          width: 3,
-          borderRadius: BorderRadius.zero),
-      BarChartRodData(
-          fromY: 0,
-          toY: 0,
-          color: Colors.green,
-          width: 3,
-          borderRadius: BorderRadius.zero),
-      BarChartRodData(
-          fromY: 0,
-          toY: 1,
-          color: Colors.red,
-          width: 3,
-          borderRadius: BorderRadius.zero),
-      BarChartRodData(
-          fromY: 0,
-          toY: 3,
-          color: Colors.purple,
-          width: 3,
-          borderRadius: BorderRadius.zero),
-      BarChartRodData(
-          fromY: 0,
-          toY: 1,
-          color: Colors.black,
-          width: 3,
-          borderRadius: BorderRadius.zero),
+      _createBar(Colors.blue, 3),
+      _createBar(Colors.green, 0),
+      _createBar(Colors.red, 1),
+      _createBar(Colors.purple, 3),
+      _createBar(Colors.black, 1),
     ]),
   ];
 
@@ -592,6 +467,15 @@ class _HealthPageState extends State<HealthPage> {
         ],
       ),
     );
+  }
+
+  static _createBar(Color color, double toY) {
+    return BarChartRodData(
+        fromY: 0,
+        toY: toY,
+        color: color,
+        width: 3,
+        borderRadius: BorderRadius.zero);
   }
 }
 

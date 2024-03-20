@@ -32,6 +32,7 @@ class _MyBarChartState extends State<MyBarChart> {
             ),
           ),
           const Wrap(
+            alignment: WrapAlignment.center,
             children: [
               Text(' Communication ', style: TextStyle(color: Colors.blue)),
               Text(' Mobility ', style: TextStyle(color: Colors.green)),
@@ -45,7 +46,7 @@ class _MyBarChartState extends State<MyBarChart> {
             height: 10,
           ),
           SizedBox(
-            width: MediaQuery.of(context).size.width - 90,
+            width: MediaQuery.of(context).size.width,
             height: 300,
             child: BarChart(BarChartData(
               minY: 0,
@@ -63,7 +64,6 @@ class _MyBarChartState extends State<MyBarChart> {
                     axisNameWidget: Text("Months since covid"),
                     axisNameSize: 30),
               ),
-              
               gridData: const FlGridData(show: true, drawVerticalLine: false),
             )),
           ),
@@ -71,4 +71,6 @@ class _MyBarChartState extends State<MyBarChart> {
       ),
     );
   }
+
+
 }
