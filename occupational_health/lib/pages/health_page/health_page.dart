@@ -468,7 +468,7 @@ class _HealthPageState extends State<HealthPage> {
                 "Personal Care",
                 "Daily Activities",
                 "Mobility",
-                "Social Role"
+                "Social Role",
                 "Communication",
               ],
               colors: const [
