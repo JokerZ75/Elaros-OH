@@ -1,12 +1,11 @@
 import 'package:choice/choice.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:occupational_health/services/Assessment/assessment_service.dart';
+import 'package:occupational_health/services/Location/location_service.dart';
 
 class QuestionairePage extends StatefulWidget {
-
-  const QuestionairePage(
-      {Key? key})
-      : super(key: key);
+  const QuestionairePage({Key? key}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _QuestionairePageState();
@@ -213,16 +212,27 @@ class _QuestionairePageState extends State<QuestionairePage> {
                                           MaterialStateProperty.all(35.0)),
                                   onPressed: () async {
                                     var result = validate();
-                                    if (result.$2 == true) {                                  
+                                    if (result.$2 == true) {
                                       Map<String, Map<String, int>>
                                           questionaire = {};
                                       for (var section in sections) {
                                         questionaire[section.sectionTitle] =
                                             section.questions;
                                       }
+                                      LocationService locationService =
+                                          LocationService();
+                                      bool isLocationEnabled =
+                                          await locationService
+                                              .checkPermission();
+                                      if (isLocationEnabled) {
+                                        await locationService
+                                            .setLoggedInPosition();
+                                      }
                                       await _assessmentService
                                           .saveQuestionaire(questionaire);
-                                      if (mounted) Navigator.pop(context, true);
+                                      if (mounted) {
+                                        Navigator.pop(context, true);
+                                      }
                                     } else {
                                       pageController.animateToPage(result.$1,
                                           duration:

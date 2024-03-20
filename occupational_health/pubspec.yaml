@@ -55,6 +55,11 @@ dependencies:
   google_sign_in: ^6.2.1
   googleapis: ^13.1.0
   http: ^1.2.0
+  google_maps_flutter: ^2.5.3
+  location: ^5.0.3
+  geolocator: ^11.0.0
+  geocoding: ^3.0.0
+  label_marker: ^1.0.1
 
 dev_dependencies:
   flutter_test:

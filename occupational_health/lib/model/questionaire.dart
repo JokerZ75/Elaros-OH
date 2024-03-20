@@ -1,15 +1,19 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class Questionaire {
-  final Map<String, Map<String, int>> questionaire; // {section: {question: answer, question: answer}, section: {question: answer, question: answer}
+  final Map<String, Map<String, int>>
+      questionaire; // {section: {question: answer, question: answer}, section: {question: answer, question: answer}
   final Timestamp timestamp;
-
-
 
   Questionaire({
     required this.questionaire,
     required this.timestamp,
   });
+
 
   Map<String, dynamic> toMap() {
     return {

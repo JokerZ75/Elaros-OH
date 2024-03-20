@@ -3,6 +3,7 @@ import "dart:async";
 import "package:firebase_auth/firebase_auth.dart";
 import "package:flutter/material.dart";
 import "package:occupational_health/components/my_date_picker.dart";
+import "package:occupational_health/components/my_keyboard_hider.dart";
 import "package:occupational_health/components/my_submit_button.dart";
 import "package:occupational_health/components/my_swipe_back.dart";
 import "package:occupational_health/components/my_text_form_field.dart";
@@ -120,7 +121,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
         ],
       ),
       body: MySwipeBack(
-          child: SingleChildScrollView(
+          child: MyKeyboardHider(child:SingleChildScrollView(
               child: Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20.0, vertical: 10.0),
@@ -355,7 +356,7 @@ class _MyAccountPageState extends State<MyAccountPage> {
           ),
         ),
       ))),
-    );
+    ));
   }
 
   Widget _changeEmailDialog() {
