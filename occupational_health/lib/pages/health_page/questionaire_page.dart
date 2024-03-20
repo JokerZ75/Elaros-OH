@@ -222,7 +222,7 @@ class _QuestionairePageState extends State<QuestionairePage> {
                                       }
                                       await _assessmentService
                                           .saveQuestionaire(questionaire);
-                                      if (mounted) Navigator.pop(context);
+                                      if (mounted) Navigator.pop(context, true);
                                     } else {
                                       pageController.animateToPage(result.$1,
                                           duration:

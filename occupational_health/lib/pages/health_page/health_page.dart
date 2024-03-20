@@ -2,6 +2,7 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:occupational_health/components/my_radar_chart.dart';
 import 'package:occupational_health/components/my_submit_button.dart';
+import 'package:occupational_health/components/my_top_progress_card.dart';
 import 'package:occupational_health/pages/health_page/pdf_page.dart';
 import 'package:occupational_health/pages/health_page/previous_page.dart';
 import 'package:occupational_health/pages/health_page/questionaire_page.dart';
@@ -28,6 +29,8 @@ class _HealthPageState extends State<HealthPage> {
       SymptomServerityChartData(
           monthlyAverages: {} // Monthly averages will be added here
           );
+  int biggestFunctionalValue = 3;
+  int biggestSymptomValue = 3;
 
   double value = 0;
 
@@ -72,6 +75,9 @@ class _HealthPageState extends State<HealthPage> {
         keys = keys.sublist(keys.length - 4);
       }
 
+      double bigF = 0;
+      double bigS = 0;
+
       // convert the data to the format we need
       for (var month in keys) {
         functionalData[month] = {};
@@ -81,13 +87,20 @@ class _HealthPageState extends State<HealthPage> {
           Map<String, double> monthData = value.monthlySectionAverages[month]!;
           for (var section in monthData.keys) {
             if (funcNames.containsKey(section)) {
+              if (monthData[section]! > bigF) {
+                bigF = monthData[section]!;
+              }
               functionalData[month]![funcNames[section]!] = monthData[section]!;
             } else if (symptomNames.containsKey(section)) {
+              if (monthData[section]! > bigS) {
+                bigS = monthData[section]!;
+              }
               symptomData[month]![symptomNames[section]!] = monthData[section]!;
             }
           }
         }
       }
+
       setState(() {
         if (functionalData.isEmpty) {
           functionalData["0"] = {
@@ -97,6 +110,7 @@ class _HealthPageState extends State<HealthPage> {
             "Daily Activities": 0,
             "Social Role": 0
           };
+          biggestFunctionalValue = 0;
         }
         if (symptomData.isEmpty) {
           symptomData["0"] = {
@@ -111,9 +125,12 @@ class _HealthPageState extends State<HealthPage> {
             "Mood": 0,
             "Sleep": 0
           };
+          biggestSymptomValue = 0;
         } else {
           functionalChartData.monthlyAverages = functionalData;
           symptomServerityChartData.monthlyAverages = symptomData;
+          biggestFunctionalValue = bigF.toInt();
+          biggestSymptomValue = bigS.toInt();
         }
       });
     });
@@ -183,32 +200,19 @@ class _HealthPageState extends State<HealthPage> {
                               builder: (context) =>
                                   const QuestionairePage())).then((value) => {
                             // Show Linear Progress Indicator in snackbar
-                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                                content: const LinearProgressIndicator(
-                                  backgroundColor: Colors.white,
-                                  valueColor: AlwaysStoppedAnimation<Color>(
-                                      Color(0xFFEFD080)),
-                                ),
-                                duration: const Duration(seconds: 2),
-                                padding: const EdgeInsets.all(15),
-                                margin: EdgeInsets.only(
-                                    bottom: MediaQuery.of(context).size.height -
-                                        200,
-                                    left: 10,
-                                    right: 10),
-                                behavior: SnackBarBehavior.floating,
-                                action: SnackBarAction(
-                                  label: "Close",
-                                  onPressed: () {
-                                    ScaffoldMessenger.of(context)
-                                        .hideCurrentSnackBar();
-                                  },
-                                ))),
+                            if (value != null)
+                              {
+                                MyTopProgressCard(
+                                        duration: const Duration(seconds: 2),
+                                        title: "Refreshing Graph",
+                                        distanceFromTop: 250)
+                                    .showSnackBar(context),
 
-                            // wait 500ms before updating the chart
-                            Future.delayed(const Duration(seconds: 2), () {
-                              _setChartData();
-                            })
+                                // wait 500ms before updating the chart
+                                Future.delayed(const Duration(seconds: 2), () {
+                                  _setChartData();
+                                })
+                              }
                           });
                     },
                     fontWeight: FontWeight.w600,
@@ -282,6 +286,7 @@ class _HealthPageState extends State<HealthPage> {
           MyRadarChart(
             title: 'Functional disability score',
             dataSets: functionalChartData.getRawData(),
+            ticks: biggestFunctionalValue,
             getTitle: (index, value) {
               switch (index) {
                 case 0:
@@ -316,6 +321,7 @@ class _HealthPageState extends State<HealthPage> {
           ),
           MyRadarChart(
             title: 'Symptoms serverity score',
+            ticks: biggestSymptomValue,
             dataSets: symptomServerityChartData.getRawData(),
             getTitle: (index, value) {
               switch (index) {
