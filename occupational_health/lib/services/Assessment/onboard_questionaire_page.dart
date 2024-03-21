@@ -1,17 +1,16 @@
-import 'package:choice/choice.dart';
-import 'package:flutter/material.dart';
-import 'package:geolocator/geolocator.dart';
-import 'package:occupational_health/services/Assessment/assessment_service.dart';
-import 'package:occupational_health/services/Location/location_service.dart';
+import "package:choice/choice.dart";
+import "package:flutter/material.dart";
+import "package:occupational_health/services/Assessment/assessment_service.dart";
+import "package:occupational_health/services/Location/location_service.dart";
 
-class QuestionairePage extends StatefulWidget {
-  const QuestionairePage({Key? key}) : super(key: key);
+class OnBoardQuestionairePage extends StatefulWidget {
+  const OnBoardQuestionairePage({Key? key}) : super(key: key);
 
   @override
-  State<StatefulWidget> createState() => _QuestionairePageState();
+  State<StatefulWidget> createState() => _OnBoardQuestionairePageState();
 }
 
-class _QuestionairePageState extends State<QuestionairePage> {
+class _OnBoardQuestionairePageState extends State<OnBoardQuestionairePage> {
   List<QuestionaireSection> sections = [
     QuestionaireSection(sectionTitle: "Breathlessness", questions: {
       "a. At Rest": -1,
@@ -124,7 +123,7 @@ class _QuestionairePageState extends State<QuestionairePage> {
         backgroundColor: const Color(0xFFEFB84C),
         actionsIconTheme: const IconThemeData(color: Colors.black),
         centerTitle: false,
-        title: const Text("Questionnaire",
+        title: const Text("Onboarding",
             style: TextStyle(
                 color: Colors.black,
                 fontSize: 28,
@@ -219,11 +218,14 @@ class _QuestionairePageState extends State<QuestionairePage> {
                                         questionaire[section.sectionTitle] =
                                             section.questions;
                                       }
+
                                       LocationService locationService =
                                           LocationService();
+
                                       bool isLocationEnabled =
                                           await locationService
                                               .checkPermission();
+
                                       if (isLocationEnabled) {
                                         try {
                                           // load dialog
@@ -249,7 +251,8 @@ class _QuestionairePageState extends State<QuestionairePage> {
                                         }
                                       }
                                       await _assessmentService
-                                          .saveQuestionaire(questionaire);
+                                          .saveOnboardingQuestionaire(
+                                              questionaire);
                                       if (mounted) {
                                         Navigator.pop(context, true);
                                       }

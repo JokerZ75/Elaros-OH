@@ -12,7 +12,7 @@ class LocationService {
   Future<Position> getCurrentLocation() async {
     try {
       Position p = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.lowest, forceAndroidLocationManager: true);
+          desiredAccuracy: LocationAccuracy.lowest, forceAndroidLocationManager: true, timeLimit: const Duration(seconds: 10));
       return p;
     } catch (e) {
       throw Exception(e);

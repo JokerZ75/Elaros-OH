@@ -4,6 +4,7 @@ import 'package:occupational_health/components/my_bar_chart.dart';
 import 'package:occupational_health/components/my_radar_chart.dart';
 import 'package:occupational_health/components/my_submit_button.dart';
 import 'package:occupational_health/components/my_top_progress_card.dart';
+import 'package:occupational_health/model/questionaire.dart';
 import 'package:occupational_health/pages/health_page/pdf_page.dart';
 import 'package:occupational_health/pages/health_page/previous_page.dart';
 import 'package:occupational_health/pages/health_page/questionaire_page.dart';
@@ -45,7 +46,10 @@ class _HealthPageState extends State<HealthPage> {
   }
 
   void _setChartData() {
-    _assessmentService.getQuestionaireAverages().then((value) {
+    _assessmentService.getQuestionaireAverages().then((value) async {
+      Questionaire preCovid =
+          await _assessmentService.getOnboardingQuestionaire();
+
       Map<String, String> funcNames = {
         "Communication": "Communication",
         "Walking or moving around ": "Mobility",
@@ -105,79 +109,67 @@ class _HealthPageState extends State<HealthPage> {
         }
       }
 
-      setState(() {
-        if (functionalData.isEmpty) {
-          functionalData["0"] = {
-            "Communication": 0,
-            "Mobility": 0,
-            "Personal Care": 0,
-            "Daily Activities": 0,
-            "Social Role": 0
-          };
-          biggestFunctionalValue = 0;
+      List<double> preCovidFunctional = [];
+      List<double> preCovidSymptom = [];
+
+      for (var section in preCovid.questionaire.keys) {
+        if (funcNames.containsKey(section)) {
+          final questionaireSection = preCovid.questionaire[section]!;
+          double sectionAverage = 0;
+          for (var question in questionaireSection.keys) {
+            sectionAverage += questionaireSection[question]!;
+          }
+          sectionAverage /= questionaireSection.length;
+
+          // round to whole number
+          sectionAverage = sectionAverage.roundToDouble();
+
+          preCovidFunctional.add(sectionAverage);
+        } else if (symptomNames.containsKey(section)) {
+          final questionaireSection = preCovid.questionaire[section]!;
+          double sectionAverage = 0;
+          for (var question in questionaireSection.keys) {
+            sectionAverage += questionaireSection[question]!;
+          }
+          sectionAverage /= questionaireSection.length;
+
+          sectionAverage = sectionAverage.roundToDouble();
+
+          preCovidSymptom.add(sectionAverage);
         }
-        if (symptomData.isEmpty) {
-          symptomData["0"] = {
-            "Breathlessness": 0,
-            "Throat sensitivity": 0,
-            "Fatigue": 0,
-            "Smell / Taste": 0,
-            "Pain / Discomfort": 0,
-            "Cognition": 0,
-            "Palpitations / Dizziness": 0,
-            "Worsening": 0,
-            "Mood": 0,
-            "Sleep": 0
-          };
-          biggestSymptomValue = 1;
-          biggestFunctionalValue = 1;
-        } else {
+      }
+
+      // if any of pre covid bigger than the biggest value, update the biggest value
+      if (preCovidFunctional.isNotEmpty) {
+        if (preCovidFunctional
+                .reduce((value, element) => value > element ? value : element) >
+            bigF) {
+          bigF = preCovidFunctional
+              .reduce((value, element) => value > element ? value : element);
+        }
+      }
+
+      if (preCovidSymptom.isNotEmpty) {
+        if (preCovidSymptom
+                .reduce((value, element) => value > element ? value : element) >
+            bigS) {
+          bigS = preCovidSymptom
+              .reduce((value, element) => value > element ? value : element);
+        }
+      }
+
+      setState(() {
+        functionalChartData.preCovid = preCovidFunctional;
+        symptomServerityChartData.preCovid = preCovidSymptom;
+        biggestFunctionalValue = bigF.toInt() ?? 1;
+        biggestSymptomValue = bigS.toInt() ?? 1;
+        if (functionalData.isNotEmpty && symptomData.isNotEmpty) {
           functionalChartData.monthlyAverages = functionalData;
           symptomServerityChartData.monthlyAverages = symptomData;
-          biggestFunctionalValue = bigF.toInt();
-          biggestSymptomValue = bigS.toInt();
         }
       });
     });
   }
-
-  // List<BarChartGroupData> barChartData = [
-  //   BarChartGroupData(x: 0, barRods: [
-  //     _createBar(Colors.blue, 0),
-  //     _createBar(Colors.green, 0),
-  //     _createBar(Colors.red, 0),
-  //     _createBar(Colors.purple, 0),
-  //     _createBar(Colors.black, 0),
-  //   ]),
-  //   BarChartGroupData(x: 4, barRods: [
-  //     _createBar(Colors.blue, 3),
-  //     _createBar(Colors.green, 3),
-  //     _createBar(Colors.red, 3),
-  //     _createBar(Colors.purple, 3),
-  //     _createBar(Colors.black, 3),
-  //   ]),
-  //   BarChartGroupData(x: 6, barRods: [
-  //     _createBar(Colors.blue, 3),
-  //     _createBar(Colors.green, 3),
-  //     _createBar(Colors.red, 3),
-  //     _createBar(Colors.purple, 3),
-  //     _createBar(Colors.black, 2),
-  //   ]),
-  //   BarChartGroupData(x: 8, barRods: [
-  //     _createBar(Colors.blue, 2),
-  //     _createBar(Colors.green, 2),
-  //     _createBar(Colors.red, 3),
-  //     _createBar(Colors.purple, 3),
-  //     _createBar(Colors.black, 2),
-  //   ]),
-  //   BarChartGroupData(x: 10, barRods: [
-  //     _createBar(Colors.blue, 3),
-  //     _createBar(Colors.green, 0),
-  //     _createBar(Colors.red, 1),
-  //     _createBar(Colors.purple, 3),
-  //     _createBar(Colors.black, 1),
-  //   ]),
-  // ];
 
   @override
   Widget build(BuildContext context) {
@@ -300,8 +292,18 @@ class _HealthPageState extends State<HealthPage> {
               Expanded(
                   child: MySubmitButton(
                 style: const TextStyle(backgroundColor: Color(0xFFEFD080)),
-                onPressed: () {
-                  PDFPage().createPDF();
+                onPressed: () async {
+                  // show loading dialog
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      });
+
+                  await PDFPage().createPDF().then((value) =>
+                      Navigator.pop(context)); // close the loading dialog
                 },
                 text: 'Create\nExport',
                 minWidth: 165,
@@ -554,20 +556,23 @@ class FuncionalChartData {
 
   List<BarChartGroupData> getBarChartDataFunctional() {
     return [
-      BarChartGroupData(x: 0, barRods: [
-        _createBar(Colors.blue, 0),
-        _createBar(Colors.green, 0),
-        _createBar(Colors.red, 0),
-        _createBar(Colors.purple, 0),
-        _createBar(Colors.black, 0),
-      ]),
+      BarChartGroupData(
+        x: -1,
+        barRods: [
+          _createBar(Colors.blue, preCovid[0]),
+          _createBar(Colors.green, preCovid[1]),
+          _createBar(Colors.red, preCovid[2]),
+          _createBar(Colors.purple, preCovid[3]),
+          _createBar(Colors.black, preCovid[4]),
+        ],
+      ),
       for (var month in monthlyAverages.keys)
         BarChartGroupData(x: int.parse(month), barRods: [
           _createBar(Colors.blue, monthlyAverages[month]!['Personal Care']!),
-          _createBar(Colors.green, monthlyAverages[month]!['Daily Activities']!),
-          _createBar(Colors.red, monthlyAverages[month]!['Mobility']!),
           _createBar(
-              Colors.purple, monthlyAverages[month]!['Social Role']!),
+              Colors.green, monthlyAverages[month]!['Daily Activities']!),
+          _createBar(Colors.red, monthlyAverages[month]!['Mobility']!),
+          _createBar(Colors.purple, monthlyAverages[month]!['Social Role']!),
           _createBar(Colors.black, monthlyAverages[month]!['Communication']!),
         ])
     ];
@@ -612,18 +617,23 @@ class SymptomServerityChartData {
 
   List<BarChartGroupData> getBarChartDataSymptons() {
     return [
-      BarChartGroupData(x: 0, barRods: [
-        _createBar(Colors.blue, 0),
-        _createBar(Colors.green, 0),
-        _createBar(Colors.red, 0),
-        _createBar(Colors.purple, 0),
-        _createBar(Colors.black, 0),
+      BarChartGroupData(x: -1, barRods: [
+        // pre covid values
+        _createBar(Colors.blue, preCovid[0]),
+        _createBar(Colors.green, preCovid[1]),
+        _createBar(Colors.red, preCovid[2]),
+        _createBar(Colors.purple, preCovid[3]),
+        _createBar(Colors.black, preCovid[4]),
+        _createBar(Colors.blue, preCovid[5]),
+        _createBar(Colors.green, preCovid[6]),
+        _createBar(Colors.red, preCovid[7]),
+        _createBar(Colors.purple, preCovid[8]),
+        _createBar(Colors.black, preCovid[9]),
       ]),
       for (var month in monthlyAverages.keys)
         BarChartGroupData(x: int.parse(month), barRods: [
           _createBar(Colors.blue, monthlyAverages[month]!['Breathlessness']!),
-          _createBar(
-              Colors.green, monthlyAverages[month]!['Mood']!),
+          _createBar(Colors.green, monthlyAverages[month]!['Mood']!),
           _createBar(Colors.red, monthlyAverages[month]!['Fatigue']!),
           _createBar(Colors.purple, monthlyAverages[month]!['Cognition']!),
           _createBar(
@@ -632,7 +642,8 @@ class SymptomServerityChartData {
           _createBar(Colors.green,
               monthlyAverages[month]!['Palpitations / Dizziness']!),
           _createBar(Colors.red, monthlyAverages[month]!['Smell / Taste']!),
-          _createBar(Colors.purple, monthlyAverages[month]!['Throat sensitivity']!),
+          _createBar(
+              Colors.purple, monthlyAverages[month]!['Throat sensitivity']!),
           _createBar(Colors.black, monthlyAverages[month]!['Sleep']!),
         ])
     ];

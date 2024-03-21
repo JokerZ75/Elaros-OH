@@ -30,8 +30,6 @@ class AuthService extends ChangeNotifier {
         'uid': userCredential.user!.uid,
       }, SetOptions(merge: true));
 
-      
-
       return;
     } on FirebaseAuthMultiFactorException catch (e) {
       // Multi-factor challenge
@@ -42,7 +40,6 @@ class AuthService extends ChangeNotifier {
 
       if (context.mounted) {
         await _verifyPhoneNumber(firstHint!.phoneNumber, context, e);
-
       }
 
       return;
@@ -334,7 +331,71 @@ class AuthService extends ChangeNotifier {
   } // sendEmailVerification
 
   // Delete user
-  Future<void> deleteUser() async {
+  Future<void> deleteUserWithPassword(String password, BuildContext context) async {
+    User? user = _auth.currentUser;
+    try {
+      // Reauthenticate the user
+      await user!.reauthenticateWithCredential(
+          EmailAuthProvider.credential(email: user.email!, password: password));
+
+      // delete all documents associated with the user
+      await deleteUserData();
+
+      Navigator.pop(context);
+      Navigator.pop(context);
+    } on FirebaseAuthMultiFactorException catch (e) {
+      // Multi-factor challenge
+      final firstHint = e.resolver.hints.first;
+      if (firstHint is! PhoneMultiFactorInfo) {
+        return;
+      }
+
+      // Verify phone number
+      await _verifyPhoneNumber(firstHint!.phoneNumber, context, e);
+
+      // delete all documents associated with the user
+      await deleteUserData();
+
+      Navigator.pop(context);
+      Navigator.pop(context);
+
+      return;
+    }
+    on FirebaseAuthException catch (e) {
+      throw Exception(e);
+    }
+  } // deleteUser
+
+  // Delete user data with google
+  Future<void> deleteUserWithGoogle(BuildContext context) async {
+    User? user = _auth.currentUser;
+    try {
+      // reauthenticate the user
+      GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser!.authentication;
+      final AuthCredential credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+      await user!.reauthenticateWithCredential(credential);
+
+
+      // delete all documents associated with the user
+      await deleteUserData();
+
+
+      Navigator.pop(context);
+      Navigator.pop(context);
+      
+      // delete the user
+    } catch (e) {
+      throw Exception(e);
+    }
+  }
+
+
+  Future<void> deleteUserData() async {
     User? user = _auth.currentUser;
     try {
       // delete all documents associated with the user
@@ -349,14 +410,16 @@ class AuthService extends ChangeNotifier {
           ds.reference.delete();
         }
       });
+      await _firestore.collection('assessments').doc(user.uid).delete();
+      // delete the user
       await user.delete();
     } catch (e) {
       throw Exception(e);
     }
-  } // deleteUser
+  }
 
   // Sign in with Google
-  Future<void> signInWithGoogle() async {
+  Future<void> signInWithGoogle(BuildContext context) async {
     try {
       // Trigger the Google Sign In process
       // Fetch email, profile and date of birth
@@ -384,6 +447,7 @@ class AuthService extends ChangeNotifier {
       );
 
       // Sign in with the credential
+      Navigator.pop(context);
       await _auth.signInWithCredential(credential);
 
       // User Info
@@ -419,7 +483,7 @@ class AuthService extends ChangeNotifier {
       }
 
       // Create a new document for the user with the uid
-      _firestore.collection('users').doc(user!.uid).set({
+      await _firestore.collection('users').doc(user!.uid).set({
         'email': user.email,
         'name': user.displayName,
         'dateOfBirth': dateOfBirth,
@@ -427,6 +491,7 @@ class AuthService extends ChangeNotifier {
         'uid': user.uid,
         'timestamp': FieldValue.serverTimestamp(),
       }, SetOptions(merge: true));
+
       return;
     } catch (e) {
       throw Exception(e);
