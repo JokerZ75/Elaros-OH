@@ -291,8 +291,8 @@ class AssessmentService extends ChangeNotifier {
           .collection('assessments')
           .doc(_auth.currentUser!.uid)
           .get();
-      if (!averages.data()!.containsKey("monthlySectionAverages") ||
-          !averages.data()!.containsKey("overallAverages")) {
+      if (!averages.data()!.containsKey("MonthlySectionAverages") ||
+          !averages.data()!.containsKey("OverallAverages")) {
         return QuestionaireAverages(
           monthlySectionAverages: {},
           overallAverages: {},

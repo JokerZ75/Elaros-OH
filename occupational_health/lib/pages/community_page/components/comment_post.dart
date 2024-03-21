@@ -24,7 +24,9 @@ class CommentWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Comment text
-          Text(comment.text),
+          SizedBox(
+            width: 180,
+            child: Text(comment.text,)),
 
           const SizedBox(height: 5),
 

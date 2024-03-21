@@ -126,10 +126,13 @@ class _CommunityPostState extends State<CommunityPost> {
                       ),
                       const SizedBox(width: 20),
                       const SizedBox(height: 10),
-                      Text(
-                        widget.message,
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 20),
+                      SizedBox(
+                        width: 190,
+                        child: Text(
+                          widget.message,
+                          style: TextStyle(
+                              fontWeight: FontWeight.bold, fontSize: 20),
+                        ),
                       ),
                       const SizedBox(height: 5),
                       widget.comments != null

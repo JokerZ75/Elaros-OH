@@ -79,8 +79,8 @@ class _HealthPageState extends State<HealthPage> {
       // sort the keys
       keys.sort((a, b) => int.parse(a).compareTo(int.parse(b)));
 
-      if (keys.length > 4) {
-        keys = keys.sublist(keys.length - 4);
+      if (keys.length > 3) {
+        keys = keys.sublist(keys.length - 3);
       }
 
       double bigF = 0;

@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:occupational_health/components/my_submit_button.dart';
+import 'package:occupational_health/model/comment.dart';
 import 'package:occupational_health/model/post.dart';
 import 'package:occupational_health/pages/community_page/components/community_post.dart';
 import 'package:occupational_health/pages/community_page/forumn_page.dart';
@@ -180,15 +181,26 @@ class _CommunityPageState extends State<CommunityPage> {
                             if (snapshot.hasError) {
                               print(snapshot.error.toString());
                             }
+                            if (snapshot.data!.docs.isEmpty) {
+                              return SizedBox(
+                                  height: 250,
+                                  child: Center(child: Text("No posts")));
+                            }
                             Post p = Post.fromMap(snapshot.data!.docs.first
                                 .data() as Map<String, dynamic>);
                             p.setUid(snapshot.data!.docs.first.id);
+                            var lastPost = [];
+                            if (p.postComments.isNotEmpty) {
+                              lastPost = [p.postComments.last];
+                            }
                             return CommunityPost(
                               postId: p.uid,
                               message: p.postTitle,
                               user: p.user,
                               likes: p.likes,
-                              comments: [p.postComments.last],
+                              comments: lastPost.isEmpty
+                                  ? lastPost
+                                  : p.postComments,
                             );
                           }),
                       SizedBox(height: 20),
