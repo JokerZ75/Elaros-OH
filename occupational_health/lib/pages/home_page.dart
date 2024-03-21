@@ -23,8 +23,7 @@ class _HomePageState extends State<HomePage> {
     // TODO: implement initState
     super.initState();
     getRecentQuestionaires();
-    if (mounted) {
-    }
+    if (mounted) {}
   }
 
   getRecentQuestionaires() async {
@@ -53,10 +52,12 @@ class _HomePageState extends State<HomePage> {
               style: TextStyle(backgroundColor: const Color(0xFFEFD080)),
               onPressed: () {
                 Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const QuestionairePage()))
-                    .then((value) => getRecentQuestionaires());
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const QuestionairePage())).then(
+                    (value) => Future.delayed(const Duration(seconds: 2), () {
+                          getRecentQuestionaires();
+                        }));
               },
               text: "Click To Take Your Daily Assessment"),
           // your environment
