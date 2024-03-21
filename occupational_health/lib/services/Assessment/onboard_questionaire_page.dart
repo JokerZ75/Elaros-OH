@@ -218,17 +218,41 @@ class _OnBoardQuestionairePageState extends State<OnBoardQuestionairePage> {
                                         questionaire[section.sectionTitle] =
                                             section.questions;
                                       }
+
                                       LocationService locationService =
                                           LocationService();
+
                                       bool isLocationEnabled =
                                           await locationService
                                               .checkPermission();
+
                                       if (isLocationEnabled) {
-                                        await locationService
-                                            .setLoggedInPosition();
+                                        try {
+                                          // load dialog
+                                          showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return const Center(
+                                                  child:
+                                                      CircularProgressIndicator(),
+                                                );
+                                              },
+                                              barrierDismissible: false);
+                                          await locationService
+                                              .setLoggedInPosition();
+                                          Navigator.pop(context);
+                                        } catch (e) {
+                                          await _assessmentService
+                                              .saveOnboardingQuestionaire(
+                                                  questionaire);
+                                          if (mounted) {
+                                            Navigator.pop(context, true);
+                                          }
+                                        }
                                       }
                                       await _assessmentService
-                                          .saveOnboardingQuestionaire(questionaire);
+                                          .saveOnboardingQuestionaire(
+                                              questionaire);
                                       if (mounted) {
                                         Navigator.pop(context, true);
                                       }

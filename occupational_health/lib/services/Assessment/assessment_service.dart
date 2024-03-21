@@ -287,11 +287,12 @@ class AssessmentService extends ChangeNotifier {
   // Get Questionaire Averages
   Future<QuestionaireAverages> getQuestionaireAverages() async {
     try {
-      DocumentSnapshot averages = await _firestore
+      final averages = await _firestore
           .collection('assessments')
           .doc(_auth.currentUser!.uid)
           .get();
-      if (!averages.exists) {
+      if (!averages.data()!.containsKey("monthlySectionAverages") ||
+          !averages.data()!.containsKey("overallAverages")) {
         return QuestionaireAverages(
           monthlySectionAverages: {},
           overallAverages: {},

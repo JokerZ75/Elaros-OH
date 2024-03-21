@@ -23,6 +23,8 @@ class _HomePageState extends State<HomePage> {
     // TODO: implement initState
     super.initState();
     getRecentQuestionaires();
+    if (mounted) {
+    }
   }
 
   getRecentQuestionaires() async {

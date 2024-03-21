@@ -137,8 +137,63 @@ class _LoginPageState extends State<LoginPage> {
                       const SizedBox(width: 5),
                       GestureDetector(
                         onTap: () {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text("Reset Password")));
+                          // Dialog to reset password
+                          showDialog(
+                              context: context,
+                              builder: (BuildContext context) {
+                                return AlertDialog(
+                                  title: const Text("Reset Password"),
+                                  content: SizedBox(
+                                    height: 200,
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: <Widget>[
+                                        const Text(
+                                            "Enter your email to reset password"),
+                                        const SizedBox(height: 10),
+                                        MyTextFormField(
+                                            controller: emailController,
+                                            labelText: "Email",
+                                            keyboardType:
+                                                TextInputType.emailAddress,
+                                            obscureText: false,
+                                            validator: (value) {
+                                              if (value == null ||
+                                                  value.isEmpty) {
+                                                return 'Please enter some text';
+                                              }
+                                              return null;
+                                            }),
+                                        const SizedBox(height: 10),
+                                        MySubmitButton(
+                                            onPressed: () async {
+                                              final authService =
+                                                  Provider.of<AuthService>(
+                                                      context,
+                                                      listen: false);
+                                              try {
+                                                await authService.resetPassword(
+                                                    emailController.text);
+                                                Navigator.pop(context);
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(SnackBar(
+                                                        content: Text(
+                                                            "Password reset email sent")));
+                                              } catch (e) {
+                                                Navigator.pop(context);
+                                                ScaffoldMessenger.of(context)
+                                                    .showSnackBar(SnackBar(
+                                                        content: Text(
+                                                  "Problem resetting password. Please try again later or try another email",
+                                                )));
+                                              }
+                                            },
+                                            text: "Reset Password"),
+                                      ],
+                                    ),
+                                  ),
+                                );
+                              });
                         },
                         child: Text(
                           "Click Here",
@@ -176,15 +231,13 @@ class _LoginPageState extends State<LoginPage> {
                               );
                             },
                             barrierDismissible: false);
-                        await authService.signInWithGoogle();
+                        await authService.signInWithGoogle(context);
                         if (mounted) {
                           Navigator.pop(context);
                         }
                       } catch (e) {
                         if (mounted) {
                           Navigator.pop(context);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text(e.toString())));
                         }
                       }
                     },

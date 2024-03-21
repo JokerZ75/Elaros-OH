@@ -1,6 +1,4 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:occupational_health/model/comment.dart';
-
 class Post {
   // Attributes
   String? uid;

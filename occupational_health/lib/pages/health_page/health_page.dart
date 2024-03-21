@@ -159,38 +159,13 @@ class _HealthPageState extends State<HealthPage> {
       }
 
       setState(() {
-        if (functionalData.isEmpty) {
-          functionalData["0"] = {
-            "Communication": 0,
-            "Mobility": 0,
-            "Personal Care": 0,
-            "Daily Activities": 0,
-            "Social Role": 0
-          };
-          biggestFunctionalValue = 0;
-        }
-        if (symptomData.isEmpty) {
-          symptomData["0"] = {
-            "Breathlessness": 0,
-            "Throat sensitivity": 0,
-            "Fatigue": 0,
-            "Smell / Taste": 0,
-            "Pain / Discomfort": 0,
-            "Cognition": 0,
-            "Palpitations / Dizziness": 0,
-            "Worsening": 0,
-            "Mood": 0,
-            "Sleep": 0
-          };
-          biggestSymptomValue = 1;
-          biggestFunctionalValue = 1;
-        } else {
+        functionalChartData.preCovid = preCovidFunctional;
+        symptomServerityChartData.preCovid = preCovidSymptom;
+        biggestFunctionalValue = bigF.toInt() ?? 1;
+        biggestSymptomValue = bigS.toInt() ?? 1;
+        if (functionalData.isNotEmpty && symptomData.isNotEmpty) {
           functionalChartData.monthlyAverages = functionalData;
           symptomServerityChartData.monthlyAverages = symptomData;
-          functionalChartData.preCovid = preCovidFunctional;
-          symptomServerityChartData.preCovid = preCovidSymptom;
-          biggestFunctionalValue = bigF.toInt();
-          biggestSymptomValue = bigS.toInt();
         }
       });
     });
@@ -317,8 +292,18 @@ class _HealthPageState extends State<HealthPage> {
               Expanded(
                   child: MySubmitButton(
                 style: const TextStyle(backgroundColor: Color(0xFFEFD080)),
-                onPressed: () {
-                  PDFPage().createPDF();
+                onPressed: () async {
+                  // show loading dialog
+                  showDialog(
+                      context: context,
+                      builder: (BuildContext context) {
+                        return const Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      });
+
+                  await PDFPage().createPDF().then((value) =>
+                      Navigator.pop(context)); // close the loading dialog
                 },
                 text: 'Create\nExport',
                 minWidth: 165,
@@ -571,13 +556,16 @@ class FuncionalChartData {
 
   List<BarChartGroupData> getBarChartDataFunctional() {
     return [
-      BarChartGroupData(x: -1, barRods: [
-        _createBar(Colors.blue, preCovid[0]),
-        _createBar(Colors.green, preCovid[1]),
-        _createBar(Colors.red, preCovid[2]),
-        _createBar(Colors.purple, preCovid[3]),
-        _createBar(Colors.black, preCovid[4]),
-      ],),
+      BarChartGroupData(
+        x: -1,
+        barRods: [
+          _createBar(Colors.blue, preCovid[0]),
+          _createBar(Colors.green, preCovid[1]),
+          _createBar(Colors.red, preCovid[2]),
+          _createBar(Colors.purple, preCovid[3]),
+          _createBar(Colors.black, preCovid[4]),
+        ],
+      ),
       for (var month in monthlyAverages.keys)
         BarChartGroupData(x: int.parse(month), barRods: [
           _createBar(Colors.blue, monthlyAverages[month]!['Personal Care']!),

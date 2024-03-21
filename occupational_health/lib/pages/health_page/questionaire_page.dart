@@ -225,8 +225,28 @@ class _QuestionairePageState extends State<QuestionairePage> {
                                           await locationService
                                               .checkPermission();
                                       if (isLocationEnabled) {
-                                        await locationService
-                                            .setLoggedInPosition();
+                                        try {
+                                          // load dialog
+                                          showDialog(
+                                              context: context,
+                                              builder: (BuildContext context) {
+                                                return const Center(
+                                                  child:
+                                                      CircularProgressIndicator(),
+                                                );
+                                              },
+                                              barrierDismissible: false);
+                                          await locationService
+                                              .setLoggedInPosition();
+                                          Navigator.pop(context);
+                                        } catch (e) {
+                                          await _assessmentService
+                                              .saveOnboardingQuestionaire(
+                                                  questionaire);
+                                          if (mounted) {
+                                            Navigator.pop(context, true);
+                                          }
+                                        }
                                       }
                                       await _assessmentService
                                           .saveQuestionaire(questionaire);
