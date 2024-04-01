@@ -17,7 +17,7 @@ class MfaGate extends StatefulWidget {
 }
 
 class _MfaGateState extends State<MfaGate> {
-  bool _isVerified = true;// Make these true if you want to test without enrolling
+  bool _isVerified = false;// Make these true if you want to test without enrolling
   final AuthService _auth = AuthService();
   bool _signedInWithGoogle = false;
 

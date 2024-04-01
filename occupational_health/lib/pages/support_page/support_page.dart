@@ -19,8 +19,10 @@ class SupportPage extends StatefulWidget {
 }
 
 class _SupportPageState extends State<SupportPage> {
+
+  // YOUR GOOGLE MAPS API KEY
   final GoogleMapsPlaces _places =
-      GoogleMapsPlaces(apiKey: "AIzaSyCSGGPsZ66yn-OVALuPVoE1z8j-S6R3Nsc");
+      GoogleMapsPlaces(apiKey: "YOUR KEY");
 
   // https://www.dhiwise.com/post/maximizing-user-experience-integrating-flutter-geolocator
   // this website was used to help with the location services, both getting the location and displaying it on the map
