@@ -176,7 +176,7 @@ class _CommunityPostState extends State<CommunityPost> {
                 width: 20,
               ),
               CommentButton(onTap: showCommentDialog),
-              SizedBox(width: 5),
+              const SizedBox(width: 5),
               Text(widget.comments!.length.toString()),
             ],
           ),

@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -141,7 +143,14 @@ class AssessmentService extends ChangeNotifier {
             geoPoints.isEmpty) {
           geoPoints["${userLocation.latitude}, ${userLocation.longitude}"] =
               user.id;
+        } else if (geoPoints.containsKey(
+            "${userLocation.latitude}, ${userLocation.longitude}"
+        )) {
+          // If location key already exists, add with geopoint edited with random decimal
+          geoPoints["${userLocation.latitude +  Random().nextDouble() / 100}, ${userLocation.longitude + Random().nextDouble() / 100}"] =
+              user.id;
         }
+
       }
 
       Map<String, List<String>> locationUsers = {};
@@ -154,7 +163,7 @@ class AssessmentService extends ChangeNotifier {
                   double.parse(geoPoint1.split(", ")[1]),
                   double.parse(geoPoint2.split(", ")[0]),
                   double.parse(geoPoint2.split(", ")[1])) <=
-              1000) {
+              10000) {
             // If the locationUsers map does not contain the key
             if (!locationUsers.containsKey(geoPoint1)) {
               locationUsers[geoPoint1] = [geoPoints[geoPoint2]!];
@@ -193,6 +202,7 @@ class AssessmentService extends ChangeNotifier {
           locationUsers.remove(location);
         }
       }
+
 
       for (var location in locationUsers.keys) {
         for (var user in locationUsers[location]!) {

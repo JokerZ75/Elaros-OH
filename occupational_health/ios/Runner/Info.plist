@@ -10,7 +10,7 @@
 	<string>$(DEVELOPMENT_LANGUAGE)</string>
 	<key>CFBundleDisplayName</key>
 	<string>Occupational Health</string>
-	<!-- CLIENT ID -->
+	<!-- CLIENT ID FROM GOOGLESERVICE-INFO.plist -->
 	<key>GIDClientID</key>
 	<string>215764582587-j6s2p5srp9ubdd8u7iv7b1l6p7kqrobl.apps.googleusercontent.com</string>
 	<!-- Location Permission -->
