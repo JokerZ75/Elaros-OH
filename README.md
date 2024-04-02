@@ -83,6 +83,7 @@ See the [open issues](https://github.com/JokerZ75/Elaros-OH/issues) for a full l
 
 * [![Firebase][Firebase]][Firebase-url]
 * [![Flutter][Flutter]][Flutter-url]
+* [![Google-cloud][Google-cloud]][Google-cloud-url]
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -97,7 +98,7 @@ To get the application up and running you will require:
 <br />
 * Flutter
     - See how to install Flutter and how to get it up and running here: [Flutter](https://docs.flutter.dev/get-started/install).
-* Firebase
+* Firebase - If you are going to use your own database and not ours
     - You will need to set up a Firebase account and create a Firebase project with a plan of your choosing.
     - See how to get Firebase working alongside Flutter here: [Firebase](https://firebase.google.com/docs/flutter/setup?platform=ios).
 
@@ -109,11 +110,48 @@ To get the application up and running you will require:
   flutter pub get
 ```
 
-#### Firebase
 
-To get your firebase ready to run the application either for development or deployment we will need to activate a few things.
+#### Android
+
+* Follow this guide for setup for Android app: [Flutter Android Guide (Windows)](https://developer.android.com/studio).
+* Follow this guide for setup for Android app: [Flutter Android Guide (Mac)](https://docs.flutter.dev/get-started/install/macos/mobile-android?tab=download).
+
+#### IOS
+
+* Follow this guide for setup for IOS app: [Flutter Android Guide (Mac)](https://docs.flutter.dev/get-started/install/macos/mobile-ios?tab=download).
+
+#### Google Cloud - REQUIRED FOR MAPS FUNCTIONALITY
+
+
+#### Firebase - Optional if you want to use your own database for development or deployment
+
+To get your firebase ready to run the application either for development or deployment using your own database and not ours we will need to activate a few things.
   * Activate authentication
-      - Add
+      - Add email and password as a provider.
+      - Activate SMS multi-factor authentication in "Sign-in method/Advanced"
+        - You will also need to follow these guides enable 2FA for both IOS and Android
+          - IOS: https://firebase.google.com/docs/auth/ios/multi-factor?hl=en&authuser=0#using_recaptcha_verification
+          - Android: https://firebase.google.com/docs/auth/android/multi-factor?hl=en&authuser=0#before_you_begin
+          - To proceed without 2FA switch the variable found at lib/services/Auth/mfa_gate.dart
+            ```dart
+            class _MfaGateState extends State<MfaGate> {
+            bool _isVerified = false; // Make this true if you want to test without 2FA
+            final AuthService _auth = AuthService();
+            bool _signedInWithGoogle = false;
+            ...
+            ```
+        - Add Google as a Sign in Provider
+          - Make sure to follow the instructions given whilest going through this process.
+          - IOS:
+            * Add custom URL schemes to your Xcode project:
+              1. Open your project configuration: click the project name in the left tree view. Select your app from the TARGETS section, then select the Info tab, and expand the URL Types                       section.
+              2. Click the + button, and add a URL scheme for your reversed client ID. To find this value, open the GoogleService-Info.plist configuration file, and look for the                                  REVERSED_CLIENT_ID key. Copy the value of that key, and paste it into the URL Schemes box on the configuration page. Leave the other fields untouched.
+
+              When completed, your config should look something similar to the following (but with your application-specific values):
+              ![image](https://github.com/JokerZ75/Elaros-OH/assets/95136337/ad12c331-5ee9-454c-96d0-b50e4bb614a9)
+            * You may also have to copy your Client ID from IOS/Runner/GoogleService-info.plist into the GIDClientID sections of IOS/Runner/Info.plist
+
+  
   * Activate firestore database
       - Update its rules to:
       ```zsh
@@ -127,15 +165,6 @@ To get your firebase ready to run the application either for development or depl
       }
       ```
 
-
-#### Android
-
-* Follow this guide for setup for Android app: [Flutter Android Guide (Windows)](https://developer.android.com/studio).
-* Follow this guide for setup for Android app: [Flutter Android Guide (Mac)](https://docs.flutter.dev/get-started/install/macos/mobile-android?tab=download).
-
-#### IOS
-
-* Follow this guide for setup for IOS app: [Flutter Android Guide (Mac)](https://docs.flutter.dev/get-started/install/macos/mobile-ios?tab=download).
 
 ### Deployment
 
@@ -160,3 +189,5 @@ To get your firebase ready to run the application either for development or depl
 [Flutter-url]: https://flutter.dev/
 [Firebase]: https://img.shields.io/badge/firebase-orange?style=for-the-badge&logo=firebase&logoColor=white
 [Firebase-url]: https://firebase.google.com/
+[Google-cloud]: https://img.shields.io/badge/google_cloud-white?style=for-the-badge&logo=googlecloud&logoColor=blue
+[Google-cloud-url]: https://console.cloud.google.com/google/maps-apis/home
